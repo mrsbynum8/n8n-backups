@@ -1,0 +1,485 @@
+{
+  "updatedAt": "2026-01-26T02:03:38.712Z",
+  "createdAt": "2026-01-26T02:03:17.934Z",
+  "id": "Q1sdijiI5T1TA20SE4YTJ",
+  "name": "002-02. MPV Image Prompt Generation (Sheet1 → Sheet2)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "46fe2d46-4827-4857-b753-17432fb7956a",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        512,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4",
+          "mode": "list",
+          "cachedResultName": "MPV Image Generation 2025.12.30",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e6f94ea6-1594-45cc-b903-7198f861db3c",
+      "name": "Read Pending Chapters (Sheet1)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        736,
+        224
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Reads pending chapters from Sheet1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "073e853d-59ce-40bf-b0b4-5db747ca0255",
+      "name": "Loop Over Chapters",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        960,
+        224
+      ],
+      "notes": "Process one chapter at a time"
+    },
+    {
+      "parameters": {
+        "jsCode": "const script = $input.item.json.script;\nconst wordCount = script.split(/\\s+/).length;\nconst imageCount = Math.round(wordCount / 25);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: $input.item.json.chapter_number,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+      },
+      "id": "80e8e1b0-ece9-4b8e-890d-b4b129ff35a8",
+      "name": "Calculate Image Count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        96
+      ],
+      "notes": "word count ÷ 50"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an image prompt generator for Mr. PsycheVerse, a YouTube channel about healing from narcissistic abuse. You will receive a script section and generate an image prompt in SILHOUETTE ART STYLE. Each prompt MUST be 5+ sentences describing a dramatic silhouette scene that visually represents the SPECIFIC content of that script section.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nCRITICAL INSTRUCTION - SCRIPT SPECIFICITY:\\n- Each prompt MUST depict what the script is ACTUALLY DISCUSSING in that section\\n- If the script mentions \\\"golden child,\\\" show golden child dynamics\\n- If the script mentions \\\"father's criticism,\\\" show a critical father figure\\n- If the script mentions \\\"walking on eggshells,\\\" show that specific feeling\\n- If the script mentions a specific behavior or phrase, depict THAT behavior or phrase\\n- Do NOT default to generic psychological imagery (mirrors, shadows, doorways, masks) unless the script specifically discusses those things\\n- Stay LITERAL to the script content first, then apply silhouette style\\n- When in doubt, ask: \\\"What is this paragraph actually talking about?\\\" and depict THAT\\n\\nSTYLE REQUIREMENTS:\\n- Silhouette art style with pure black shapes against luminous gradient backgrounds\\n- Victorian paper-cut aesthetic meets shadow puppet theater\\n- No internal detail on figures — emotion conveyed entirely through posture, gesture, and scale\\n- Crisp, confident edges on all silhouettes — every contour carries meaning\\n- Gradient backgrounds transition between warm and cool tones to convey emotional temperature\\n- Natural elements (grass, flowers, trees, branches) can frame scenes as black silhouette borders when appropriate\\n- Figures should feel universal and anonymous — the viewer sees themselves\\n\\nGRADIENT BACKGROUNDS:\\n- Use warm gradients (amber through golden orange to soft cream) for hope, healing, and safety\\n- Use cool gradients (deep blue through purple to black) for threat, shadow, and the past\\n- Mix warm and cool in the same gradient to show emotional complexity or transition\\n- The gradient itself tells the emotional story\\n\\nTRANSLATING SCRIPT TO SILHOUETTE:\\n- First, identify WHAT SPECIFIC THING the script is describing in this section\\n- Then, create a silhouette scene that depicts THAT SPECIFIC THING\\n- Use SCALE to show power dynamics (larger = more powerful/threatening)\\n- Use POSTURE to show emotion (hunched = shame, reaching = longing, standing tall = strength)\\n- Use PROXIMITY between figures to show relationship dynamics\\n- Use the GRADIENT to reinforce the emotional tone of that specific section\\n- Be creative and varied — avoid repeating the same composition across prompts\\n- If multiple prompts cover the same topic, show DIFFERENT MOMENTS or ANGLES of that topic, not the same generic scene\\n\\nCONTENT RESTRICTIONS (CRITICAL - READ CAREFULLY):\\n- NO violence, gore, blood, or weapons of any kind\\n- NO chains, shackles, restraints, ropes binding people, or bondage imagery\\n- NO beds with people restrained or trapped on them\\n- NO knives, swords, clubs, or any objects that could be used as weapons\\n- NO nudity or sexual content\\n- NO readable text, words, or labels in images\\n- NO literal depictions of abuse — use symbolic/atmospheric approaches only\\n- Threat should be conveyed through SCALE, POSTURE, and SHADOW — not through violent objects\\n- Figures should feel universal, not specific individuals\\n- When depicting entrapment, use metaphors like cages, boxes, small rooms, or looming figures — NOT physical restraints on bodies\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A silhouette scene shows...\\\"}, {\\\"prompt\\\": \\\"A silhouette scene shows...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.script) }}\n    }\n  ],\n  \"temperature\": 1\n}",
+        "options": {}
+      },
+      "id": "e389d9c0-f824-4aa3-8bc5-ff67d02b351b",
+      "name": "Generate Prompts via OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        96
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Creates all image prompts for this chapter"
+    },
+    {
+      "parameters": {
+        "jsCode": "const openaiResponse = $input.item.json.choices[0].message.content;\nlet prompts;\n\ntry {\n  prompts = JSON.parse(openaiResponse);\n} catch (e) {\n  const jsonMatch = openaiResponse.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    prompts = JSON.parse(jsonMatch[1]);\n  } else {\n    throw new Error(\"Could not parse OpenAI response as JSON\");\n  }\n}\n\nconst videoName = $('Loop Over Chapters').item.json.video_name;\nconst chapterNum = $('Loop Over Chapters').item.json.chapter_number;\nconst rowNumber = $('Loop Over Chapters').item.json.row_number;\n\n// Format for Sheet2 - each prompt as a separate row\nreturn prompts.map((p, index) => ({\n  json: {\n    video_name: videoName,\n    chapter_number: chapterNum,\n    image_number: String(index + 1).padStart(2, '0'),\n    filename: `${videoName}-${chapterNum}-${String(index + 1).padStart(2, '0')}.png`,\n    prompt: p.prompt,\n    status: 'pending',\n    chapter_row_number: rowNumber\n  }\n}));"
+      },
+      "id": "ae2f831f-9d3b-4a77-a364-d0189959e8a4",
+      "name": "Parse & Format for Sheet2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        96
+      ],
+      "notes": "Formats each prompt as a row for Sheet2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4",
+          "mode": "list",
+          "cachedResultName": "MPV Image Generation 2025.12.30",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2075116139,
+          "mode": "list",
+          "cachedResultName": "Prompts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PcvTpjL6R22V5kr2QXa4DROgI7p6vMj0gMr4ImlIiKY/edit#gid=2075116139"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "chapter_number": "={{ $json.chapter_number }}",
+            "image_number": "={{ $json.image_number }}",
+            "filename": "={{ $json.filename }}",
+            "prompt": "={{ $json.prompt }}",
+            "status": "pending"
+          },
+          "matchingColumns": [
+            "filename"
+          ],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_number",
+              "displayName": "image_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "86b167fa-2070-4711-85bb-1f54cbeb985d",
+      "name": "Write Prompts to Sheet2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        352
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Appends all prompts to Sheet2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4",
+          "mode": "list",
+          "cachedResultName": "MPV Image Generation 2025.12.30",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PcvTpjL6R22V5kr2QXa4DROgI7p6vMj0gMr4ImlIiKY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "completed",
+            "row_number": "={{ $('Loop Over Chapters').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "script",
+              "displayName": "script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "df672d1f-6e6d-46ee-a5f0-803deaf367c2",
+      "name": "Mark Chapter Complete (Sheet1)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1408,
+        352
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Marks this chapter as completed in Sheet1"
+    },
+    {
+      "parameters": {
+        "content": "## Workflow 1: Prompt Generation\n\n### What This Does:\n1. Reads pending chapters from Sheet1\n2. Calculates how many images needed (word count ÷ 50)\n3. Generates ALL prompts via OpenAI\n4. Writes prompts to Sheet2 with status='pending'\n5. Marks chapter as 'completed' in Sheet1\n\n### Sheet1 Columns:\nvideo_name, chapter_number, script, status, row_number\n\n### Sheet2 Columns:\nvideo_name, chapter_number, image_number, filename, prompt, status, row_number\n\n### Benefits:\n- Review/edit prompts before generating images\n- Separate prompt creation from expensive image generation\n- Only pay for image generation after reviewing prompts",
+        "height": 532,
+        "width": 440,
+        "color": 5
+      },
+      "id": "a717c314-4943-439b-8e54-67b87e50435e",
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Pending Chapters (Sheet1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Pending Chapters (Sheet1)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Chapters": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Calculate Image Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Image Count": {
+      "main": [
+        [
+          {
+            "node": "Generate Prompts via OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Prompts via OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Parse & Format for Sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Format for Sheet2": {
+      "main": [
+        [
+          {
+            "node": "Write Prompts to Sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Prompts to Sheet2": {
+      "main": [
+        [
+          {
+            "node": "Mark Chapter Complete (Sheet1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Chapter Complete (Sheet1)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b5dcf787-f8b3-4d01-ba91-f4313f489a1a",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-26T02:03:17.940Z",
+      "createdAt": "2026-01-26T02:03:17.940Z",
+      "role": "workflow:owner",
+      "workflowId": "Q1sdijiI5T1TA20SE4YTJ",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-26T02:00:19.464Z",
+      "createdAt": "2026-01-26T02:00:19.464Z",
+      "id": "TpFsJjCc34mubRl4",
+      "name": "MPV"
+    }
+  ]
+}
