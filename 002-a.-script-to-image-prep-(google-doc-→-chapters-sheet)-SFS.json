@@ -1,0 +1,1573 @@
+{
+  "updatedAt": "2026-02-04T04:07:02.917Z",
+  "createdAt": "2026-01-25T23:20:43.283Z",
+  "id": "ZYwVA9WqrGwDHT59WQN-F",
+  "name": "002-A. Script to Image Prep (Google Doc → Chapters Sheet)",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "144bba60-8f76-420e-a32f-b0e9cba2ac6c",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "doc-id",
+              "name": "document_id",
+              "value": "={{ $json.doc_id }}",
+              "type": "string"
+            },
+            {
+              "id": "vid-name",
+              "name": "=video_name",
+              "value": "={{ $json.video_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea6d3b8e-c1ec-4f2e-a059-87d69907c50c",
+      "name": "📝 EDIT THIS - Your Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        32
+      ],
+      "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name for spreadsheets (must match what you'll use in Workflow B)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.document_id }}"
+      },
+      "id": "e03968b8-d464-4524-abc9-28ed52793399",
+      "name": "Read Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        32
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// The content is already a string when using simple: true\nconst fullText = $input.item.json.content;\nconst videoName = $('📝 EDIT THIS - Your Input').item.json.video_name;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nconst matches = [];\n\n// Find all section headers\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    fullMatch: match[0],\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\n// Extract content for each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const startIndex = currentMatch.index;\n  const endIndex = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  \n  let sectionContent = fullText.substring(startIndex, endIndex).trim();\n  \n  // Remove the --- separator at the end if present\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  sections.push({\n    json: {\n      video_name: videoName,\n      chapter_number: currentMatch.number,\n      script: sectionContent,\n      status: 'pending'\n    }\n  });\n}\n\nif (sections.length === 0) {\n  throw new Error('No sections found. Make sure the document uses \"# **Section N: Title**\" format.');\n}\n\nreturn sections;"
+      },
+      "id": "665b9203-2437-46b6-b501-3a097443875b",
+      "name": "Parse Sections",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        32
+      ],
+      "notes": "Splits the document by section headers and formats for spreadsheet"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1287119606,
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1287119606"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "chapter_number": "={{ $json.chapter_number }}",
+            "script": "={{ $json.script }}",
+            "status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script",
+              "displayName": "script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "48358cc1-8b42-47e6-80e6-a983f0a786f6",
+      "name": "Write to Chapters Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        560,
+        32
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "summary",
+              "name": "message",
+              "value": "=✅ Successfully wrote {{ $input.all().length }} sections to Chapters sheet",
+              "type": "string"
+            },
+            {
+              "id": "sections-count",
+              "name": "sections_processed",
+              "value": "={{ $input.all().length }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6214d944-d4ef-4ed4-9de3-596800ee54ed",
+      "name": "Output Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        -192
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Workflow A: Script to Image Prep\n\n### What This Does\nReads a completed script from Google Docs and writes each section to your Image Generation spreadsheet's Chapters tab.\n\n### How to Use\n1. Get the document_id from Workflow 0's output (or from the Google Doc URL)\n2. Enter the same video_name you used in Workflow 0\n3. Run the workflow\n4. Check your Chapters sheet!\n\n### Then Run\nYour existing \"Prompt Generation\" workflow to generate image prompts from these chapters.",
+        "height": 548,
+        "width": 320,
+        "color": 5
+      },
+      "id": "a193810b-cca1-4d78-99e0-7b26382febc9",
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1296,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Google Sheets has a 50,000 character limit per cell\n// We'll use 45,000 as a safe buffer\nconst MAX_CHARS = 45000;\n\nconst allItems = [];\n\n// Function to find the best split point\nfunction findSplitPoint(text, maxLength) {\n  if (text.length <= maxLength) {\n    return text.length;\n  }\n  \n  // Try to split at a paragraph break (double newline)\n  const paragraphBreak = text.lastIndexOf('\\n\\n', maxLength);\n  if (paragraphBreak > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return paragraphBreak + 2; // Include the newlines\n  }\n  \n  // Try to split at a sentence ending (. ! ? followed by space or newline)\n  const sentenceEndings = ['. ', '.\\n', '! ', '!\\n', '? ', '?\\n'];\n  let bestSplit = -1;\n  \n  for (const ending of sentenceEndings) {\n    const pos = text.lastIndexOf(ending, maxLength);\n    if (pos > bestSplit) {\n      bestSplit = pos + ending.length;\n    }\n  }\n  \n  if (bestSplit > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return bestSplit;\n  }\n  \n  // Last resort: split at last space\n  const lastSpace = text.lastIndexOf(' ', maxLength);\n  if (lastSpace > 0) {\n    return lastSpace + 1;\n  }\n  \n  // Absolute last resort: hard cut (shouldn't happen with normal text)\n  return maxLength;\n}\n\n// Process each section from the previous node\nfor (const item of $input.all()) {\n  const script = item.json.script;\n  const videoName = item.json.video_name;\n  const chapterNumber = item.json.chapter_number;\n  const status = item.json.status;\n  \n  // If section is short enough, keep it as-is\n  if (script.length <= MAX_CHARS) {\n    allItems.push({\n      json: {\n        video_name: videoName,\n        chapter_number: chapterNumber,\n        script: script,\n        status: status\n      }\n    });\n  } else {\n    // Section is too long - split it into chunks at natural boundaries\n    let remaining = script;\n    let partNumber = 1;\n    \n    while (remaining.length > 0) {\n      const splitPoint = findSplitPoint(remaining, MAX_CHARS);\n      const chunk = remaining.substring(0, splitPoint).trim();\n      \n      // Format part number with leading zero (01, 02, etc.)\n      const paddedPart = String(partNumber).padStart(2, '0');\n      \n      allItems.push({\n        json: {\n          video_name: videoName,\n          chapter_number: `${chapterNumber}-${paddedPart}`,\n          script: chunk,\n          status: status\n        }\n      });\n      \n      remaining = remaining.substring(splitPoint).trim();\n      partNumber++;\n    }\n  }\n}\n\nreturn allItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        32
+      ],
+      "id": "d557eebd-122e-4a69-bd2c-fce1c9d73c6e",
+      "name": "Split Long Sections"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "image_status",
+              "lookupValue": "ready"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -896,
+        32
+      ],
+      "id": "ca7652a6-4406-40a9-8749-e4b17a461f3d",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "463a29d7-4688-4cb2-b6ad-d0904568413f",
+              "leftValue": "={{ $json.row_number }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -688,
+        32
+      ],
+      "id": "6124abde-f412-4ef2-ac54-0d0b9da11178",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -464,
+        32
+      ],
+      "id": "ebccb3a5-e236-4dfc-bcc5-51bc64cd8d69",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        288
+      ],
+      "id": "2daf3d96-1f4b-4606-bee5-d18244054097"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doc_id": "={{ $('Read Google Doc').item.json.documentId }}",
+            "image_status": "chapters"
+          },
+          "matchingColumns": [
+            "doc_id"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        256
+      ],
+      "id": "73b8407d-0b7f-4345-b0fe-53e03b0d1bab",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('Read Google Doc').item.json.documentId }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        256
+      ],
+      "id": "2c597777-c59b-4d45-9a9a-991ea9a9c812",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Scripture for Sleep, a YouTube channel creating 2-3 hour biblical sleep content.\\n\\nCHANNEL VOICE:\\n- Comedically appalled storyteller (like telling about a terrible Airbnb)\\n- Warm, amused, incredulous\\n- Second-person immersion: \\\"you wake up in 1200 BCE\\\"\\n- Modern vocabulary describing ancient absurdity\\n- Entertainingly disgusted by ancient living conditions\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nOption 1 (Brand Standard): Fall Asleep to [Topic] | [Evocative Subtitle]\\nOption 2 (Mystery Hook): [Intriguing Question] | Bible Stories for Sleep\\nOption 3 (Complete Story): The Complete Story of [Subject] | Bible Stories for Sleep\\n\\nSubtitle Formulas:\\n- \\\"From X to Y\\\" (journey arc): From Slavery to Sinai\\n- \\\"The [Role] Who [Did Something]\\\": The Prophet Who Saw the End\\n- Evocative phrase: Forty Years in the Wilderness\\n- List preview: Messengers, Warriors & Guardians\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic]. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook—pose a question or highlight something surprising about the topic]\\n\\n⏱️ CHAPTERS\\n00:00 - Introduction\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters or what makes it interesting]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about biblical history and ancient stories.\\n\\n🔔 Subscribe for more Bible stories for sleep: @ScriptureforSleep\\n\\n#BibleStories #[Topic] #[Topic2] #SleepStories #BibleHistory\\n\\nIMPORTANT: Extract actual chapter titles from the script's \\\"Section N: Title\\\" headers.\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters):\\n\\nProvide ALL tags in a single comma-separated line, prioritized by search value:\\n\\nFormat:\\n[topic] bible story, [topic] explained, story of [topic], bible stories for sleep, fall asleep to bible stories, scripture for sleep, [book] explained, sleep bible stories, relaxing bible stories, bible documentary, old testament stories, biblical history, bedtime bible, sleep stories, calm narration\\n\\nTag Priority Order:\\n1. Topic-specific terms (highest search value)\\n2. Brand terms (channel recognition)\\n3. Sleep/relaxation terms (audience intent)\\n4. Discovery terms (browse traffic)\\n\\n---\\n\\n## HASHTAGS (Exactly 5):\\n\\nFormat:\\n#BibleStories #[MainTopic] #[SecondaryTopic] #SleepStories #[Category]\\n\\nCategories: OldTestament, NewTestament, BiblicalMysteries, BiblicalHistory, BibleExplained\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** [Specific time period and garments from this reference]\\n  - Egyptian (1200 BCE): Golden nemes headdress, uraeus cobra, white linen\\n  - Babylonian (6th century BCE): Ornate robes, gold embroidery\\n  - Persian (5th century BCE): Elaborate court dress, crown\\n  - Patriarchs (2000-1800 BCE): Bronze Age nomadic, wool robes\\n  - Judges (1100 BCE): Iron Age Israelite, linen, bronze armor\\n  - United Kingdom (1000 BCE): Iron Age Israelite king's robes\\n  - Prophets (850 BCE): Rough hairy prophet's cloak, simple wool\\n  - New Testament (1st century CE): Simple wool/linen robes\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: [specific time period and garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Gustave Doré influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        160,
+        256
+      ],
+      "id": "6bb7784c-3e8a-473e-b50f-a91a59bbb6a3",
+      "name": "HTTP Request",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const seoResponse = $input.item.json.choices[0].message.content;\nconst videoName = $('📝 EDIT THIS - Your Input').item.json.video_name;\n\nreturn [{\n  json: {\n    video_name: videoName,\n    seo_package: seoResponse\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        256
+      ],
+      "id": "f2b71d4d-84c7-42a6-866b-ff034f8508b5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AAHGKVD4L",
+          "mode": "list",
+          "cachedResultName": "sfs-video-assets"
+        },
+        "text": "=🎬 **VIDEO ASSETS READY: {{ $json.video_name }}**\\n\\n✅ Image prompts generated and ready in spreadsheet\\n✅ SEO package generated\\n\\n---\\n\\n{{ $json.seo_package }}\\n\\n---\\n\\n📊 Check your Image Generation spreadsheet to review prompts before generating images!",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        560,
+        256
+      ],
+      "id": "e7c52414-b897-4577-97df-e21598692e2b",
+      "name": "Send a message",
+      "webhookId": "48e110b2-7d44-4ead-990c-25d7fa04f920",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "eFTGhpy1vaGaNItw",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "b5a36cfa-11d5-4d42-b46f-f2cd2953d118",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1168,
+        208
+      ],
+      "id": "5088d06e-80d9-47fc-a2ae-845969936154",
+      "name": "Webhook",
+      "webhookId": "b5a36cfa-11d5-4d42-b46f-f2cd2953d118"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 EDIT THIS - Your Input": {
+      "main": [
+        [
+          {
+            "node": "Read Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Parse Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Sections": {
+      "main": [
+        [
+          {
+            "node": "Split Long Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Chapters Sheet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Long Sections": {
+      "main": [
+        [
+          {
+            "node": "Write to Chapters Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📝 EDIT THIS - Your Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b25fcfd5-4814-4b21-80f9-6d570e03acab",
+  "activeVersionId": "b25fcfd5-4814-4b21-80f9-6d570e03acab",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-25T23:20:43.287Z",
+      "createdAt": "2026-01-25T23:20:43.287Z",
+      "role": "workflow:owner",
+      "workflowId": "ZYwVA9WqrGwDHT59WQN-F",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-04T04:09:13.000Z",
+    "createdAt": "2026-02-04T04:07:02.919Z",
+    "versionId": "b25fcfd5-4814-4b21-80f9-6d570e03acab",
+    "workflowId": "ZYwVA9WqrGwDHT59WQN-F",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "144bba60-8f76-420e-a32f-b0e9cba2ac6c",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1168,
+          32
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "doc-id",
+                "name": "document_id",
+                "value": "={{ $json.doc_id }}",
+                "type": "string"
+              },
+              {
+                "id": "vid-name",
+                "name": "=video_name",
+                "value": "={{ $json.video_name }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ea6d3b8e-c1ec-4f2e-a059-87d69907c50c",
+        "name": "📝 EDIT THIS - Your Input",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -224,
+          32
+        ],
+        "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name for spreadsheets (must match what you'll use in Workflow B)"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $json.document_id }}"
+        },
+        "id": "e03968b8-d464-4524-abc9-28ed52793399",
+        "name": "Read Google Doc",
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          -16,
+          32
+        ],
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// The content is already a string when using simple: true\nconst fullText = $input.item.json.content;\nconst videoName = $('📝 EDIT THIS - Your Input').item.json.video_name;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nconst matches = [];\n\n// Find all section headers\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    fullMatch: match[0],\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\n// Extract content for each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const startIndex = currentMatch.index;\n  const endIndex = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  \n  let sectionContent = fullText.substring(startIndex, endIndex).trim();\n  \n  // Remove the --- separator at the end if present\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  sections.push({\n    json: {\n      video_name: videoName,\n      chapter_number: currentMatch.number,\n      script: sectionContent,\n      status: 'pending'\n    }\n  });\n}\n\nif (sections.length === 0) {\n  throw new Error('No sections found. Make sure the document uses \"# **Section N: Title**\" format.');\n}\n\nreturn sections;"
+        },
+        "id": "665b9203-2437-46b6-b501-3a097443875b",
+        "name": "Parse Sections",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          160,
+          32
+        ],
+        "notes": "Splits the document by section headers and formats for spreadsheet"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1287119606,
+            "mode": "list",
+            "cachedResultName": "Chapters",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1287119606"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "chapter_number": "={{ $json.chapter_number }}",
+              "script": "={{ $json.script }}",
+              "status": "={{ $json.status }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script",
+                "displayName": "script",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "48358cc1-8b42-47e6-80e6-a983f0a786f6",
+        "name": "Write to Chapters Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          560,
+          32
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "summary",
+                "name": "message",
+                "value": "=✅ Successfully wrote {{ $input.all().length }} sections to Chapters sheet",
+                "type": "string"
+              },
+              {
+                "id": "sections-count",
+                "name": "sections_processed",
+                "value": "={{ $input.all().length }}",
+                "type": "number"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "6214d944-d4ef-4ed4-9de3-596800ee54ed",
+        "name": "Output Summary",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          432,
+          -192
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Workflow A: Script to Image Prep\n\n### What This Does\nReads a completed script from Google Docs and writes each section to your Image Generation spreadsheet's Chapters tab.\n\n### How to Use\n1. Get the document_id from Workflow 0's output (or from the Google Doc URL)\n2. Enter the same video_name you used in Workflow 0\n3. Run the workflow\n4. Check your Chapters sheet!\n\n### Then Run\nYour existing \"Prompt Generation\" workflow to generate image prompts from these chapters.",
+          "height": 548,
+          "width": 320,
+          "color": 5
+        },
+        "id": "a193810b-cca1-4d78-99e0-7b26382febc9",
+        "name": "Instructions",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1296,
+          -96
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Google Sheets has a 50,000 character limit per cell\n// We'll use 45,000 as a safe buffer\nconst MAX_CHARS = 45000;\n\nconst allItems = [];\n\n// Function to find the best split point\nfunction findSplitPoint(text, maxLength) {\n  if (text.length <= maxLength) {\n    return text.length;\n  }\n  \n  // Try to split at a paragraph break (double newline)\n  const paragraphBreak = text.lastIndexOf('\\n\\n', maxLength);\n  if (paragraphBreak > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return paragraphBreak + 2; // Include the newlines\n  }\n  \n  // Try to split at a sentence ending (. ! ? followed by space or newline)\n  const sentenceEndings = ['. ', '.\\n', '! ', '!\\n', '? ', '?\\n'];\n  let bestSplit = -1;\n  \n  for (const ending of sentenceEndings) {\n    const pos = text.lastIndexOf(ending, maxLength);\n    if (pos > bestSplit) {\n      bestSplit = pos + ending.length;\n    }\n  }\n  \n  if (bestSplit > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return bestSplit;\n  }\n  \n  // Last resort: split at last space\n  const lastSpace = text.lastIndexOf(' ', maxLength);\n  if (lastSpace > 0) {\n    return lastSpace + 1;\n  }\n  \n  // Absolute last resort: hard cut (shouldn't happen with normal text)\n  return maxLength;\n}\n\n// Process each section from the previous node\nfor (const item of $input.all()) {\n  const script = item.json.script;\n  const videoName = item.json.video_name;\n  const chapterNumber = item.json.chapter_number;\n  const status = item.json.status;\n  \n  // If section is short enough, keep it as-is\n  if (script.length <= MAX_CHARS) {\n    allItems.push({\n      json: {\n        video_name: videoName,\n        chapter_number: chapterNumber,\n        script: script,\n        status: status\n      }\n    });\n  } else {\n    // Section is too long - split it into chunks at natural boundaries\n    let remaining = script;\n    let partNumber = 1;\n    \n    while (remaining.length > 0) {\n      const splitPoint = findSplitPoint(remaining, MAX_CHARS);\n      const chunk = remaining.substring(0, splitPoint).trim();\n      \n      // Format part number with leading zero (01, 02, etc.)\n      const paddedPart = String(partNumber).padStart(2, '0');\n      \n      allItems.push({\n        json: {\n          video_name: videoName,\n          chapter_number: `${chapterNumber}-${paddedPart}`,\n          script: chunk,\n          status: status\n        }\n      });\n      \n      remaining = remaining.substring(splitPoint).trim();\n      partNumber++;\n    }\n  }\n}\n\nreturn allItems;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          368,
+          32
+        ],
+        "id": "d557eebd-122e-4a69-bd2c-fce1c9d73c6e",
+        "name": "Split Long Sections"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "image_status",
+                "lookupValue": "ready"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -896,
+          32
+        ],
+        "id": "ca7652a6-4406-40a9-8749-e4b17a461f3d",
+        "name": "Get row(s) in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "463a29d7-4688-4cb2-b6ad-d0904568413f",
+                "leftValue": "={{ $json.row_number }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -688,
+          32
+        ],
+        "id": "6124abde-f412-4ef2-ac54-0d0b9da11178",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -464,
+          32
+        ],
+        "id": "ebccb3a5-e236-4dfc-bcc5-51bc64cd8d69",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          -688,
+          288
+        ],
+        "id": "2daf3d96-1f4b-4606-bee5-d18244054097"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "doc_id": "={{ $('Read Google Doc').item.json.documentId }}",
+              "image_status": "chapters"
+            },
+            "matchingColumns": [
+              "doc_id"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "target_words",
+                "displayName": "target_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script_type",
+                "displayName": "script_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_id",
+                "displayName": "doc_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "doc_link",
+                "displayName": "doc_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "date_completed",
+                "displayName": "date_completed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "image_status",
+                "displayName": "image_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "tts_status",
+                "displayName": "tts_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -208,
+          256
+        ],
+        "id": "73b8407d-0b7f-4345-b0fe-53e03b0d1bab",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $('Read Google Doc').item.json.documentId }}"
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          -16,
+          256
+        ],
+        "id": "2c597777-c59b-4d45-9a9a-991ea9a9c812",
+        "name": "Get a document",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openRouterApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Scripture for Sleep, a YouTube channel creating 2-3 hour biblical sleep content.\\n\\nCHANNEL VOICE:\\n- Comedically appalled storyteller (like telling about a terrible Airbnb)\\n- Warm, amused, incredulous\\n- Second-person immersion: \\\"you wake up in 1200 BCE\\\"\\n- Modern vocabulary describing ancient absurdity\\n- Entertainingly disgusted by ancient living conditions\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nOption 1 (Brand Standard): Fall Asleep to [Topic] | [Evocative Subtitle]\\nOption 2 (Mystery Hook): [Intriguing Question] | Bible Stories for Sleep\\nOption 3 (Complete Story): The Complete Story of [Subject] | Bible Stories for Sleep\\n\\nSubtitle Formulas:\\n- \\\"From X to Y\\\" (journey arc): From Slavery to Sinai\\n- \\\"The [Role] Who [Did Something]\\\": The Prophet Who Saw the End\\n- Evocative phrase: Forty Years in the Wilderness\\n- List preview: Messengers, Warriors & Guardians\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic]. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook—pose a question or highlight something surprising about the topic]\\n\\n⏱️ CHAPTERS\\n00:00 - Introduction\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters or what makes it interesting]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about biblical history and ancient stories.\\n\\n🔔 Subscribe for more Bible stories for sleep: @ScriptureforSleep\\n\\n#BibleStories #[Topic] #[Topic2] #SleepStories #BibleHistory\\n\\nIMPORTANT: Extract actual chapter titles from the script's \\\"Section N: Title\\\" headers.\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters):\\n\\nProvide ALL tags in a single comma-separated line, prioritized by search value:\\n\\nFormat:\\n[topic] bible story, [topic] explained, story of [topic], bible stories for sleep, fall asleep to bible stories, scripture for sleep, [book] explained, sleep bible stories, relaxing bible stories, bible documentary, old testament stories, biblical history, bedtime bible, sleep stories, calm narration\\n\\nTag Priority Order:\\n1. Topic-specific terms (highest search value)\\n2. Brand terms (channel recognition)\\n3. Sleep/relaxation terms (audience intent)\\n4. Discovery terms (browse traffic)\\n\\n---\\n\\n## HASHTAGS (Exactly 5):\\n\\nFormat:\\n#BibleStories #[MainTopic] #[SecondaryTopic] #SleepStories #[Category]\\n\\nCategories: OldTestament, NewTestament, BiblicalMysteries, BiblicalHistory, BibleExplained\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** [Specific time period and garments from this reference]\\n  - Egyptian (1200 BCE): Golden nemes headdress, uraeus cobra, white linen\\n  - Babylonian (6th century BCE): Ornate robes, gold embroidery\\n  - Persian (5th century BCE): Elaborate court dress, crown\\n  - Patriarchs (2000-1800 BCE): Bronze Age nomadic, wool robes\\n  - Judges (1100 BCE): Iron Age Israelite, linen, bronze armor\\n  - United Kingdom (1000 BCE): Iron Age Israelite king's robes\\n  - Prophets (850 BCE): Rough hairy prophet's cloak, simple wool\\n  - New Testament (1st century CE): Simple wool/linen robes\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: [specific time period and garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Gustave Doré influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          160,
+          256
+        ],
+        "id": "6bb7784c-3e8a-473e-b50f-a91a59bbb6a3",
+        "name": "HTTP Request",
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const seoResponse = $input.item.json.choices[0].message.content;\nconst videoName = $('📝 EDIT THIS - Your Input').item.json.video_name;\n\nreturn [{\n  json: {\n    video_name: videoName,\n    seo_package: seoResponse\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          384,
+          256
+        ],
+        "id": "f2b71d4d-84c7-42a6-866b-ff034f8508b5",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0AAHGKVD4L",
+            "mode": "list",
+            "cachedResultName": "sfs-video-assets"
+          },
+          "text": "=🎬 **VIDEO ASSETS READY: {{ $json.video_name }}**\\n\\n✅ Image prompts generated and ready in spreadsheet\\n✅ SEO package generated\\n\\n---\\n\\n{{ $json.seo_package }}\\n\\n---\\n\\n📊 Check your Image Generation spreadsheet to review prompts before generating images!",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          560,
+          256
+        ],
+        "id": "e7c52414-b897-4577-97df-e21598692e2b",
+        "name": "Send a message",
+        "webhookId": "48e110b2-7d44-4ead-990c-25d7fa04f920",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "eFTGhpy1vaGaNItw",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "path": "b5a36cfa-11d5-4d42-b46f-f2cd2953d118",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -1168,
+          208
+        ],
+        "id": "5088d06e-80d9-47fc-a2ae-845969936154",
+        "name": "Webhook",
+        "webhookId": "b5a36cfa-11d5-4d42-b46f-f2cd2953d118"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📝 EDIT THIS - Your Input": {
+        "main": [
+          [
+            {
+              "node": "Read Google Doc",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Google Doc": {
+        "main": [
+          [
+            {
+              "node": "Parse Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Sections": {
+        "main": [
+          [
+            {
+              "node": "Split Long Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write to Chapters Sheet": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Long Sections": {
+        "main": [
+          [
+            {
+              "node": "Write to Chapters Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "📝 EDIT THIS - Your Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Get a document",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a document": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version b25fcfd5",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T23:18:23.477Z",
+      "createdAt": "2026-01-25T23:18:23.477Z",
+      "id": "EYwjzgLoghqZQ2Du",
+      "name": "SFS"
+    }
+  ]
+}
