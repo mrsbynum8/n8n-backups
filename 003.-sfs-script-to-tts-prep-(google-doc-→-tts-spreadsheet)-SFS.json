@@ -1,0 +1,1193 @@
+{
+  "updatedAt": "2026-02-04T01:55:50.068Z",
+  "createdAt": "2026-01-26T00:25:02.042Z",
+  "id": "UKfhRSUncjdb7ANnyf8lQ",
+  "name": "003. SFS Script to TTS Prep (Google Doc → TTS Spreadsheet)",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "38e6010a-e631-4d5e-96a7-796c20f5838f",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "doc-id",
+              "name": "document_id",
+              "value": "={{ $json.doc_id }}",
+              "type": "string"
+            },
+            {
+              "id": "vid-name",
+              "name": "video_name",
+              "value": "={{ $json.video_name }}",
+              "type": "string"
+            },
+            {
+              "id": "voice",
+              "name": "voice_id",
+              "value": "AeRdCCKzvd23BpJoofzx",
+              "type": "string"
+            },
+            {
+              "id": "max-chars",
+              "name": "max_chunk_chars",
+              "value": 2950,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0bfb080d-d40c-46c7-bb45-41518c71987f",
+      "name": "📝 EDIT THIS - Your Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -496,
+        304
+      ],
+      "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name (must match Workflow A)\n- voice_id: ElevenLabs voice ID\n- max_chunk_chars: Maximum characters per TTS chunk (default 2900)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.document_id }}"
+      },
+      "id": "38bafdfd-af59-494b-b6a7-6a5b86449d76",
+      "name": "Read Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        304
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fullText = $input.item.json.content;\nconst inputNode = $('📝 EDIT THIS - Your Input').item.json;\nconst videoName = inputNode.video_name;\nconst voiceId = inputNode.voice_id;\nconst maxChars = inputNode.max_chunk_chars;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst matches = [];\nlet match;\n\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    headerEnd: match.index + match[0].length,\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\nconst allChunks = [];\n\n// Process each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const sectionNum = currentMatch.number;\n  \n  // Get section content WITHOUT the header\n  const contentStart = currentMatch.headerEnd;\n  const contentEnd = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  let sectionContent = fullText.substring(contentStart, contentEnd).trim();\n  \n  // Remove --- separators\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  // Split into sentences using a different approach - split then filter\n  // This regex splits on sentence-ending punctuation while keeping the punctuation\n  const sentences = sectionContent\n    .split(/(?<=[.!?][\"']?\\s)/)\n    .map(s => s.trim())\n    .filter(s => s.length > 0);\n  \n  // If no sentences found (no splits happened), treat whole section as one sentence\n  if (sentences.length === 0 && sectionContent.length > 0) {\n    sentences.push(sectionContent);\n  }\n  \n  // Chunk sentences without splitting them\n  let currentChunk = '';\n  let chunkNum = 1;\n  \n  for (const sentence of sentences) {\n    // If adding this sentence would exceed limit, save current chunk and start new one\n    if (currentChunk.length > 0 && (currentChunk.length + sentence.length + 1) > maxChars) {\n      // Save current chunk\n      const segmentNum = String(sectionNum).padStart(2, '0') + '-' + String(chunkNum).padStart(2, '0');\n      allChunks.push({\n        video_name: videoName,\n        segment_number: segmentNum,\n        filename: segmentNum,\n        text: currentChunk.trim(),\n        status: 'pending',\n        voice_id: voiceId,\n        char_count: currentChunk.trim().length\n      });\n      chunkNum++;\n      currentChunk = sentence;\n    } else {\n      // Add sentence to current chunk\n      currentChunk = currentChunk.length > 0 ? currentChunk + ' ' + sentence : sentence;\n    }\n  }\n  \n  // Don't forget the last chunk\n  if (currentChunk.trim().length > 0) {\n    const segmentNum = String(sectionNum).padStart(2, '0') + '-' + String(chunkNum).padStart(2, '0');\n    allChunks.push({\n      video_name: videoName,\n      segment_number: segmentNum,\n      filename: segmentNum,\n      text: currentChunk.trim(),\n      status: 'pending',\n      voice_id: voiceId,\n      char_count: currentChunk.trim().length\n    });\n  }\n}\n\nif (allChunks.length === 0) {\n  throw new Error('No chunks created. Check that the document has content.');\n}\n\nreturn allChunks.map(chunk => ({ json: chunk }));"
+      },
+      "id": "029724cc-e59c-4b8b-b96f-6c4af1cd6acc",
+      "name": "Parse and Chunk for TTS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        496
+      ],
+      "notes": "Splits document into sections, removes headers, chunks at sentence boundaries (never mid-sentence), stays under max_chunk_chars"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1009224671,
+          "mode": "list",
+          "cachedResultName": "TTS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1009224671"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "segment_number": "={{ $json.segment_number }}",
+            "filename": "={{ $json.filename }}",
+            "text": "={{ $json.text }}",
+            "status": "={{ $json.status }}",
+            "voice_id": "={{ $json.voice_id }}",
+            "char_count": "={{ $json.char_count }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "segment_number",
+              "displayName": "segment_number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "char_count",
+              "displayName": "char_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e859d106-9e96-404d-9d24-df2cac96383b",
+      "name": "Write to TTS Spreadsheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -496,
+        496
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -704,
+        304
+      ],
+      "id": "2d5685de-b558-4f60-b529-5caeebc2ae52",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "tts_status",
+              "lookupValue": "ready"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -480,
+        96
+      ],
+      "id": "356a7439-b499-4635-b4d9-8e79e41a22b9",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -208,
+        96
+      ],
+      "id": "48e73f32-c630-4c5a-9353-fa95c8c86de1",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doc_id": "={{ $('Loop Over Items').item.json.doc_id }}",
+            "tts_status": "complete"
+          },
+          "matchingColumns": [
+            "doc_id"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        496
+      ],
+      "id": "4a3a23cc-7b26-4208-b59b-e88d5d43de8a",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "398d3739-d200-4370-9556-04136765e542",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "path": "30c6ef26-9866-4181-a8ee-64f193f33ff5",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        -64
+      ],
+      "id": "a3c8275e-a7c5-4731-9979-b7018c87cca1",
+      "name": "Webhook",
+      "webhookId": "30c6ef26-9866-4181-a8ee-64f193f33ff5"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 EDIT THIS - Your Input": {
+      "main": [
+        [
+          {
+            "node": "Read Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Parse and Chunk for TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse and Chunk for TTS": {
+      "main": [
+        [
+          {
+            "node": "Write to TTS Spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to TTS Spreadsheet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📝 EDIT THIS - Your Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "885d2c12-9f42-479e-bf92-8c2dbbc4cc0f",
+  "activeVersionId": "885d2c12-9f42-479e-bf92-8c2dbbc4cc0f",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-26T00:25:02.052Z",
+      "createdAt": "2026-01-26T00:25:02.052Z",
+      "role": "workflow:owner",
+      "workflowId": "UKfhRSUncjdb7ANnyf8lQ",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-04T01:55:53.000Z",
+    "createdAt": "2026-02-04T01:55:50.070Z",
+    "versionId": "885d2c12-9f42-479e-bf92-8c2dbbc4cc0f",
+    "workflowId": "UKfhRSUncjdb7ANnyf8lQ",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "38e6010a-e631-4d5e-96a7-796c20f5838f",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -688,
+          96
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "doc-id",
+                "name": "document_id",
+                "value": "={{ $json.doc_id }}",
+                "type": "string"
+              },
+              {
+                "id": "vid-name",
+                "name": "video_name",
+                "value": "={{ $json.video_name }}",
+                "type": "string"
+              },
+              {
+                "id": "voice",
+                "name": "voice_id",
+                "value": "AeRdCCKzvd23BpJoofzx",
+                "type": "string"
+              },
+              {
+                "id": "max-chars",
+                "name": "max_chunk_chars",
+                "value": 2950,
+                "type": "number"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "0bfb080d-d40c-46c7-bb45-41518c71987f",
+        "name": "📝 EDIT THIS - Your Input",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -496,
+          304
+        ],
+        "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name (must match Workflow A)\n- voice_id: ElevenLabs voice ID\n- max_chunk_chars: Maximum characters per TTS chunk (default 2900)"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $json.document_id }}"
+        },
+        "id": "38bafdfd-af59-494b-b6a7-6a5b86449d76",
+        "name": "Read Google Doc",
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          -208,
+          304
+        ],
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const fullText = $input.item.json.content;\nconst inputNode = $('📝 EDIT THIS - Your Input').item.json;\nconst videoName = inputNode.video_name;\nconst voiceId = inputNode.voice_id;\nconst maxChars = inputNode.max_chunk_chars;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst matches = [];\nlet match;\n\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    headerEnd: match.index + match[0].length,\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\nconst allChunks = [];\n\n// Process each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const sectionNum = currentMatch.number;\n  \n  // Get section content WITHOUT the header\n  const contentStart = currentMatch.headerEnd;\n  const contentEnd = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  let sectionContent = fullText.substring(contentStart, contentEnd).trim();\n  \n  // Remove --- separators\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  // Split into sentences using a different approach - split then filter\n  // This regex splits on sentence-ending punctuation while keeping the punctuation\n  const sentences = sectionContent\n    .split(/(?<=[.!?][\"']?\\s)/)\n    .map(s => s.trim())\n    .filter(s => s.length > 0);\n  \n  // If no sentences found (no splits happened), treat whole section as one sentence\n  if (sentences.length === 0 && sectionContent.length > 0) {\n    sentences.push(sectionContent);\n  }\n  \n  // Chunk sentences without splitting them\n  let currentChunk = '';\n  let chunkNum = 1;\n  \n  for (const sentence of sentences) {\n    // If adding this sentence would exceed limit, save current chunk and start new one\n    if (currentChunk.length > 0 && (currentChunk.length + sentence.length + 1) > maxChars) {\n      // Save current chunk\n      const segmentNum = String(sectionNum).padStart(2, '0') + '-' + String(chunkNum).padStart(2, '0');\n      allChunks.push({\n        video_name: videoName,\n        segment_number: segmentNum,\n        filename: segmentNum,\n        text: currentChunk.trim(),\n        status: 'pending',\n        voice_id: voiceId,\n        char_count: currentChunk.trim().length\n      });\n      chunkNum++;\n      currentChunk = sentence;\n    } else {\n      // Add sentence to current chunk\n      currentChunk = currentChunk.length > 0 ? currentChunk + ' ' + sentence : sentence;\n    }\n  }\n  \n  // Don't forget the last chunk\n  if (currentChunk.trim().length > 0) {\n    const segmentNum = String(sectionNum).padStart(2, '0') + '-' + String(chunkNum).padStart(2, '0');\n    allChunks.push({\n      video_name: videoName,\n      segment_number: segmentNum,\n      filename: segmentNum,\n      text: currentChunk.trim(),\n      status: 'pending',\n      voice_id: voiceId,\n      char_count: currentChunk.trim().length\n    });\n  }\n}\n\nif (allChunks.length === 0) {\n  throw new Error('No chunks created. Check that the document has content.');\n}\n\nreturn allChunks.map(chunk => ({ json: chunk }));"
+        },
+        "id": "029724cc-e59c-4b8b-b96f-6c4af1cd6acc",
+        "name": "Parse and Chunk for TTS",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -688,
+          496
+        ],
+        "notes": "Splits document into sections, removes headers, chunks at sentence boundaries (never mid-sentence), stays under max_chunk_chars"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1009224671,
+            "mode": "list",
+            "cachedResultName": "TTS",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1009224671"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "segment_number": "={{ $json.segment_number }}",
+              "filename": "={{ $json.filename }}",
+              "text": "={{ $json.text }}",
+              "status": "={{ $json.status }}",
+              "voice_id": "={{ $json.voice_id }}",
+              "char_count": "={{ $json.char_count }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string"
+              },
+              {
+                "id": "segment_number",
+                "displayName": "segment_number",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string"
+              },
+              {
+                "id": "filename",
+                "displayName": "filename",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string"
+              },
+              {
+                "id": "text",
+                "displayName": "text",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string"
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string"
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string"
+              },
+              {
+                "id": "char_count",
+                "displayName": "char_count",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "number"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e859d106-9e96-404d-9d24-df2cac96383b",
+        "name": "Write to TTS Spreadsheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -496,
+          496
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 6
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -704,
+          304
+        ],
+        "id": "2d5685de-b558-4f60-b529-5caeebc2ae52",
+        "name": "Schedule Trigger",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "tts_status",
+                "lookupValue": "ready"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -480,
+          96
+        ],
+        "id": "356a7439-b499-4635-b4d9-8e79e41a22b9",
+        "name": "Get row(s) in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -208,
+          96
+        ],
+        "id": "48e73f32-c630-4c5a-9353-fa95c8c86de1",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "doc_id": "={{ $('Loop Over Items').item.json.doc_id }}",
+              "tts_status": "complete"
+            },
+            "matchingColumns": [
+              "doc_id"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "target_words",
+                "displayName": "target_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script_type",
+                "displayName": "script_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_id",
+                "displayName": "doc_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "doc_link",
+                "displayName": "doc_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "date_completed",
+                "displayName": "date_completed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "image_status",
+                "displayName": "image_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "tts_status",
+                "displayName": "tts_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -192,
+          496
+        ],
+        "id": "4a3a23cc-7b26-4208-b59b-e88d5d43de8a",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "398d3739-d200-4370-9556-04136765e542",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "path": "30c6ef26-9866-4181-a8ee-64f193f33ff5",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -720,
+          -64
+        ],
+        "id": "a3c8275e-a7c5-4731-9979-b7018c87cca1",
+        "name": "Webhook",
+        "webhookId": "30c6ef26-9866-4181-a8ee-64f193f33ff5"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📝 EDIT THIS - Your Input": {
+        "main": [
+          [
+            {
+              "node": "Read Google Doc",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Google Doc": {
+        "main": [
+          [
+            {
+              "node": "Parse and Chunk for TTS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse and Chunk for TTS": {
+        "main": [
+          [
+            {
+              "node": "Write to TTS Spreadsheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write to TTS Spreadsheet": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "📝 EDIT THIS - Your Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version 885d2c12",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T23:18:23.477Z",
+      "createdAt": "2026-01-25T23:18:23.477Z",
+      "id": "EYwjzgLoghqZQ2Du",
+      "name": "SFS"
+    }
+  ]
+}
