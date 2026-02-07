@@ -1,0 +1,193 @@
+{
+  "updatedAt": "2026-02-04T03:55:09.000Z",
+  "createdAt": "2026-02-04T03:17:32.648Z",
+  "id": "xB0Lci0NHeXua3bb",
+  "name": "Image Sub-workflow",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "call_workflow",
+        "outdatedVersionWarning": "",
+        "source": "database",
+        "workflowId": "ZYwVA9WqrGwDHT59WQN-F",
+        "executeWorkflowNotice": "",
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "b84d2738-9846-402f-9157-331227e17c40",
+      "name": "Step 3B: Script to Chapters",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        384,
+        1552
+      ],
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "operation": "call_workflow",
+        "outdatedVersionWarning": "",
+        "source": "database",
+        "workflowId": "1wR80dnRbmIQCArsoKBxg",
+        "executeWorkflowNotice": "",
+        "mode": "once",
+        "options": {}
+      },
+      "id": "6ac0c038-b1cd-4b08-8fd7-0468a57eb154",
+      "name": "Step 3C: Write Prompts",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        848,
+        1552
+      ],
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "operation": "call_workflow",
+        "outdatedVersionWarning": "",
+        "source": "database",
+        "workflowId": "7eTLolS3Xq87upqhzzL2C",
+        "executeWorkflowNotice": "",
+        "mode": "once",
+        "options": {}
+      },
+      "id": "2dc4ce6d-c659-45e0-9551-909697ed29fb",
+      "name": "Step 4B: Generate Images",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        1552
+      ],
+      "disabled": false
+    },
+    {
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        592,
+        1552
+      ],
+      "id": "e58c2404-93a6-4d2a-9856-d569453f8e9f",
+      "name": "Limit2",
+      "disabled": false,
+      "parameters": {
+        "maxItems": 1,
+        "keep": "firstItems"
+      }
+    },
+    {
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        1552
+      ],
+      "id": "9be0c93b-af7a-4f68-9c72-821c9c5a004b",
+      "name": "Limit3",
+      "disabled": false,
+      "parameters": {
+        "maxItems": 1,
+        "keep": "firstItems"
+      }
+    },
+    {
+      "id": "9218c9e0-644a-42d2-92a0-a3dedcccf6fd",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        176,
+        1552
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    }
+  ],
+  "connections": {
+    "Step 3B: Script to Chapters": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 3C: Write Prompts": {
+      "main": [
+        [
+          {
+            "node": "Limit3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Step 3C: Write Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit3": {
+      "main": [
+        [
+          {
+            "node": "Step 4B: Generate Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Step 3B: Script to Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "431c4417-3244-43b9-ac96-708374423358",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T03:17:32.654Z",
+      "createdAt": "2026-02-04T03:17:32.654Z",
+      "role": "workflow:owner",
+      "workflowId": "xB0Lci0NHeXua3bb",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
