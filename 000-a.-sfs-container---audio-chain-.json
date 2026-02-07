@@ -1,0 +1,322 @@
+{
+  "updatedAt": "2026-02-04T04:37:38.080Z",
+  "createdAt": "2026-02-04T04:32:02.237Z",
+  "id": "lKZwgnksEmiL3mPoSqyTd",
+  "name": "000-A. SFS Container - Audio Chain",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c262fe4b-c44b-4a6a-9829-2d5e14b0b0c0",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "path": "sfs-audio-container",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "4212de5f-32c2-4733-87a4-f7b9d6bce56d",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        160
+      ],
+      "webhookId": "sfs-audio-container"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"message\": \"Audio Container Started\"\n}",
+        "options": {}
+      },
+      "id": "5dfece9d-0bbd-40f6-8b88-994f57fbc777",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        208,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "UKfhRSUncjdb7ANnyf8lQ",
+        "options": {}
+      },
+      "id": "cc9f3725-23d5-4db3-97be-56bedeb8d37a",
+      "name": "Step 3A: Script to TTS",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        464,
+        0
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": "C958wKQ13rICFNT4flkF-",
+        "options": {}
+      },
+      "id": "41a58d9e-8b28-4b01-8fd4-a0f80816d4d5",
+      "name": "Step 4A: Create Voiceover",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        912,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "fb0632fe-90b5-4c94-961e-552ba58c809b",
+      "name": "Limit"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Step 3A: Script to TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Step 3A: Script to TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 3A: Script to TTS": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Step 4A: Create Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "68721313-b1b1-491d-9dde-9a4b939ec37d",
+  "activeVersionId": "68721313-b1b1-491d-9dde-9a4b939ec37d",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T04:32:02.239Z",
+      "createdAt": "2026-02-04T04:32:02.239Z",
+      "role": "workflow:owner",
+      "workflowId": "lKZwgnksEmiL3mPoSqyTd",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-04T04:37:45.000Z",
+    "createdAt": "2026-02-04T04:37:38.081Z",
+    "versionId": "68721313-b1b1-491d-9dde-9a4b939ec37d",
+    "workflowId": "lKZwgnksEmiL3mPoSqyTd",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "c262fe4b-c44b-4a6a-9829-2d5e14b0b0c0",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "path": "sfs-audio-container",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "4212de5f-32c2-4733-87a4-f7b9d6bce56d",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1,
+        "position": [
+          0,
+          160
+        ],
+        "webhookId": "sfs-audio-container"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{\n  \"message\": \"Audio Container Started\"\n}",
+          "options": {}
+        },
+        "id": "5dfece9d-0bbd-40f6-8b88-994f57fbc777",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          208,
+          160
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": "UKfhRSUncjdb7ANnyf8lQ",
+          "options": {}
+        },
+        "id": "cc9f3725-23d5-4db3-97be-56bedeb8d37a",
+        "name": "Step 3A: Script to TTS",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1,
+        "position": [
+          464,
+          0
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "workflowId": "C958wKQ13rICFNT4flkF-",
+          "options": {}
+        },
+        "id": "41a58d9e-8b28-4b01-8fd4-a0f80816d4d5",
+        "name": "Step 4A: Create Voiceover",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1,
+        "position": [
+          912,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          672,
+          0
+        ],
+        "id": "fb0632fe-90b5-4c94-961e-552ba58c809b",
+        "name": "Limit"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Step 3A: Script to TTS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Webhook": {
+        "main": [
+          [
+            {
+              "node": "Step 3A: Script to TTS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Step 3A: Script to TTS": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Step 4A: Create Voiceover",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version 68721313",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
