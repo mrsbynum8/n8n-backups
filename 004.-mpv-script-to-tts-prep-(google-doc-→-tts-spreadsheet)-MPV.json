@@ -1,0 +1,341 @@
+{
+  "updatedAt": "2026-01-26T02:06:09.300Z",
+  "createdAt": "2026-01-26T02:05:56.288Z",
+  "id": "ljEK7waTGqoz_SljAkWXf",
+  "name": "004. MPV Script to TTS Prep (Google Doc → TTS Spreadsheet)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "353d83ef-19d3-4183-90f4-20fdbd6e4c2c",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        368,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "doc-id",
+              "name": "document_id",
+              "value": "1XRpW8zJ0eZ2Z2kk1oFrrdyaEoho5w8-ASnDEyOYrA30",
+              "type": "string"
+            },
+            {
+              "id": "vid-name",
+              "name": "video_name",
+              "value": "NCNP",
+              "type": "string"
+            },
+            {
+              "id": "voice",
+              "name": "voice_id",
+              "value": "alFofuDn3cOwyoz1i44T",
+              "type": "string"
+            },
+            {
+              "id": "max-chars",
+              "name": "max_chunk_chars",
+              "value": 2950,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8988c97a-cc8c-4c21-8467-911ec26ad06c",
+      "name": "📝 EDIT THIS - Your Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        160
+      ],
+      "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name (must match Workflow A)\n- voice_id: ElevenLabs voice ID\n- max_chunk_chars: Maximum characters per TTS chunk (default 2900)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.document_id }}"
+      },
+      "id": "ddb7bf6f-ac32-49a3-9816-36f6db36632d",
+      "name": "Read Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        768,
+        160
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fullText = $input.item.json.content;\nconst inputNode = $('📝 EDIT THIS - Your Input').item.json;\nconst videoName = inputNode.video_name;\nconst voiceId = inputNode.voice_id;\nconst maxChars = inputNode.max_chunk_chars;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst matches = [];\nlet match;\n\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    headerEnd: match.index + match[0].length,\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\nconst allChunks = [];\n\n// Process each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const sectionNum = currentMatch.number;\n  \n  // Get section content WITHOUT the header\n  const contentStart = currentMatch.headerEnd;\n  const contentEnd = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  let sectionContent = fullText.substring(contentStart, contentEnd).trim();\n  \n  // Remove --- separators\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  // Split into sentences using a different approach - split then filter\n  // This regex splits on sentence-ending punctuation while keeping the punctuation\n  const sentences = sectionContent\n    .split(/(?<=[.!?][\"']?\\s)/)\n    .map(s => s.trim())\n    .filter(s => s.length > 0);\n  \n  // If no sentences found (no splits happened), treat whole section as one sentence\n  if (sentences.length === 0 && sectionContent.length > 0) {\n    sentences.push(sectionContent);\n  }\n  \n  // Chunk sentences without splitting them\n  let currentChunk = '';\n  let chunkNum = 1;\n  \n  for (const sentence of sentences) {\n    // If adding this sentence would exceed limit, save current chunk and start new one\n    if (currentChunk.length > 0 && (currentChunk.length + sentence.length + 1) > maxChars) {\n      // Save current chunk\n      const segmentNum = String(sectionNum).padStart(2, '0') + '-' + String(chunkNum).padStart(2, '0');\n      allChunks.push({\n        video_name: videoName,\n        segment_number: segmentNum,\n        filename: segmentNum,\n        text: currentChunk.trim(),\n        status: 'pending',\n        voice_id: voiceId,\n        char_count: currentChunk.trim().length\n      });\n      chunkNum++;\n      currentChunk = sentence;\n    } else {\n      // Add sentence to current chunk\n      currentChunk = currentChunk.length > 0 ? currentChunk + ' ' + sentence : sentence;\n    }\n  }\n  \n  // Don't forget the last chunk\n  if (currentChunk.trim().length > 0) {\n    const segmentNum = String(sectionNum).padStart(2, '0') + '-' + String(chunkNum).padStart(2, '0');\n    allChunks.push({\n      video_name: videoName,\n      segment_number: segmentNum,\n      filename: segmentNum,\n      text: currentChunk.trim(),\n      status: 'pending',\n      voice_id: voiceId,\n      char_count: currentChunk.trim().length\n    });\n  }\n}\n\nif (allChunks.length === 0) {\n  throw new Error('No chunks created. Check that the document has content.');\n}\n\nreturn allChunks.map(chunk => ({ json: chunk }));"
+      },
+      "id": "a953e367-955b-40aa-80d6-d93ac6716074",
+      "name": "Parse and Chunk for TTS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        160
+      ],
+      "notes": "Splits document into sections, removes headers, chunks at sentence boundaries (never mid-sentence), stays under max_chunk_chars"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "12MH2dlgTAIAhYaTuTLjehiHsKfgd-bKbhOAUCvltnoA",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1l-1hd6iVBAu97Tfh_5FOOpqC05o4OnUPRQzYdFFoqRg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "segment_number": "={{ $json.segment_number }}",
+            "filename": "={{ $json.filename }}",
+            "text": "={{ $json.text }}",
+            "status": "={{ $json.status }}",
+            "voice_id": "={{ $json.voice_id }}",
+            "char_count": "={{ $json.char_count }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "segment_number",
+              "displayName": "segment_number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "char_count",
+              "displayName": "char_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "e4c01809-9627-44f6-b0f9-f2a0e47a73f9",
+      "name": "Write to TTS Spreadsheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        160
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "summary",
+              "name": "message",
+              "value": "=✅ Successfully wrote {{ $input.all().length }} TTS segments to spreadsheet",
+              "type": "string"
+            },
+            {
+              "id": "chunks-count",
+              "name": "segments_created",
+              "value": "={{ $input.all().length }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47bbe8c3-b716-4536-b1ab-a9bd17b7a7ec",
+      "name": "Output Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1424,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Workflow B: Script to TTS Prep\n\n### What This Does\nReads a completed script from Google Docs, removes section headers, and splits into TTS-ready chunks that respect sentence boundaries.\n\n### Chunking Rules\n- Never splits mid-sentence\n- Stays under max_chunk_chars (default 2900)\n- Names chunks as \"01-03\" (section 1, chunk 3)\n- Removes headers (TTS shouldn't read \"Section 1: Opening\")\n\n### How to Use\n1. Enter the document_id from Workflow 0\n2. Use the same video_name as Workflows 0 and A\n3. Set your voice_id\n4. Run the workflow\n5. Check your TTS spreadsheet!\n\n### Then Run\nYour existing \"GenAIPro TTS Workflow\" to generate audio.",
+        "height": 420,
+        "width": 340,
+        "color": 5
+      },
+      "id": "ea5d3414-6f98-425f-923c-8902c0b6e306",
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "📝 EDIT THIS - Your Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 EDIT THIS - Your Input": {
+      "main": [
+        [
+          {
+            "node": "Read Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Parse and Chunk for TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse and Chunk for TTS": {
+      "main": [
+        [
+          {
+            "node": "Write to TTS Spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to TTS Spreadsheet": {
+      "main": [
+        [
+          {
+            "node": "Output Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "9922aef1-e18c-415a-a7be-69ee07a5b609",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-26T02:05:56.291Z",
+      "createdAt": "2026-01-26T02:05:56.291Z",
+      "role": "workflow:owner",
+      "workflowId": "ljEK7waTGqoz_SljAkWXf",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-26T02:00:19.464Z",
+      "createdAt": "2026-01-26T02:00:19.464Z",
+      "id": "TpFsJjCc34mubRl4",
+      "name": "MPV"
+    }
+  ]
+}
