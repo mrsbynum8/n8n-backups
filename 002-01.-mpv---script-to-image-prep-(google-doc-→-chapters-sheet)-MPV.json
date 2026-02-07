@@ -1,0 +1,303 @@
+{
+  "updatedAt": "2026-01-26T02:02:25.693Z",
+  "createdAt": "2026-01-26T02:01:41.308Z",
+  "id": "MgNxPu08nxpghMAyTckIu",
+  "name": "002-01. MPV - Script to Image Prep (Google Doc → Chapters Sheet)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f7bff50a-5891-43bd-ad41-4f56b414ff32",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        304,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "doc-id",
+              "name": "document_id",
+              "value": "1XRpW8zJ0eZ2Z2kk1oFrrdyaEoho5w8-ASnDEyOYrA30",
+              "type": "string"
+            },
+            {
+              "id": "vid-name",
+              "name": "=video_name",
+              "value": "NCNP",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "421b4d65-8471-4c95-aac4-07e67bc457da",
+      "name": "📝 EDIT THIS - Your Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        128
+      ],
+      "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name for spreadsheets (must match what you'll use in Workflow B)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.document_id }}"
+      },
+      "id": "e527cdd4-4170-4800-96c8-b8e0a1bd80c3",
+      "name": "Read Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        752,
+        128
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// The content is already a string when using simple: true\nconst fullText = $input.item.json.content;\nconst videoName = $('📝 EDIT THIS - Your Input').item.json.video_name;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nconst matches = [];\n\n// Find all section headers\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    fullMatch: match[0],\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\n// Extract content for each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const startIndex = currentMatch.index;\n  const endIndex = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  \n  let sectionContent = fullText.substring(startIndex, endIndex).trim();\n  \n  // Remove the --- separator at the end if present\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  sections.push({\n    json: {\n      video_name: videoName,\n      chapter_number: currentMatch.number,\n      script: sectionContent,\n      status: 'pending'\n    }\n  });\n}\n\nif (sections.length === 0) {\n  throw new Error('No sections found. Make sure the document uses \"# **Section N: Title**\" format.');\n}\n\nreturn sections;"
+      },
+      "id": "26a54b81-e5ef-44cf-8009-f7ce6e04e5ca",
+      "name": "Parse Sections",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        128
+      ],
+      "notes": "Splits the document by section headers and formats for spreadsheet"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4",
+          "mode": "list",
+          "cachedResultName": "MPV Image Generation 2025.12.30",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b_w9t8Bw8LxCyl2gBKkvjep8bx7MBztllRzUGERjhV4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PcvTpjL6R22V5kr2QXa4DROgI7p6vMj0gMr4ImlIiKY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "chapter_number": "={{ $json.chapter_number }}",
+            "script": "={{ $json.script }}",
+            "status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script",
+              "displayName": "script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "6e41ad53-541b-4c69-8fff-0a2e730165f8",
+      "name": "Write to Chapters Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1184,
+        128
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "summary",
+              "name": "message",
+              "value": "=✅ Successfully wrote {{ $input.all().length }} sections to Chapters sheet",
+              "type": "string"
+            },
+            {
+              "id": "sections-count",
+              "name": "sections_processed",
+              "value": "={{ $input.all().length }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cbed83dd-34a2-4cc0-95ee-8cc1c27ac0da",
+      "name": "Output Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Workflow A: Script to Image Prep\n\n### What This Does\nReads a completed script from Google Docs and writes each section to your Image Generation spreadsheet's Chapters tab.\n\n### How to Use\n1. Get the document_id from Workflow 0's output (or from the Google Doc URL)\n2. Enter the same video_name you used in Workflow 0\n3. Run the workflow\n4. Check your Chapters sheet!\n\n### Then Run\nYour existing \"Prompt Generation\" workflow to generate image prompts from these chapters.",
+        "height": 548,
+        "width": 320,
+        "color": 5
+      },
+      "id": "60d144df-db01-409a-991a-475b6fa314fd",
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "📝 EDIT THIS - Your Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 EDIT THIS - Your Input": {
+      "main": [
+        [
+          {
+            "node": "Read Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Parse Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Sections": {
+      "main": [
+        [
+          {
+            "node": "Write to Chapters Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Chapters Sheet": {
+      "main": [
+        [
+          {
+            "node": "Output Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "10fadefc-29ad-4105-b623-26b0080eefdb",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-26T02:01:41.311Z",
+      "createdAt": "2026-01-26T02:01:41.311Z",
+      "role": "workflow:owner",
+      "workflowId": "MgNxPu08nxpghMAyTckIu",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-26T02:00:19.464Z",
+      "createdAt": "2026-01-26T02:00:19.464Z",
+      "id": "TpFsJjCc34mubRl4",
+      "name": "MPV"
+    }
+  ]
+}
