@@ -1,0 +1,727 @@
+{
+  "updatedAt": "2026-01-26T02:08:02.223Z",
+  "createdAt": "2026-01-26T02:07:05.360Z",
+  "id": "34ITJYUJx2gPo4dr8MPEf",
+  "name": "005. MPV TTS (GenAIPro)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "16038f1f-d7fe-4608-8e97-47ff7ab60c9b",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        496,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12MH2dlgTAIAhYaTuTLjehiHsKfgd-bKbhOAUCvltnoA",
+          "mode": "list",
+          "cachedResultName": "MPV TTS 2025.12.30",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12MH2dlgTAIAhYaTuTLjehiHsKfgd-bKbhOAUCvltnoA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12MH2dlgTAIAhYaTuTLjehiHsKfgd-bKbhOAUCvltnoA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1477fdb9-c3bc-4444-87a9-3491393db826",
+      "name": "Read Pending Segments",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        832,
+        256
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Reads all rows where status = 'pending'. Configure your spreadsheet ID and sheet name."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f686b7c6-9b6f-49d8-a2b6-8ad6db68d5db",
+      "name": "Loop Over Segments",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1152,
+        256
+      ],
+      "notes": "Processes one segment at a time to avoid rate limits"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://genaipro.vn/api/v1/labs/task",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"input\": {{ JSON.stringify($json.text) }},\n  \"voice_id\": \"{{ $json.voice_id }}\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"stability\": 0.50,\n  \"similarity\": 0.75,\n  \"style\": 0.0,\n  \"speed\": 1.00,\n  \"use_speaker_boost\": true\n}",
+        "options": {}
+      },
+      "id": "d125c890-71b6-4b97-9f6d-1a1999597291",
+      "name": "Create TTS Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        256
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qh7wXpPCIXnZmiDW",
+          "name": "GenAIPro Auth"
+        }
+      },
+      "notes": "Sends text to GenAIPro API. Voice: Nathaniel C (British calm). Adjust stability/speed for your style."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cf0175ba-10db-43b1-a691-9015e2760fca",
+              "name": "task_id",
+              "value": "={{ $json.task_id }}",
+              "type": "string"
+            },
+            {
+              "id": "6d52c645-0c39-42ed-b218-6e02dfb0b132",
+              "name": "video_name",
+              "value": "={{ $('Loop Over Segments').item.json.video_name }}",
+              "type": "string"
+            },
+            {
+              "id": "212c7b1a-4c4a-46ad-8301-c67e22fa79eb",
+              "name": "filename",
+              "value": "={{ $('Loop Over Segments').item.json.filename }}",
+              "type": "string"
+            },
+            {
+              "id": "6e090263-64d6-40bc-9f35-74eee6be057f",
+              "name": "segment_number",
+              "value": "={{ $('Loop Over Segments').item.json.segment_number }}",
+              "type": "string"
+            },
+            {
+              "id": "346e2617-dcbe-459d-95c9-a69644ad0fdd",
+              "name": "row_number",
+              "value": "={{ $('Loop Over Segments').item.json.row_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f23d08db-d91e-4660-bc64-b0520dcdcecd",
+      "name": "Store Task Info",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1584,
+        256
+      ],
+      "notes": "Preserves task_id and original row data for later use"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "id": "256b42c2-1735-44ae-ae4c-973eb3b6bc35",
+      "name": "Wait for Processing",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1808,
+        256
+      ],
+      "webhookId": "9abfb013-5d74-4d16-ada6-f7341a3b36b1",
+      "notes": "Initial wait before first status check. Adjust based on typical segment length."
+    },
+    {
+      "parameters": {
+        "url": "=https://genaipro.vn/api/v1/labs/task/{{ $('Store Task Info').item.json.task_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "3194fedd-0c7b-43a9-bbca-262761ce8bd6",
+      "name": "Check Task Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2032,
+        256
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qh7wXpPCIXnZmiDW",
+          "name": "GenAIPro Auth"
+        }
+      },
+      "notes": "Polls GenAIPro API for task completion status"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8cccf44e-8b5c-4b42-aa70-eb64c17cb256",
+              "name": "task_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "37089516-b151-45e1-8b32-7f4dd09a9b5c",
+              "name": "status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            },
+            {
+              "id": "025bab86-3ff9-4245-9062-1dd4f17377e1",
+              "name": "result_url",
+              "value": "={{ $json.result }}",
+              "type": "string"
+            },
+            {
+              "id": "0b7b2961-4982-4bfe-a591-9cd20b78ce6b",
+              "name": "subtitle_url",
+              "value": "={{ $json.subtitle }}",
+              "type": "string"
+            },
+            {
+              "id": "1a3164c1-16f8-4966-9ff4-7bfeee4edb4a",
+              "name": "video_name",
+              "value": "={{ $('Store Task Info').item.json.video_name }}",
+              "type": "string"
+            },
+            {
+              "id": "fdd38141-66a3-4fcd-b24b-d9f6d2585ac6",
+              "name": "filename",
+              "value": "={{ $('Store Task Info').item.json.filename }}",
+              "type": "string"
+            },
+            {
+              "id": "d0845c1c-a74a-4f30-bc20-d830deaf51da",
+              "name": "segment_number",
+              "value": "={{ $('Store Task Info').item.json.segment_number }}",
+              "type": "string"
+            },
+            {
+              "id": "69f83640-e778-4287-8a7f-80d6421c7f1d",
+              "name": "row_number",
+              "value": "={{ $('Store Task Info').item.json.row_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "95739ade-6bf9-4319-ace3-b5157830f9a7",
+      "name": "Merge Status Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2240,
+        256
+      ],
+      "notes": "Combines API response with stored metadata"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "condition-completed",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ecab9cdd-de35-4b0c-8237-0aba4199411b",
+      "name": "Is Completed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2464,
+        256
+      ],
+      "notes": "Routes to download if complete, or back to wait if still processing"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "id": "238236ee-ee55-4b4e-9b34-0c433c5e3afd",
+      "name": "Wait & Retry",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        448
+      ],
+      "webhookId": "dc2c8535-4558-4c6b-b315-385e70f80ff2",
+      "notes": "Waits before checking status again"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ed711bd5-8366-4b87-9e64-02b7cd60bad4",
+      "name": "Preserve Data for Retry",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2032,
+        448
+      ],
+      "notes": "Keeps metadata intact during retry loop"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.result_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "384047e6-b811-4728-b17d-83c2a5826788",
+      "name": "Download MP3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2688,
+        256
+      ],
+      "notes": "Downloads the generated audio file as binary"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Loop Over Segments').item.json.video_name }}-{{ $('Merge Status Data').item.json.filename }}.mp3",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1UP5585jvP_g8rsPoQ2Vr8aJWygePZCoQ",
+          "mode": "list",
+          "cachedResultName": "MPV Audio",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1UP5585jvP_g8rsPoQ2Vr8aJWygePZCoQ"
+        },
+        "options": {
+          "simplifyOutput": true
+        }
+      },
+      "id": "4e697e2b-2ee5-4596-9513-31eb397706dd",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2912,
+        256
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YccFrdj90ivdga5k",
+          "name": "Google Drive account"
+        }
+      },
+      "notes": "Uploads MP3 to your Google Drive folder. Set your destination folder ID."
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "12MH2dlgTAIAhYaTuTLjehiHsKfgd-bKbhOAUCvltnoA",
+          "mode": "list",
+          "cachedResultName": "MPV TTS 2025.12.30",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12MH2dlgTAIAhYaTuTLjehiHsKfgd-bKbhOAUCvltnoA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12MH2dlgTAIAhYaTuTLjehiHsKfgd-bKbhOAUCvltnoA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Download MP3').item.json.row_number }}",
+            "status": "completed",
+            "timestamp": "={{ $now.setZone('America/New_York').format('yyyy-MM-dd HH:mm:ss') }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "segment_number",
+              "displayName": "segment_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "char_count",
+              "displayName": "char_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c7957e54-ff97-46be-be8b-a33f075f5d42",
+      "name": "Update Status to Completed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        256
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Marks the row as 'completed' in your spreadsheet"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "92bbefa8-441e-4e7c-8934-006ec2412318",
+      "name": "Rate Limit Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3136,
+        1888
+      ],
+      "webhookId": "d88c68ef-dec8-4171-b74a-9bd9be213ef2",
+      "notes": "Brief pause between segments to avoid rate limits"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Pending Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Pending Segments": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Segments": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Create TTS Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create TTS Task": {
+      "main": [
+        [
+          {
+            "node": "Store Task Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Task Info": {
+      "main": [
+        [
+          {
+            "node": "Wait for Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Processing": {
+      "main": [
+        [
+          {
+            "node": "Check Task Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Task Status": {
+      "main": [
+        [
+          {
+            "node": "Merge Status Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Status Data": {
+      "main": [
+        [
+          {
+            "node": "Is Completed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Completed?": {
+      "main": [
+        [
+          {
+            "node": "Download MP3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preserve Data for Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preserve Data for Retry": {
+      "main": [
+        [
+          {
+            "node": "Wait & Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait & Retry": {
+      "main": [
+        [
+          {
+            "node": "Check Task Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download MP3": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Update Status to Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status to Completed": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "fd465290-5975-49e9-a97f-2d0f2eaef03d",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-26T02:07:05.363Z",
+      "createdAt": "2026-01-26T02:07:05.363Z",
+      "role": "workflow:owner",
+      "workflowId": "34ITJYUJx2gPo4dr8MPEf",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-26T02:00:19.464Z",
+      "createdAt": "2026-01-26T02:00:19.464Z",
+      "id": "TpFsJjCc34mubRl4",
+      "name": "MPV"
+    }
+  ]
+}
