@@ -1,0 +1,557 @@
+{
+  "updatedAt": "2026-02-02T22:51:11.491Z",
+  "createdAt": "2026-01-29T02:58:48.418Z",
+  "id": "NvPvq2GiXPD80hkv",
+  "name": "SHSFS - Script QC Automation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.doc_id }}"
+      },
+      "id": "a481ad16-53b7-4774-950b-638b872a4d45",
+      "name": "Get Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        656,
+        0
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract plain text from Google Docs response (Simplify mode)\nconst doc = $input.first().json;\nconst documentId = $json.documentId;\n\n// With Simplify ON, content comes as a direct string\nconst scriptText = doc.content || '';\n\n// Calculate approximate end index for the update\n// Google Docs indices are 1-based, and we need the position after the last character\nconst endIndex = scriptText.length + 1;\n\nreturn [{\n  json: {\n    documentId,\n    scriptText,\n    endIndex,\n    wordCount: scriptText.split(/\\s+/).filter(w => w.length > 0).length\n  }\n}];"
+      },
+      "id": "96e6b001-0adb-44da-a3ba-4d15ffe07176",
+      "name": "Extract Script Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare QC Prompt Node - SHSFS v1 (Sacred Hindu Stories for Sleep)\n// Based on Knowledge Base v6 and QC Checklist v5\n\nconst scriptData = $('Extract Script Text').first().json;\n\nconst qcPrompt = `You are a CRITICAL script editor for \"Sacred Hindu Stories for Sleep,\" a YouTube channel. Your job is to find problems and enforce the style guide below.\n\nIMPORTANT: First-draft scripts ALWAYS have room for improvement. A thorough QC typically identifies 5-25 issues. If you find zero issues, you are not looking hard enough.\n\n---\n\n# COMPLETE STYLE GUIDE\n\n## Rule 1: Stay Inside the Story\nYou are a storyteller, not a scholar. Never step outside the narrative to analyze, comment on, or explain the story. Just tell it.\n\nNEVER SAY:\n- \"The texts say...\" / \"The scriptures describe...\"\n- \"Notice who benefits from this arrangement...\"\n- \"The theological convenience here...\"\n- \"This is narrative engineering...\"\n- \"Scholars note...\" / \"Historians observe...\"\n- \"The gentle cynic\" / \"the historian in me\" / \"from a historical perspective\"\n- \"Someone in the celestial accounting department...\"\n- \"Institutional anxiety\"\n\nINSTEAD: Just tell what happens. Let listeners draw their own conclusions.\n\nNOTE: References to \"the texts,\" \"the story,\" \"the scriptures,\" or \"the storytellers\" ARE FINE in the Reflection Beat section. We're teaching there—there IS a lesson and a purpose. What we avoid is stepping outside to analyze power dynamics or narrative construction.\n\n## Rule 2: Second-Person Immersion\nPut the listener IN the story constantly. They should feel like they're standing in ancient India, not reading about it.\n\nUSE REGULARLY:\n- \"You're standing on a beach at twilight.\"\n- \"The smell hits you before anything else.\"\n- \"You can hear the distant rumble of chariot wheels.\"\n- \"The heat presses against your skin like a hand.\"\n\nAIM FOR: At least one second-person immersion drop every 200-300 words.\n\n## Rule 3: Sensory Saturation\nGround every section in physical reality. Ancient India should feel REAL.\n\nTHE FIVE SENSES OF ANCIENT INDIA:\n- SMELL: Sandalwood, incense, ghee lamps, dust after rain, jasmine, blood, horses, cooking fires, marigolds\n- SOUND: Conch shells, temple bells, chariot wheels on stone, arrows in flight, silk rustling, the Ganga flowing, evening prayers\n- TOUCH: Rough homespun cotton, cool marble floors, the weight of gold jewelry, the grit of battlefield dust, monsoon rain\n- TASTE: Rice and ghee, spiced wine, dust on your tongue, the copper tang of blood, sacred water\n- CLIMATE: The heat (always the heat), monsoon humidity, pre-dawn chill, afternoon dust\n\nAIM FOR: A sensory grounding line every 150-200 words.\n\n## Rule 4: Direct Address\nConstantly use \"you,\" \"we,\" \"us,\" and \"let's.\" The listener should feel like you're telling them a story, not presenting a documentary.\n\n## Rule 5: Pacing = Short Sentences + Fragment Punchlines\nSlow, deliberate cadence. Short, declarative sentences. Frequent paragraph breaks.\n\nTHE RHYTHM: [Setup sentence]. [Pause beat]. [Punchline fragment].\n\nEXAMPLE: \"The arrow flew. The god fell. And nothing was ever the same.\"\n\nRULES:\n- Maximum 5 sentences per paragraph\n- Maximum 25 words per sentence (split if longer)\n- After something big happens: fragment punchline\n\n## Rule 6: Humor About Situations (Not Narratives)\nThe comedy comes from the absurdity of what characters actually face—not from commenting on how the story is constructed.\n\nGOOD (situation humor):\n- \"Congratulations, you're a demigod. The bad news: your dad is the sun, and he's not great at child support.\"\n- \"This is the family reunion from hell. Literally everyone is armed.\"\n- \"Privacy doesn't exist. Your whole family, three servants, and possibly a cow are sleeping in the same room.\"\n\nBAD (narrative/analytical humor):\n- \"The theological convenience here is suspicious.\"\n- \"Notice who benefits from this arrangement.\"\n- \"Someone in the celestial accounting department got promoted for this.\"\n\n## Rule 7: The Four Humor Devices\n\nA. ANACHRONISM - Compare ancient situations to modern ones. Use sparingly—ONE per section maximum.\n- \"This is the ancient equivalent of a family dinner where everyone's armed.\"\n- \"The medieval version of a strongly-worded email.\"\n\nB. WITTY PHRASING - Clever metaphors and unexpected word choices. Timeless, no modern references needed.\n- \"A wet punctuation mark at the end of a very long sentence.\"\n- \"A sound like a question being answered wrong.\"\n\nC. PERSONIFICATION - Give objects, places, or abstract concepts human qualities.\n- \"The ocean watches. The ocean waits.\"\n- \"The curse had been waiting in the soil all along, patient as a creditor.\"\n\nD. SITUATIONAL ABSURDITY - Point out the inherent ridiculousness of what characters face.\n- \"The good news: you're alive. The bad news: so are the fleas.\"\n- \"One hundred sons. She had one hundred sons. Now she has none.\"\n\n## Rule 8: The Three-Part Opening Structure (SACRED - DO NOT MODIFY)\n\nPART 1 — THE HOOK (2-4 sentences before CTA):\nDrop immediately into intrigue. What makes this story irresistible?\nExample: \"Here's something about divine deaths: they're never accidents. Not really. When a god decides to leave a body behind, the whole universe holds its breath.\"\n\nPART 2 — THE FULL RITUAL FORMULA (MANDATORY - NEVER DELETE OR MOVE):\n\"So, before you get comfortable, take a moment to like the video and subscribe, but only if you genuinely enjoy what I do here. And let me know in the comments where you're tuning in from and what time it is for you. It's always fascinating to see who's joining us from around the world. Now, dim the lights. Maybe turn on a fan for that soft background hum. And let's ease into tonight's journey together.\"\n\nPART 3 — THE IMMERSION DROP:\nPut the listener directly into the world. Second person. Sensory. Immediate.\nExample: \"You're standing at the edge of Kurukshetra. The sun hasn't risen yet, but you can already smell it—dust, horses, iron, fear.\"\n\n⚠️ THE RITUAL FORMULA IS UNTOUCHABLE. It must stay between HOOK and IMMERSION DROP. Never suggest removing, moving, or modifying it.\n\n## Rule 9: Storytelling Momentum\nAlways keep the story moving. Every paragraph should either:\n1. Move the plot forward (what happens next)\n2. Deepen immersion in a moment (sensory expansion)\n3. Reveal character through action or dialogue\n\nNever pause to analyze. Never step back to comment. Just keep telling.\n\n## Rule 10: Brief Dialogue Quotes\nYou may briefly quote characters as a storyteller recounting what was said. Keep quotes to 1-2 sentences and embed them naturally.\n\nExample: \"'This kingdom,' Duryodhana said, 'will never be yours.' He meant it. You could hear it in his voice.\"\n\nNEVER: Switch voices, perform characters, or use extended dialogue exchanges.\n\n## Rule 11: Spoken Chapter Transitions\nBegin each major section with a story-focused bridge:\n\nGOOD TRANSITIONS:\n- \"Three days pass. The forest grows thicker.\"\n- \"But that arrow is still in the air. Let's go back.\"\n- \"Morning comes. With it, the war.\"\n\nBAD TRANSITIONS (never use):\n- \"Now let's examine...\"\n- \"Which raises the question...\" (in story sections—OK in Reflection Beat)\n- \"In this next section, we'll discuss...\"\n\n## Rule 12: The Reflection Beat (SECOND-TO-LAST SECTION)\nA dedicated section (800-1200 words) where we \"close the Mahabharata\" and share what the story meant. It provides RESOLUTION and CLOSURE after a long journey.\n\nTHE PURPOSE: After a 2-3 hour story, the listener should drift off feeling like they understood the point—NOT lying awake pondering unanswered questions.\n\nTHE TONE: Conversational, not preachy. You're a friend sharing insight after experiencing a story together—not a priest delivering a sermon. This section is EARNEST and SINCERE. The humor and \"gentle cynic\" voice stay in the story sections—here, we're genuinely discussing what matters.\n\nWRONG (Preachy):\n- \"The moral of this story is that we must always follow our dharma.\"\n- \"Let this be a lesson to us all about karma.\"\n\nRIGHT (Conversational):\n- \"And that's what the storytellers wanted you to remember. That dharma isn't always clean or comfortable.\"\n\nTHE FORMULA:\n1. Transition out of immersion — Signal stepping back (\"So after all of that...\")\n2. Walk through the major lessons — What did each part teach? Blend Hindu concepts (dharma, karma, maya) with accessible language.\n3. Deliver the overall meaning — What's the big takeaway?\n4. Provide closure — The listener should feel satisfied.\n\nWHAT IT'S NOT:\n- Not open-ended questions that keep the listener's brain spinning\n- Not preachy moralizing\n- Not a quick wrap-up paragraph\n- Not academic analysis or \"gentle cynic\" observations\n\n## Rule 13: No Duplicate/Repeated Text or \"Stutter\" Edits\nScan for TWO types of repetition artifacts:\n\nTYPE A - EXACT DUPLICATES: The same phrase or sentence appears twice in close proximity.\nExample: \"Back before banners and conches. Back before banners and conches.\"\n\nTYPE B - STUTTER EDITS: A fragment appears, then the full sentence restarts immediately after.\nExample: \"With heat already pressing down. It began with heat already pressing down, with dust...\"\nThe fragment \"With heat already pressing down\" is an editing remnant that should be deleted.\n\nDETECTION PATTERN FOR STUTTERS:\n- Look for any phrase (4+ words) that appears twice within 50 words\n- Especially at section transitions and paragraph openings\n- The first instance is usually a fragment; the second is the intended sentence\n\nFLAG AS CRITICAL: These are copy-paste/editing artifacts that MUST be fixed before production.\n\n## Rule 14: Character Name Consistency (ACTIVE SCAN REQUIRED)\nYou MUST actively scan the entire script for variant spellings of character names.\n\nMANDATORY CHECK - Search for ALL of these variant groups and flag ANY inconsistency:\n\n| Preferred (for sleep) | Variants to flag and replace |\n|----------------------|------------------------------|\n| Shikhandi | Shikhandin, Sikhandin, Sikhandi |\n| Draupadi | Draupathi, Draupadhi |\n| Yudhishthira | Yudhisthira, Yudhishtira, Yudhisthir |\n| Dhritarashtra | Dhritrashtra, Dhritarastra |\n| Duryodhana | Duryodhan, Duryodana |\n| Bhishma | Bheeshma, Bhisma |\n| Arjuna | Arjun |\n| Krishna | Krishn |\n\nACTION REQUIRED: If you find ANY variant spelling, create a replacement entry for EACH instance with priority \"critical\".\n\nDO NOT just note \"there are inconsistencies.\" Provide the exact find/replace for every single instance.\n\n## Rule 15: The Fade-Out Ending (NO Closing CTA)\nNEVER end with: \"Good night,\" \"Thanks for watching,\" \"See you next time,\" or any call to action.\n\nINSTEAD, fade into stillness, legacy, or quiet image:\n- \"And if you listen—really listen, in the spaces between sounds—you might hear it still. Not words. Not music. Just presence. Just peace.\"\n- \"The forest settles into night. An owl calls. A stream murmurs. And somewhere, everywhere, something continues.\"\n\n---\n\n# PHRASES TO AVOID (Flag these as violations)\n\nVOICE VIOLATIONS (CRITICAL):\n- \"Notice who benefits...\"\n- \"The theological convenience...\"\n- \"This is narrative engineering...\"\n- \"The pattern here...\" / \"The narrative pattern...\"\n- \"Which raises the question...\" (in story sections, not Reflection Beat)\n- \"The gentle cynic\" / \"the historian in me\" / \"from a historical perspective\"\n- \"Someone in the celestial accounting department...\"\n- \"Institutional anxiety\" or similar analytical frameworks\n\nESSAY SCAFFOLDING:\n- \"Let's examine...\"\n- \"Consider...\"\n- \"From a historical perspective...\"\n- \"In this story\"\n- \"Let's explore\"\n- \"Picture this\"\n- \"Can you imagine\"\n- \"You might be wondering\"\n- \"It's important to note\"\n- \"Interestingly\"\n- \"In conclusion\"\n- \"Without further ado\"\n\nMETA-REFERENCES IN STORY SECTIONS:\n- \"camera\" / \"scene\" / \"narrator\" / \"chapter\"\n- Any phrase directly addressing the YouTube audience inside the narrative\n\nCONSISTENCY ISSUES:\n- Duplicate sentences or phrases (copy-paste artifacts)\n- Variant spellings of the same character name\n- Inconsistent transliterations\n\n---\n\n# YOUR TASK\n\nAnalyze the script and return a JSON response with suggested find/replace changes.\n\n## MANDATORY PRE-ANALYSIS SCANS:\nBefore analyzing style issues, you MUST perform these two scans:\n\n1. STUTTER/DUPLICATE SCAN: Search the entire script for any phrase (4+ words) that appears twice within 100 words. Flag every instance.\n\n2. NAME VARIANT SCAN: Search for each character name variant listed in Rule 14. If you find \"Shikhandin\" OR \"Sikhandin\" anywhere, flag it for replacement with \"Shikhandi\". Do this for ALL variant groups.\n\nThese scans are NON-NEGOTIABLE. Missing these is a QC failure.\n\n## CRITICAL COPY-PASTE RULES:\n1. **EXACT TEXT ONLY**: The \"find\" field must contain text EXACTLY as it appears in the script\n2. **DO NOT PARAPHRASE**: If the script says \"It's a boat\" you cannot write \"It was a boat\"\n3. **COPY-PASTE LITERALLY**: Select the text from the script and copy it exactly\n4. **NO TRUNCATION**: Never use \"...\" to shorten the find text\n5. **AVOID OVERLAPPING REPLACEMENTS**: Each replacement should target a distinct piece of text\n\n## OUTPUT FORMAT (JSON):\n{\n  \"assessment\": {\n    \"word_count\": <number>,\n    \"second_person_immersion_score\": <1-10>,\n    \"comedically_appalled_tone_score\": <1-10>,\n    \"pacing_score\": <1-10>,\n    \"reflection_beat_status\": \"present_strong\" | \"present_weak\" | \"missing\",\n    \"reflection_beat_quality\": <1-10 or null if missing>,\n    \"hard_no_count\": <number of forbidden phrases found>,\n    \"humor_distribution_score\": <1-10>,\n    \"structure_integrity_score\": <1-10>,\n    \"name_consistency_issues\": [\"list any character names with inconsistent spellings\"],\n\"duplicate_text_found\": <boolean>,\n    \"ready_for_production\": <boolean>,\n    \"production_blockers\": [\"list of issues that must be fixed\"]\n  },\n  \"replacements\": [\n    {\n      \"rule_violated\": \"Rule X: Name\",\n      \"issue\": \"Brief description of the problem\",\n      \"find\": \"EXACT text from script - copy-paste only\",\n      \"replace\": \"Improved version\",\n      \"priority\": \"critical\" | \"high\" | \"medium\" | \"low\"\n    }\n  ]\n}\n\n## REPLACEMENT PRIORITIES:\n- **critical**: Voice violations, broken immersion, structure violations, missing Reflection Beat\n- **high**: Immersion gaps, pacing issues, missing sensory details, weak transitions, Reflection Beat quality issues\n- **medium**: Humor distribution, tone adjustments, minor wording improvements\n- **low**: Style polish, optional enhancements, expansion opportunities\n\n## AUTOMATIC PRODUCTION BLOCKERS:\nThe following issues MUST appear in production_blockers if found:\n- Any duplicate/stutter text artifacts\n- Any character name spelling inconsistencies\n- Any voice violations (analytical commentary)\n- Missing or weak Reflection Beat\n- Missing Ritual Formula\n\n## THINGS TO PRESERVE (DO NOT CHANGE):\n- The Ritual Formula section (subscribe/like/dim the lights)\n- Intentional stylistic fragments\n- Specific names from Hindu texts (Mahabharata, Ramayana, etc.)\n- The Reflection Beat section structure\n- References to \"the texts,\" \"the story,\" \"the scriptures,\" or \"the storytellers\" in the Reflection Beat\n\n## REFLECTION BEAT SPECIFIC CHECKS:\n- Does it transition OUT of immersion clearly? (\"So after all of that...\")\n- Does it walk through lessons from major story beats?\n- Does it blend Hindu philosophy (dharma, karma, maya) with accessible language?\n- Is the tone conversational and EARNEST (not preachy, not \"gentle cynic\")?\n- Does it provide RESOLUTION and CLOSURE (not open-ended questions)?\n- Is it 800-1200 words?\n\n## HUMOR DEVICE DISTRIBUTION (STORY SECTIONS ONLY):\nCheck that all four devices appear throughout story sections:\n- Anachronism (MAX one per section)\n- Witty phrasing\n- Personification\n- Situational absurdity\nNOTE: The Reflection Beat should have MINIMAL to NO humor—it's earnest and sincere.\n\n## DOUBLE-CHECK BEFORE SUBMITTING:\n- Did I copy the \"find\" text EXACTLY from the script?\n- Are my replacements targeting DIFFERENT parts of the text (no overlaps)?\n- Did I preserve the Ritual Formula?\n- Did I avoid suggesting meta language like \"camera\" or \"scene\"?\n- Is humor in story sections about SITUATIONS, never about narrative construction?\n- Is humor in the Reflection Beat minimal or absent?\n- Did I check for duplicate/repeated text, especially at section transitions?\n- Are all character names spelled consistently throughout?\n\nReturn ONLY the JSON object, no other text.\n\n---\n\n# SCRIPT TO ANALYZE:\n\n${scriptData.scriptText}`;\n\nreturn [{\n  json: {\n    prompt: qcPrompt,\n    documentId: scriptData.documentId,\n    wordCount: scriptData.wordCount\n  }\n}];"
+      },
+      "id": "8ba2817c-4d62-4504-aca0-644d96a09d79",
+      "name": "Prepare QC Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "HTTP-Referer",
+              "value": "https://sacredhindustoriesforsleep.com"
+            },
+            {
+              "name": "X-Title",
+              "value": "Sacred Hindu Stories for Sleep QC"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"openai/gpt-5.2\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.prompt) }}\n    }\n  ],\n  \"temperature\": 0.3,\n  \"max_tokens\": 16000\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "eb0b327c-a45a-4461-a661-88992e7554c8",
+      "name": "OpenRouter QC Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1312,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qh7wXpPCIXnZmiDW",
+          "name": "GenAIPro Auth"
+        },
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst previousData = $('Prepare QC Prompt').first().json;\n\n// Extract the content from OpenRouter's response format\nlet content = response.choices?.[0]?.message?.content || response.content || '';\n\n// Clean up the response (remove any markdown code fences if present)\ncontent = content.replace(/^```json\\s*/i, '').replace(/\\s*```$/i, '').trim();\n\n// Parse the JSON\nlet parsed;\ntry {\n  parsed = JSON.parse(content);\n} catch (e) {\n  // If parsing fails, try to extract JSON from the response\n  const jsonMatch = content.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    try {\n      parsed = JSON.parse(jsonMatch[0]);\n    } catch (e2) {\n      throw new Error('Failed to parse JSON from AI response: ' + e.message + '\\n\\nRaw content: ' + content.substring(0, 500));\n    }\n  } else {\n    throw new Error('No JSON found in AI response: ' + content.substring(0, 500));\n  }\n}\n\n// Validate structure\nif (!parsed.assessment) {\n  parsed.assessment = {\n    word_count: previousData.wordCount,\n    second_person_immersion_score: 0,\n    comedically_appalled_tone_score: 0,\n    pacing_score: 0,\n    reflection_beat_status: 'unknown',\n    hard_no_count: 0,\n    ready_for_production: false,\n    production_blockers: ['Could not parse assessment']\n  };\n}\n\nif (!Array.isArray(parsed.replacements)) {\n  parsed.replacements = [];\n}\n\nreturn [{\n  json: {\n    documentId: previousData.documentId,\n    scriptText: previousData.scriptText,\n    endIndex: previousData.endIndex,\n    assessment: parsed.assessment,\n    replacements: parsed.replacements,\n    replacementCount: parsed.replacements.length,\n    readyForProduction: parsed.assessment.ready_for_production\n  }\n}];"
+      },
+      "id": "51082313-b68c-4181-897f-983aadc5622a",
+      "name": "Parse QC Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Apply Replacements Node - v2 (with overlap detection)\n// Paste this into your \"Apply Replacements\" Code node in n8n\n\nconst scriptData = $('Extract Script Text').first().json;\nconst qcResponse = $('Parse QC Response').first().json;\n\nlet currentText = scriptData.scriptText;\nconst replacements = qcResponse.replacements || [];\n\nconst results = {\n  applied: [],\n  failed: [],\n  skippedOverlap: []\n};\n\n// Helper: Normalize whitespace for flexible matching\nfunction normalizeWhitespace(str) {\n  return str.replace(/\\s+/g, ' ').trim();\n}\n\n// Helper: Check word boundaries\nfunction isWordBoundaryMatch(text, startIndex, matchLength) {\n  const beforeChar = startIndex > 0 ? text[startIndex - 1] : ' ';\n  const afterChar = startIndex + matchLength < text.length ? text[startIndex + matchLength] : ' ';\n  const wordBoundary = /[\\s.,!?;:'\"()\\[\\]{}\\-—–\\n\\r]/;\n  return (startIndex === 0 || wordBoundary.test(beforeChar)) &&\n         (startIndex + matchLength === text.length || wordBoundary.test(afterChar));\n}\n\n// Helper: Find text with flexible whitespace\nfunction findWithFlexibleWhitespace(text, searchStr) {\n  const normalizedSearch = normalizeWhitespace(searchStr);\n  const searchRegex = normalizedSearch\n    .replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')\n    .replace(/ /g, '\\\\s+');\n\n  const regex = new RegExp(searchRegex, 'g');\n  const matches = [];\n  let match;\n\n  while ((match = regex.exec(text)) !== null) {\n    if (isWordBoundaryMatch(text, match.index, match[0].length)) {\n      matches.push({\n        index: match.index,\n        length: match[0].length,\n        matchedText: match[0]\n      });\n    }\n  }\n\n  return matches;\n}\n\n// Step 1: Find all match positions FIRST\nconst replacementsWithPositions = [];\n\nfor (const replacement of replacements) {\n  const findText = replacement.find;\n\n  // Skip truncated entries\n  if (findText.endsWith('...') || findText.length < 10) {\n    results.failed.push({\n      find: findText.substring(0, 50) + '...',\n      reason: 'Find text too short or truncated'\n    });\n    continue;\n  }\n\n  const matches = findWithFlexibleWhitespace(currentText, findText);\n\n  if (matches.length === 0) {\n    results.failed.push({\n      find: findText.substring(0, 50) + '...',\n      reason: 'Text not found in script'\n    });\n    continue;\n  }\n\n  if (matches.length > 1) {\n    results.failed.push({\n      find: findText.substring(0, 50) + '...',\n      reason: 'Multiple matches found (' + matches.length + ') - need more specific text'\n    });\n    continue;\n  }\n\n  replacementsWithPositions.push({\n    ...replacement,\n    startIndex: matches[0].index,\n    endIndex: matches[0].index + matches[0].length,\n    matchedText: matches[0].matchedText\n  });\n}\n\n// Step 2: Sort by position (END to START) to avoid index shifting\nreplacementsWithPositions.sort((a, b) => b.startIndex - a.startIndex);\n\n// Step 3: Detect and skip overlapping replacements\nconst appliedRanges = [];\n\nfor (const replacement of replacementsWithPositions) {\n  // Check if this replacement overlaps with any already-applied replacement\n  const overlaps = appliedRanges.some(range =>\n    (replacement.startIndex < range.end && replacement.endIndex > range.start)\n  );\n\n  if (overlaps) {\n    results.skippedOverlap.push({\n      find: replacement.find.substring(0, 50) + '...',\n      reason: 'Skipped - overlaps with another replacement'\n    });\n    continue;\n  }\n\n  // Apply the replacement\n  currentText =\n    currentText.substring(0, replacement.startIndex) +\n    replacement.replace +\n    currentText.substring(replacement.endIndex);\n\n  // Track this range (adjusted for the new text length)\n  appliedRanges.push({\n    start: replacement.startIndex,\n    end: replacement.startIndex + replacement.replace.length\n  });\n\n  results.applied.push({\n    rule: replacement.rule_violated || 'unspecified',\n    priority: replacement.priority || 'medium',\n    original: replacement.matchedText.substring(0, 50) + (replacement.matchedText.length > 50 ? '...' : ''),\n    replacement: replacement.replace.substring(0, 50) + (replacement.replace.length > 50 ? '...' : '')\n  });\n}\n\nreturn [{\n  json: {\n    documentId: scriptData.documentId,\n    updatedText: currentText,\n    originalLength: scriptData.scriptText.length,\n    newLength: currentText.length,\n    stats: {\n      totalReplacements: replacements.length,\n      appliedSuccessfully: results.applied.length,\n      failed: results.failed.length,\n      skippedOverlap: results.skippedOverlap.length\n    },\n    appliedChanges: results.applied,\n    failedReplacements: results.failed,\n    skippedReplacements: results.skippedOverlap,\n    assessment: qcResponse.assessment\n  }\n}];\n"
+      },
+      "id": "14ea8542-ca93-4652-9c1c-797995ad87e0",
+      "name": "Apply Replacements",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://docs.googleapis.com/v1/documents/{{ $json.documentId }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"requests\": [\n    {\n      \"deleteContentRange\": {\n        \"range\": {\n          \"startIndex\": 1,\n          \"endIndex\": {{ $json.originalLength }}\n        }\n      }\n    },\n    {\n      \"insertText\": {\n        \"location\": {\n          \"index\": 1\n        },\n        \"text\": {{ JSON.stringify($json.updatedText) }}\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "6c4e3236-cf68-454f-8981-3fac026a7d38",
+      "name": "Update Google Doc",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1968,
+        0
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "392dcc5a-373a-4858-84e3-c072ea3f8240",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doc_id": "={{ $('Loop Over Items').item.json.doc_id }}",
+            "edit_status": "complete"
+          },
+          "matchingColumns": [
+            "doc_id"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "edit_status",
+              "displayName": "edit_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2176,
+        0
+      ],
+      "id": "71e2923d-5dd5-49d5-a788-fcc609ea28d4",
+      "name": "Mark Complete",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7cdb77a4-3307-4cfe-97cc-c3bd94a436cf",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -192
+      ],
+      "id": "959184d0-331b-42fc-833e-93913834587c"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "edit_status",
+              "lookupValue": "ready"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1fb386c7-d7ca-457f-ab20-57b43e3cef7a",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Get Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Extract Script Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Script Text": {
+      "main": [
+        [
+          {
+            "node": "Prepare QC Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare QC Prompt": {
+      "main": [
+        [
+          {
+            "node": "OpenRouter QC Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter QC Analysis": {
+      "main": [
+        [
+          {
+            "node": "Parse QC Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse QC Response": {
+      "main": [
+        [
+          {
+            "node": "Apply Replacements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Replacements": {
+      "main": [
+        [
+          {
+            "node": "Update Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Mark Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    },
+    "Mark Complete": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "9a0ff575-9182-41e2-a0cd-1ce0ac882218",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-29T02:58:48.430Z",
+      "createdAt": "2026-01-29T02:58:48.430Z",
+      "role": "workflow:owner",
+      "workflowId": "NvPvq2GiXPD80hkv",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T21:33:40.980Z",
+      "createdAt": "2026-01-25T21:33:40.980Z",
+      "id": "3tXWj4bbeGdd4akG",
+      "name": "SHSFS"
+    }
+  ]
+}
