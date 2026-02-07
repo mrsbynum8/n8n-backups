@@ -1,0 +1,136 @@
+{
+  "updatedAt": "2026-02-04T03:55:13.000Z",
+  "createdAt": "2026-02-04T03:17:18.335Z",
+  "id": "UGiV8fJw3qHGaOuD",
+  "name": "Audio Sub-workflow",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "call_workflow",
+        "outdatedVersionWarning": "",
+        "source": "database",
+        "workflowId": "UKfhRSUncjdb7ANnyf8lQ",
+        "executeWorkflowNotice": "",
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "00d682b7-43ce-4621-8aa0-f26a855c499a",
+      "name": "Step 3A: Script to TTS",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        384,
+        1248
+      ],
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "operation": "call_workflow",
+        "outdatedVersionWarning": "",
+        "source": "database",
+        "workflowId": "C958wKQ13rICFNT4flkF-",
+        "executeWorkflowNotice": "",
+        "mode": "once",
+        "options": {}
+      },
+      "id": "fd99e639-5430-474e-b9ed-abd72a426636",
+      "name": "Step 4A: Create Voiceover",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        848,
+        1248
+      ],
+      "disabled": false
+    },
+    {
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        592,
+        1248
+      ],
+      "id": "75d42521-2705-4141-baea-7e5321b47715",
+      "name": "Limit",
+      "disabled": false,
+      "parameters": {
+        "maxItems": 1,
+        "keep": "firstItems"
+      }
+    },
+    {
+      "id": "1323d272-a0f7-4ff4-9e53-93bb703fb59c",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        176,
+        1248
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    }
+  ],
+  "connections": {
+    "Step 3A: Script to TTS": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Step 4A: Create Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Step 3A: Script to TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "a06b11ca-14a0-43b3-90d0-627dc10f2fc2",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T03:17:18.340Z",
+      "createdAt": "2026-02-04T03:17:18.340Z",
+      "role": "workflow:owner",
+      "workflowId": "UGiV8fJw3qHGaOuD",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
