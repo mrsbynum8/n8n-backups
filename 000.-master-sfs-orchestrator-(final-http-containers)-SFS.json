@@ -1,0 +1,174 @@
+{
+  "updatedAt": "2026-02-04T04:46:41.480Z",
+  "createdAt": "2026-02-04T02:01:19.405Z",
+  "id": "8WCGev-ZvL8kjx7qzK9ms",
+  "name": "000. Master SFS Orchestrator (Final HTTP Containers)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "58038b3a-70e9-4441-9e25-47c400e7cef1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        2560
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://n8n.srv1296617.hstgr.cloud/webhook/sfs-audio-container",
+        "options": {}
+      },
+      "id": "6378c393-f567-4fca-abd4-d69d5afe19e9",
+      "name": "Trigger Audio Container (HTTP)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        256,
+        2400
+      ],
+      "notes": "Fire & Forget"
+    },
+    {
+      "parameters": {
+        "url": "https://n8n.srv1296617.hstgr.cloud/webhook/sfs-visual-container",
+        "options": {}
+      },
+      "id": "89fd811b-7589-47f1-8709-63ebc212948e",
+      "name": "Trigger Visual Container (HTTP)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        256,
+        2704
+      ],
+      "notes": "Fire & Forget"
+    },
+    {
+      "parameters": {
+        "workflowId": "RcrPI43JHDgZsxlXZ83Xv",
+        "options": {}
+      },
+      "id": "30d55bed-a8f2-49d2-a213-441858d42ece",
+      "name": "Step 1: Write Scripts1",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        2560
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "workflowId": "9VUzzoWFaL5fQVoQUAXrQ",
+        "options": {}
+      },
+      "id": "b09e5dbb-0930-468a-9878-56584193dd0d",
+      "name": "Step 2: QC Scripts1",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        2560
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "880066bb-9058-4ffd-9823-451a25772a54",
+      "name": "Limit to ",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        16,
+        2560
+      ],
+      "notes": "Force only 1 execution"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Step 1: Write Scripts1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 1: Write Scripts1": {
+      "main": [
+        [
+          {
+            "node": "Step 2: QC Scripts1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 2: QC Scripts1": {
+      "main": [
+        [
+          {
+            "node": "Limit to ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to ": {
+      "main": [
+        [
+          {
+            "node": "Trigger Audio Container (HTTP)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Trigger Visual Container (HTTP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v0",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f5d35446-dba7-4bdf-8ce9-c991f113bd2e",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T02:01:19.413Z",
+      "createdAt": "2026-02-04T02:01:19.413Z",
+      "role": "workflow:owner",
+      "workflowId": "8WCGev-ZvL8kjx7qzK9ms",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T23:18:23.477Z",
+      "createdAt": "2026-01-25T23:18:23.477Z",
+      "id": "EYwjzgLoghqZQ2Du",
+      "name": "SFS"
+    }
+  ]
+}
