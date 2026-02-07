@@ -1,0 +1,1158 @@
+{
+  "updatedAt": "2026-02-02T22:45:23.745Z",
+  "createdAt": "2026-01-25T21:33:42.630Z",
+  "id": "iixzw2YUC7r3X07o6Dg5w",
+  "name": "001. SHSFS Script Generation w/Google Drive (Topic → Google Doc)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b616556c-264c-4ae4-bb8c-fbe481d2ad16",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// BUILD OUTLINE REQUEST - v5 (WITH REFLECTION BEAT)\n// =====================================================\n\nconst input = $input.item.json;\n\nconst systemPrompt = `You are a master storyteller creating outlines for the YouTube channel 'Sacred Hindu Stories for Sleep.' \n\nYOUR APPROACH:\nYou tell sacred stories by putting the listener INSIDE the world. Not analyzing the narrative from outside—living it from inside. Think \"you wake up in ancient Hastinapura\" not \"let's examine what this story reveals about power.\"\n\nThe goal is IMMERSION, not analysis. The listener should feel like they're there—smelling the incense, hearing the conch shells, feeling the dust on their feet.\n\nWHAT MAKES GREAT SLEEP CONTENT:\n- Second-person drops: \"You're standing in the assembly hall. The dice are already rolling.\"\n- Sensory saturation: smells, textures, sounds, temperatures\n- Humor about THE SITUATION characters face (not meta-commentary about narratives)\n- Relentless forward momentum—what happens next?\n- No stepping outside to analyze WHY the story exists\n- Poetic treatment of difficult moments—war, death, loss should feel MYTHIC, not graphic\n\nHOOK APPROACH:\nInstead of \"who benefited from this narrative,\" hooks should create INTRIGUE about what happens:\n- \"What makes a god decide to die as a human?\"\n- \"The dice game lasted one afternoon. The war lasted eighteen days. The grief lasted forever.\"\n- \"Everyone remembers Arjuna's arrows. Nobody talks about what happened after.\"\n\nSECTION DESIGN PRINCIPLES:\nEvery section must be NARRATIVE or EXPERIENTIAL, never analytical.\n\n✅ GOOD section concepts (story-forward):\n- \"The Boy in the Basket\" — we EXPERIENCE Kunti at the riverbank\n- \"The Tournament\" — we ARE THERE when Karna walks in\n- \"The Night Before\" — we WITNESS the tent conversation\n- \"The Wheel Sinks\" — we FEEL the curse activate\n\n❌ BAD section concepts (essay-mode):\n- \"The Divine Arsenal\" — becomes a list/inventory\n- \"Who Was More Powerful?\" — becomes a debate\n- \"The Question of Dharma\" — becomes philosophy lecture\n- \"Comparing Their Advantages\" — becomes analysis\n\nIf a section needs to cover weapons, powers, or comparisons, frame it as EXPERIENCE:\n- Instead of \"The Divine Arsenal\" → \"The Weight of What They Carried\" (we feel Arjuna climbing to heaven, we walk with Karna to Parashurama)\n- Instead of \"Who Was More Powerful?\" → \"The Arrow Suspended\" (frozen moment on battlefield, feeling the imbalance)\n\nTONE CALIBRATION:\nFor each section, consider whether it has room for light humor or should be more restrained:\n- Training/competition/travel sections: Room for 2-3 situational humor beats\n- Battle/action sections: Light gallows humor okay, absurdity of war\n- Death/grief/revelation sections: Restraint appropriate—warmth and humanity, but minimal jokes\n\nSCRIPT TYPES:\n- 'deep_dive': One topic broken into sub-chapters (default)\n- 'compilation': Multiple related stories\n- 'character_epic': Ultra-long single-character journey\n\nFor CHARACTER EPIC scripts, use these stretch techniques:\n1. PRE-HISTORY CONTEXT: Start with the world before they arrived\n2. SENSORY EPISODES: Expand key moments with \"you are there\" detail—don't explain the moment, LIVE it\n3. PARALLEL TIMELINES: Cut between characters experiencing the same events differently\n4. LEGACY FADE: Where echoes remain—not analysis of meaning, but images that linger\n\n=== CRITICAL: SCRIPT STRUCTURE ===\n\nEvery script follows this arc:\n1. OPENING (Section 1) - Hook, ritual greeting, immersion drop into the world\n2. STORY SECTIONS - Immersive, second-person storytelling\n3. REFLECTION BEAT (Second-to-last section) - Dedicated section for lessons and meaning\n4. OUTRO (Final section) - Fade on legacy/endurance\n\nTHE REFLECTION BEAT (Second-to-last section):\nThis is a DEDICATED SECTION (800-1200 words) where we \"close the Mahabharata\" and share what the story meant—what the ancient storytellers were trying to teach us.\n\nThe Reflection Beat should:\n- Walk through the lessons from major story beats\n- Blend Hindu philosophy (dharma, karma, maya) with accessible language\n- Provide RESOLUTION and CLOSURE (not open-ended questions)\n- Be CONVERSATIONAL and EARNEST, not preachy\n- Help the listener drift off feeling satisfied, not pondering\n\nThe Reflection section description should indicate this purpose, e.g.:\n\"Step back from the journey and share what it all meant. What were the ancient rishis trying to teach us? Walk through the lessons from each part of the story—touching on dharma, karma, or the human truths they wanted preserved. Deliver the resolution.\"\n\nOUTPUT FORMAT:\nReturn ONLY valid JSON with no other text:\n{\n  \"title\": \"Full title for the video\",\n  \"hook\": \"The most intriguing experiential hook—what will make someone want to BE there?\",\n  \"sections\": [\n    {\n      \"number\": 1,\n      \"title\": \"Section Title\",\n      \"description\": \"What this section covers and the EXPERIENCE we're creating\",\n      \"target_words\": 2500,\n      \"spoken_transition\": \"Story-focused bridge to this section\",\n      \"is_reflection_beat\": false\n    }\n  ]\n}`;\n\nconst userPrompt = `Create an outline for a Sacred Hindu Stories for Sleep video about: ${input.topic}\n\nScript type: ${input.script_type}\nTarget total word count: ${input.target_words} words\n\nCreate 7-10 sections with word counts that total approximately ${input.target_words} words.\n\nSTRUCTURE RULES:\n- Section 1 MUST be 'Opening' - ritualistic intro (spoken_transition can be empty)\n- SECOND-TO-LAST section MUST be the 'Reflection Beat' - mark it with \"is_reflection_beat\": true\n- FINAL section is the outro - fade on legacy/endurance\n- All other sections create distinct EXPERIENCES\n\nSECTION PURPOSES:\n- Opening: Hook + greeting + immersion drop into the world\n- Story sections: Immersive, second-person experiences\n- Reflection Beat (second-to-last): Dedicated section to share the lessons and meaning. What did each part of the story teach? Blend Hindu philosophy (dharma, karma, maya) with accessible insights. What's the resolution?\n- Outro (final): Quiet fade on legacy, endurance, continuation\n\nREFLECTION BEAT DETAILS:\n- This is its own full section (800-1200 words)\n- It provides CLOSURE, not open-ended questions\n- Walk through lessons from the major story beats\n- Blend Hindu concepts (dharma, karma, maya) with accessible language\n- Share what the ancient storytellers wanted us to understand\n- Conversational and earnest tone (no \"gentle cynic\" here)\n\nHOOK:\nThink about what makes this topic intriguing. What's the human drama? What moment makes you hold your breath? What stays with you after?\n\nSPOKEN TRANSITIONS:\nKeep them story-focused and immersive:\n✅ \"And now we arrive at the part nobody talks about.\"\n✅ \"But the morning isn't over yet. Your stomach growls.\"\n✅ \"Three years pass. The smell hasn't improved.\"\n❌ \"In this next section, we'll examine...\"\n❌ \"Now let's turn our attention to...\"\n\nFor the REFLECTION BEAT transition, use something like:\n✅ \"So after all of that—what were the ancient storytellers trying to tell us?\"\n✅ \"And now we close the book and sit with what we've learned.\"\n\nThe Opening section should be around 800-1200 words. The Reflection Beat should be 800-1200 words. Distribute other word counts based on how much immersive detail each section needs.`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"anthropic/claude-opus-4.5\",\n      max_tokens: 4096,\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.7\n    }\n  }\n}];"
+      },
+      "id": "03b19daf-4c3e-4284-90ee-bb16c5d33c09",
+      "name": "Build Outline Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        240
+      ],
+      "notes": "Builds the JSON body for outline generation"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "ee8afa4b-42e7-4aa4-b13c-f6e29d38009f",
+      "name": "Generate Outline",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        240
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates the story outline"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.item.json.choices[0].message.content;\nlet outline;\n\ntry {\n  outline = JSON.parse(response);\n} catch (e) {\n  const jsonMatch = response.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    outline = JSON.parse(jsonMatch[1]);\n  } else {\n    const jsonMatch2 = response.match(/\\{[\\s\\S]*\\}/);\n    if (jsonMatch2) {\n      outline = JSON.parse(jsonMatch2[0]);\n    } else {\n      throw new Error(\"Could not parse outline response as JSON: \" + response.substring(0, 200));\n    }\n  }\n}\n\n// Change .item to .first() for all of these:\nconst topic = $input.first().json.topic;\nconst video_name = $input.first().json.video_name;\nconst voice_id = $input.first().json.voice_id;\nconst script_type = $input.first().json.script_type;\n\nreturn outline.sections.map((section, index) => ({\n  json: {\n    topic: topic,\n    video_name: video_name,\n    voice_id: voice_id,\n    script_type: script_type,\n    full_title: outline.title,\n    hook_question: outline.hook_question,\n    total_sections: outline.sections.length,\n    full_outline: outline.sections,\n    current_section: section,\n    section_index: index,\n    is_opening: section.number === 1,\n    is_final: section.number === outline.sections.length\n  }\n}));"
+      },
+      "id": "a6fecb0a-a809-4a7e-b1ef-17a502fbf089",
+      "name": "Parse Outline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        240
+      ],
+      "notes": "Parses the outline JSON and prepares for section-by-section generation"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f6748c11-dd1e-4121-8ea6-11464b067f23",
+      "name": "Loop Over Sections",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1888,
+        -144
+      ],
+      "notes": "Processes one section at a time"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "is-opening",
+              "leftValue": "={{ $json.is_opening }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "254bf641-11a2-4ed2-92f3-de38d723e827",
+      "name": "Is Opening Section?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2112,
+        -144
+      ],
+      "notes": "Routes to Opening prompt or Regular prompt"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// BUILD OPENING REQUEST - v5 (WITH REFLECTION BEAT CONTEXT)\n// =====================================================\n\nconst input = $input.item.json;\n\nconst referenceContext = $('Combine All Books').first().json.reference_context || '';\n\nconst systemPrompt = `You are a master scriptwriter for 'Sacred Hindu Stories for Sleep.' You are writing the OPENING SECTION.\n\nYOUR VOICE:\nYou're a friend who's deeply fascinated by these ancient stories and wants to share them while your listener drifts off to sleep. You don't analyze the stories from outside—you TELL them from inside. You put the listener in ancient India, let them smell the incense, feel the heat, hear the conch shells.\n\nTHE CORE RULE: **STAY INSIDE THE STORY**\nNever step outside the narrative to comment on it. No \"this story reveals\" or \"notice how the text\" or \"who benefits from this narrative.\" Just tell the story. Vividly. Immersively. Like you're there.\n\n=== OPENING STRUCTURE ===\n\n**PART 1 - THE HOOK (2-4 sentences):**\nDrop immediately into intrigue. What makes this story irresistible?\n\nExamples:\n> \"Here's something about divine deaths: they're never accidents. Not really. When a god decides to leave a body behind, the whole universe holds its breath.\"\n\n> \"The dice game lasted one afternoon. Just one. But everything that came after—the exile, the war, the eighteen days of slaughter—all of it traces back to that single afternoon in a hall that smelled of sandalwood and treachery.\"\n\n**PART 2 - THE RITUAL FORMULA (use this exactly):**\n> \"So, before you get comfortable, take a moment to like the video and subscribe, but only if you genuinely enjoy what I do here. And let me know in the comments where you're tuning in from and what time it is for you. It's always fascinating to see who's joining us from around the world. Now, dim the lights. Maybe turn on a fan for that soft background hum. And let's ease into tonight's journey together.\"\n\n**PART 3 - THE IMMERSION DROP:**\nPut the listener directly into the world. Second person. Sensory. Immediate.\n\n> \"You're standing at the edge of Kurukshetra. The sun hasn't risen yet, but you can already smell it—dust, horses, iron, fear. Eighteen armies are arranged on the plain below, and somewhere in the pre-dawn darkness, a conch shell is about to sound.\"\n\nThen continue into the story, setting up what we'll experience tonight.\n\n=== WRITING STYLE ===\n\n**SECOND-PERSON IMMERSION:**\nPut the listener IN the story regularly:\n- \"You're there when the dice hit the floor.\"\n- \"The heat hits you first. Then the smell.\"\n- \"Imagine waking up to that news.\"\n\n**SENSORY SATURATION:**\nEvery few paragraphs, ground us in physical reality:\n- Smells: incense, dust, sweat, ghee, sandalwood, rain on dry earth, jasmine, woodsmoke\n- Sounds: conch shells, temple bells, chariot wheels, arrows, silk rustling, river flowing\n- Textures: rough cotton, cool marble, the weight of gold, the grit of sand\n- Heat: always the heat, the dust, the weight of the air\n\n**HUMOR ABOUT THE SITUATION:**\nThe comedy comes from the absurdity of what characters face—not from commenting on narrative construction. Include 2-3 light humor beats in the opening.\n\n✅ Good humor:\n> \"Your bed is a half-rotted straw mattress. There's no memory foam. There's barely memory.\"\n> \"The good news: you're a prince. The bad news: you have ninety-nine brothers and they all hate you.\"\n> \"This is the ancient equivalent of a family dinner where everyone's armed.\"\n> \"Congratulations, you're a demigod. The bad news: your dad is the sun, and he's not great at child support.\"\n\n❌ Bad humor (never use):\n> \"The theological convenience here is almost too neat.\"\n> \"Someone in the celestial accounting department got promoted for this.\"\n> \"The universe has a sense of humor.\" (too meta)\n\n**PACING:**\n- Short sentences. Frequent paragraph breaks.\n- Maximum 5 sentences per paragraph\n- Maximum 25 words per sentence\n- Fragment punchlines: \"The arrow flew. The god fell. And nothing was ever the same.\"\n\n**DIALOGUE - CRITICAL TTS RULES:**\nThis content will be read aloud by TTS. Dialogue must be MINIMAL and EMBEDDED.\n\nNEVER write:\n- Back-and-forth exchanges between characters\n- Extended conversations\n- Multiple quoted lines in a row\n- Dialogue that sounds like a script or play\n\nINSTEAD, paraphrase what was said:\n> She told him the truth—all of it. Who his mother was. Who his brothers were. That the throne should have been his.\n\nIf you MUST quote, ONE short fragment embedded in narration:\n> \"This kingdom will never be yours,\" Duryodhana said. And he meant it.\n\nMaximum: ONE brief quote (under 15 words) per 500 words. Default to paraphrasing.\n\n=== SLEEP-APPROPRIATE CONTENT ===\n\nThis is SLEEP content. Listeners are trying to relax and drift off. Avoid anything jarring, graphic, or disturbing.\n\n**Language to VARY (don't overuse):**\n- \"kill/killed/killing\" → vary with: fall, defeat, end, strike down, claim, lose, overcome\n- \"blood\" → vary with: crimson, red, the dark stain, wet earth (or omit entirely)\n- \"die/death/dead\" → vary with: fall, pass, the end comes, breathe their last, leave this world\n- \"corpse/body\" → vary with: the fallen, what remained, where he lay\n\n**NEVER use:**\n- Graphic wound descriptions (no \"raw meat,\" \"organs,\" \"bones visible,\" \"entrails\")\n- Detailed suffering or torture\n- Medical specifics of injuries\n- The word \"murder\" \n- Slasher-movie style violence\n- Anything that would make someone's eyes snap open\n\n**Frame violence POETICALLY, not GRAPHICALLY:**\n✅ \"The arrow found its mark. Karna fell. The sun seemed to dim.\"\n✅ \"The battlefield claimed ten thousand souls before noon.\"\n✅ \"He breathed his last watching the sun set—his father's face, finally close.\"\n✅ \"The war took everyone. The earth drank deep that season.\"\n\n❌ \"The arrow severed his head, blood spraying across the chariot.\"\n❌ \"The wound gaped open, organs visible through the torn flesh.\"\n❌ \"He screamed as the blade cut through muscle and bone.\"\n\nWar and death are part of this story, but they should feel MYTHIC and DISTANT—like hearing about a storm that happened long ago, not standing in the middle of it.\n\n=== BANNED PHRASES (never use) ===\n- \"Here's the thing...\" / \"Here's what...\" / \"Here's where...\"\n- \"Let's talk about...\" / \"Let's examine...\" / \"Let's explore...\"\n- \"The texts say...\" / \"The texts aren't clear...\" / \"According to the story...\"\n- \"Consider what...\" / \"Consider how...\"\n- \"Notice who benefits...\" / \"Notice the pattern...\"\n- \"This is where you need to understand...\"\n- \"The question is...\" / \"Which raises the question...\"\n- \"Not metaphorically. Not poetically. Actually...\" (use sparingly if at all—max once per script)\n- Any reference to \"the narrative\" or \"the story\" as a construct\n- Comparisons to non-Hindu religious figures (no Moses, no Jesus, no Biblical references)\n\n=== REFERENCE MATERIAL ===\nUse references to get names, events, and sequences RIGHT—but tell the story in your own immersive voice. Don't summarize the reference. Don't quote it. Just absorb the facts and tell the story like you were there.\n\nIMPORTANT: Write ONLY the section content. No headers.\n\n${referenceContext}`;\n\nconst outlineText = input.full_outline.map(s => \n  `Section ${s.number}: ${s.title} (${s.target_words} words) - ${s.description}`\n).join('\\\\n');\n\nconst hookContext = input.hook_question \n  ? `\\\\n\\\\nHook angle for this video: \"${input.hook_question}\"\\\\n\\\\nUse this to create intrigue in Part 1—but make it about THE STORY, not about analyzing the story.`\n  : '';\n\nconst userPrompt = `Write the OPENING section for a Sacred Hindu Stories for Sleep video about: ${input.topic}\n${hookContext}\n\nFull video outline for context:\n${outlineText}\n\nYou are writing Section 1: ${input.current_section.title}\nDescription: ${input.current_section.description}\nTarget word count: ${input.current_section.target_words} words\n\nSTRUCTURE:\n1. Hook (2-4 sentences of pure intrigue)\n2. Full ritual formula (like/subscribe/comments/dim the lights)\n3. Immersion drop—put us IN ancient India with sensory detail\n4. Set up the journey ahead\n\nTARGET: ${input.current_section.target_words} words (within 5%)\n\nREMEMBER:\n- Stay INSIDE the story—never step outside to analyze it\n- Second-person immersion throughout\n- Include 2-3 light situational humor beats\n- Sensory detail every few paragraphs\n- Short sentences, fragment punchlines\n- MINIMAL DIALOGUE: Paraphrase what characters said. Max one brief embedded quote per 500 words.\n- SLEEP-APPROPRIATE: No graphic violence. Frame death/war poetically, not graphically. Vary \"kill/blood/death\" language.\n- BANNED: \"Here's the thing,\" \"Let's talk about,\" \"The texts say,\" \"Consider what,\" \"Not metaphorically\"\n- Keep all cultural references within Hindu/Indian frame (no Moses, no Biblical references)\n- Save reflection on lessons/meaning for the Reflection Beat section later—this section is pure immersion`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"openai/gpt-5.2\",\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.8\n    }\n  }\n}];"
+      },
+      "id": "766775be-d3aa-4a01-a993-41a51dc1c4e9",
+      "name": "Build Opening Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2352,
+        -144
+      ],
+      "notes": "Builds JSON for Opening section API call"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "7df6922a-576f-4371-8568-40d5598b191f",
+      "name": "Generate Opening Section",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2592,
+        -160
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates Opening section"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// BUILD REGULAR REQUEST - v5 (WITH REFLECTION BEAT)\n// =====================================================\n\nconst input = $input.item.json;\nconst staticData = $getWorkflowStaticData('global');\nconst previousSectionText = staticData.lastSectionContent || null;\nconst usedOpenings = staticData.usedOpenings || [];\n\n// Check if this is the reflection beat section (second-to-last)\nconst isReflectionBeat = input.current_section.is_reflection_beat || \n  (input.current_section.number === input.total_sections - 1);\n\nconst referenceContext = $('Combine All Books').first().json.reference_context || '';\n\nconst systemPrompt = `You are a master scriptwriter for 'Sacred Hindu Stories for Sleep.'\n\nYOUR VOICE:\nYou're a friend telling a story you love. You don't lecture about it. You don't analyze it. You TELL it—vividly, immersively, with humor and heart. The listener should feel like they're in ancient India, not in a classroom learning about ancient India.\n\nTHE CORE RULE: **STAY INSIDE THE STORY**\nYou are a storyteller, not a scholar. Never step outside the narrative to:\n- Analyze why the story exists\n- Comment on who benefits from the narrative\n- Reference \"the texts\" or \"scholars\" or \"the story tells us\"\n- Discuss patterns or theological implications\n- Compare or rank characters like a debate\n\nJust tell the story. Be there with the listener. Experience it together.\n\n=== WRITING STYLE ===\n\n**SECOND-PERSON IMMERSION:**\nRegularly put the listener in the scene:\n- \"You're standing in the assembly hall when the dice hit the floor.\"\n- \"The smell hits you before you see anything—ghee, marigolds, and something burning.\"\n- \"This is the moment. You can feel it.\"\n\nAim for a second-person immersion line every 200-300 words.\n\n**SENSORY SATURATION:**\nGround every section in physical reality. Ancient India should feel REAL:\n\nSmells: sandalwood, incense, ghee lamps, dust after rain, jasmine, horses, cooking fires, river mud\nSounds: conch shells, temple bells, chariot wheels on stone, arrows in flight, silk rustling, the Ganga flowing\nTextures: rough homespun cotton, cool marble floors, the weight of gold jewelry, the grit of battlefield dust\nClimate: the heat, always the heat—or the brief mercy of monsoon rain\n\nEvery 150-200 words, include a sensory grounding line.\n\n**HUMOR CALIBRATION:**\nLight humor helps the listener relax. Calibrate based on section content:\n\n- Training/competition/travel sections: Include 2-3 situational humor beats\n- Battle/action sections: Light touches okay—absurdity of war, gallows humor\n- Death/grief/revelation sections: Restraint appropriate—warmth over jokes\n\n✅ Good humor (situation-based):\n> \"Congratulations, you're a demigod. The bad news: your dad is the sun, and he's not great at child support.\"\n> \"This is the family reunion from hell. Literally everyone is armed.\"\n> \"The good news: you've been invited to the royal dice game. The bad news: everything you love is about to become a betting chip.\"\n> \"You have ninety-nine cousins. Ninety-nine. And every single one of them wants you dead.\"\n\n❌ Never use (meta/narrative humor):\n> \"The narrative convenience here is suspicious.\"\n> \"Notice who benefits from this arrangement.\"\n> \"The universe has a sense of humor.\" (too meta—comment on the situation itself instead)\n\n**PACING:**\n- Short sentences. Frequent paragraph breaks.\n- Maximum 5 sentences per paragraph\n- Maximum 25 words per sentence\n- After something big happens: fragment punchline.\n  \"The arrow flew. Bhishma fell. And the war had truly begun.\"\n\n**STORYTELLING MOMENTUM:**\nAlways keep the story moving. Every paragraph should either:\n1. Move the plot forward (what happens next)\n2. Deepen immersion in a moment (sensory expansion)\n3. Reveal character through action\n\nNever pause to analyze. Never step back to compare. Just keep telling.\n\n**DIALOGUE - CRITICAL TTS RULES:**\nThis content will be read aloud by text-to-speech. Dialogue BREAKS the hypnotic flow.\n\nNEVER write:\n- Back-and-forth conversations between characters\n- Extended quoted exchanges\n- Multiple speakers taking turns\n- Dialogue that reads like a script or play\n\nALWAYS paraphrase instead:\n✅ \"She told him everything—who his mother was, who his brothers were, that the throne should have been his by right. She begged him to switch sides.\"\n✅ \"He refused. He told her that Duryodhana was the only one who ever saw his worth. He would not betray that.\"\n✅ \"Krishna's voice cut through the chaos. He reminded Arjuna of every wrong done to the Pandavas—the woman dragged by her hair, the boy surrounded and cut down.\"\n\nIf you absolutely MUST include a direct quote:\n- Maximum ONE brief quote per 500 words\n- Embed it in narration, never standalone\n- Keep it under 15 words\n- Never follow one quote with another quote\n\nDEFAULT TO PARAPHRASING. When in doubt, describe what was said rather than quoting it.\n\n=== SLEEP-APPROPRIATE CONTENT ===\n\nThis is SLEEP content. Listeners are trying to relax and drift off. The goal is a hypnotic, peaceful experience—even when the story involves war and death.\n\n**Language to VARY (don't overuse any single term):**\n- \"kill/killed/killing\" → vary with: fall, defeat, end, strike down, claim, lose, overcome, bring down\n- \"blood\" → vary with: crimson, red, the dark stain, wet earth (or simply omit—we don't need constant blood references)\n- \"die/death/dead\" → vary with: fall, pass, the end comes, breathe their last, leave this world, slip away\n- \"corpse/body\" → vary with: the fallen, what remained, where he lay, the still form\n\n**NEVER use (too graphic/jarring for sleep):**\n- Graphic wound descriptions (no \"raw meat,\" \"organs,\" \"bones visible,\" \"entrails,\" \"gore\")\n- Detailed suffering, torture, or prolonged pain\n- Medical specifics of injuries\n- The word \"murder\" (too jarring)\n- Slasher-movie style violence\n- Screaming or anguish dwelt upon\n- Anything that would make someone's eyes snap open\n\n**Frame violence POETICALLY, not GRAPHICALLY:**\n✅ \"The arrow found its mark. Karna fell. The sun seemed to dim.\"\n✅ \"The battlefield claimed ten thousand souls before noon.\"\n✅ \"He breathed his last watching the sun set—his father's face, finally close.\"\n✅ \"The war took everyone. The earth drank deep that season.\"\n✅ \"One by one, the great warriors fell. By sunset, the field was quiet.\"\n\n❌ \"The arrow severed his head, blood spraying across the chariot.\"\n❌ \"The wound gaped open, organs visible through the torn flesh.\"\n❌ \"He screamed as the blade cut through muscle and bone.\"\n❌ \"Blood pooled beneath the corpse, soaking into the mud, spreading in dark rivers.\"\n\nWar and death are part of this story, but they should feel MYTHIC and DISTANT—like hearing about a storm that happened long ago. The listener should be able to absorb even difficult moments while remaining relaxed and drowsy.\n\n=== THE REFLECTION BEAT ===\n\nIf this is the REFLECTION BEAT section (second-to-last), your job changes:\n\nThis is a DEDICATED SECTION where you \"close the Mahabharata\" and share what the story meant—what the ancient storytellers were trying to teach us. This section provides RESOLUTION and CLOSURE.\n\n**THE PURPOSE:**\nAfter a 2-3 hour journey, the listener should drift off feeling like they understood the point—NOT lying awake pondering unanswered questions. You are delivering the lessons and meaning.\n\n**REFLECTION BEAT TONE:**\nConversational and EARNEST, not preachy. You're a friend sharing insight after experiencing a story together—not a priest delivering a sermon. The \"gentle cynic\" voice stays OUT of this section. This is where we genuinely discuss what the story teaches.\n\n**❌ WRONG (Preachy):**\n- \"The moral of this story is that we must always follow our dharma.\"\n- \"Let this be a lesson to us all about karma.\"\n- \"This teaches us that devotion is always rewarded.\"\n\n**✅ RIGHT (Conversational & Earnest):**\n- \"And that's what the storytellers wanted you to remember. That dharma isn't always clean or comfortable. Sometimes doing the right thing means choosing between two terrible options. Arjuna couldn't see past the horror of killing his teachers. Krishna was trying to show him something bigger—that the real battle wasn't about arrows and armor. It was about duty when duty feels impossible.\"\n\n- \"This is what the story is really about. Not that karma is some cosmic accounting system where good deeds get rewards. But that your actions ripple outward in ways you can't control. Karna's generosity, his loyalty, his skill—none of it could erase the karma of fighting for the wrong side. The storytellers wanted you to understand that sometimes the consequences of our choices outlive us.\"\n\n- \"The ancient rishis who preserved this story for thousands of years wanted you to know something: that even gods struggle with the weight of their roles. That Krishna himself wept for what had to happen at Kurukshetra. The war was necessary, but that didn't make it good. Duty and heartbreak can exist in the same moment.\"\n\n**REFLECTION BEAT FORMULA:**\n1. **Transition out of immersion** — Signal that we're stepping back (\"So after all of that—what were the ancient storytellers trying to tell us?\")\n2. **Walk through the major lessons** — What did each part of the journey teach? Cover the key story beats. Blend Hindu philosophy (dharma, karma, maya) with accessible language.\n3. **Deliver the overall meaning** — What's the big takeaway the ancient storytellers wanted to preserve?\n4. **Provide closure** — The listener should feel satisfied, not left hanging with questions.\n\n**BLENDING HINDU PHILOSOPHY:**\nWhen discussing concepts, make them accessible without dumbing them down:\n\n✅ \"The Bhagavad Gita calls it dharma—your duty, your role in the cosmic order. But what Krishna was really asking Arjuna was this: what do you do when duty demands something that breaks your heart?\"\n\n✅ \"Karma isn't just 'what goes around comes around.' It's more complex than that. It's the web of cause and effect that binds everyone together. Duryodhana's karma wasn't just his personal actions—it was tangled up with his father's blindness, his uncle's silence, his mother's ambition.\"\n\n✅ \"Maya—the illusion that makes us think this physical world is all there is. Yudhishthira couldn't see past the dice and the kingdom and the humiliation. The storytellers wanted you to understand that sometimes what feels like the end of everything is just maya—the surface level of a much deeper truth.\"\n\n**REFLECTION BEAT LENGTH:** 800-1200 words. This is a full section, not a quick paragraph.\n\n**WHAT IT'S NOT:**\n- Not open-ended questions that keep the listener's brain spinning\n- Not preachy moralizing with \"Let this be a lesson\" energy\n- Not a quick wrap-up tacked onto another section\n- Not academic analysis\n- Not \"gentle cynic\" observations\n\n**WHAT IT IS:**\n- A dedicated section with room to cover all the lessons\n- Resolution and closure after a long journey\n- Warm, conversational, EARNEST insight-sharing\n- The payoff—here's what all of that meant\n\n=== BANNED PHRASES (never use) ===\n- \"Here's the thing...\" / \"Here's what...\" / \"Here's where...\" / \"Here's something about...\"\n- \"Let's talk about...\" / \"Let's examine...\" / \"Let's explore...\"\n- \"The texts say...\" / \"The texts aren't clear...\" / \"According to the scriptures...\"\n- \"Consider what...\" / \"Consider how...\"\n- \"Notice who benefits...\" / \"Notice the pattern...\"\n- \"This is where you need to understand...\"\n- \"The question is...\" / \"Which raises the question...\"\n- \"Start with [X]. Pure, measurable...\" (essay framing)\n- \"The answer is...\" / \"We will never know...\" (debate framing)\n- Any reference to \"the narrative\" or \"the story\" as a construct being analyzed\n- Comparisons to non-Hindu religious figures (no Moses, no Biblical references)\n\n=== LIMITED PHRASES (use max once per entire script) ===\n- \"Not metaphorically. Not poetically.\" — if used, use ONCE and move on quickly\n- \"But that's later.\" — vary with \"Not yet.\" / \"That comes in time.\" / \"For now, stay here.\"\n\n=== TRANSITIONS ===\n\nBegin each section with a story-focused bridge:\n\n✅ Good:\n- \"Three days pass. The forest grows quieter.\"\n- \"But that arrow is still in the air. Let's go back to the moment before.\"\n- \"Dawn comes. With it, the war.\"\n- \"Meanwhile, in the enemy camp, something else entirely is happening.\"\n\n❌ Bad:\n- \"Now let's examine...\"\n- \"Which raises the question...\"\n- \"Let's talk about what they carried...\"\n- \"Here's what you need to understand about...\"\n\n=== HANDLING \"ANALYTICAL\" CONTENT ===\n\nIf the section covers weapons, powers, comparisons, or \"who was better\":\n- DO NOT list or inventory (\"He had X, Y, and Z weapons\")\n- DO NOT debate (\"The question is who was more powerful\")\n- DO NOT analyze (\"Consider the advantages each had\")\n\nINSTEAD, make us EXPERIENCE it:\n- Walk with Arjuna up the frozen mountain toward Shiva\n- Feel the weight of the Pashupatastra humming in your hands\n- Stand with Karna as the curse activates and the words dissolve from his mind\n- Freeze the moment and let us FEEL the imbalance rather than listing it\n\n=== ENDING (FINAL SECTION ONLY) ===\n\nIf this is the FINAL section:\n- No CTA, no \"good night,\" no \"thanks for watching\"\n- Let the story fade naturally into legacy or stillness\n- End with sensory quiet, not analysis\n- Final image, not final thesis\n- Extra gentleness—this is where the listener drifts off\n\n> \"And somewhere in the forests of India, they say, you can still hear the echo of chariot wheels. If you listen. If the night is quiet enough. If you let yourself drift.\"\n\nIMPORTANT: Write ONLY section content. No headers.\n\n${referenceContext}`;\n\nconst outlineText = input.full_outline.map(s => \n  `Section ${s.number}: ${s.title} (${s.target_words} words) - ${s.description}`\n).join('\\\\n');\n\nconst spokenTransition = input.current_section.spoken_transition \n  ? `\\\\n\\\\nSuggested transition into this section: \"${input.current_section.spoken_transition}\"\\\\nUse this or similar—keep it story-focused, not analytical.`\n  : '';\n\nlet userPrompt = `Write Section ${input.current_section.number} of a Sacred Hindu Stories for Sleep video about: ${input.topic}\n\nFull video outline:\n${outlineText}\n\nYou are writing Section ${input.current_section.number}: ${input.current_section.title}\nDescription: ${input.current_section.description}\nTarget word count: ${input.current_section.target_words} words\n${spokenTransition}\n\nThis is section ${input.current_section.number} of ${input.total_sections}.`;\n\nif (previousSectionText) {\n  userPrompt += `\n\nEnd of previous section for continuity:\n\"\"\"\n${previousSectionText.slice(-1500)}\n\"\"\"\n\nContinue naturally. Match the tone and momentum.`;\n}\n\n// Add Reflection Beat instructions if this is the second-to-last section\nif (isReflectionBeat) {\n  userPrompt += `\n\nTHIS IS THE REFLECTION BEAT SECTION:\nThis is a dedicated section where you \"close the Mahabharata\" and share what the story meant.\n\nYour job in this section:\n1. Transition out of immersive storytelling mode (\"So after all of that—what were the ancient storytellers trying to tell us?\")\n2. Walk through the lessons from each major part of the story\n3. Blend Hindu philosophy (dharma, karma, maya) with accessible language—make concepts clear without dumbing them down\n4. Deliver the overall meaning—what did the ancient rishis want us to understand?\n5. Provide RESOLUTION and CLOSURE—the listener should drift off satisfied, not pondering questions\n\nDO NOT:\n- Leave the listener with open-ended questions\n- Use preachy language like \"The moral is...\" or \"Let this be a lesson...\"\n- Use \"gentle cynic\" or analytical voice (no \"who benefited\" observations)\n- Rush through it—this is a full 800-1200 word section\n- Be academic or scholarly\n\nDO:\n- Be conversational and EARNEST, like a friend sharing insight after a long story\n- Cover the lessons from the major story beats (what did each part teach?)\n- Deliver the payoff—here's what all of that journey meant\n- Give the listener closure so they can drift off feeling satisfied\n- When relevant, explain Hindu concepts (dharma, karma, maya) in accessible terms\n\nRemember: The goal is RESOLUTION, not more questions. They should feel like they got the point and can rest now.`;\n}\n\nif (input.is_final) {\n  userPrompt += `\n\nTHIS IS THE FINAL SECTION - FADE-OUT ENDING:\n- No \"good night,\" no CTA, no \"thanks for watching\"\n- Reduce humor intensity\n- End on legacy, endurance, or quiet continuation\n- Let the story fade rather than stop abruptly\n- Do NOT analyze \"who was better\" or rehash lessons—that's what the Reflection Beat was for\n- Just let the images and emotions settle`;\n}\n\nconst previousSections = input.full_outline\n  .slice(0, input.section_index)\n  .map((s, i) => `Section ${s.number}: ${s.title}`)\n  .join('\\\\n');\n\nuserPrompt += `\n\nWHAT THE LISTENER HAS ALREADY EXPERIENCED:\n${previousSections}\n\nContinue the journey. Don't re-explain things already covered.\n\nWORD COUNT TARGET: ${input.current_section.target_words} words (within 5%)\n\nREMEMBER:\n- Stay INSIDE the story (unless this is Reflection Beat—then step back earnestly)\n- Second-person immersion (\"you see,\" \"you smell,\" \"you feel\") in story sections\n- Humor = situations characters face, not meta-commentary\n- Gross, specific sensory details in story sections\n- No \"who benefited\" analysis in ANY section\n- Story-focused transitions\n- MINIMAL DIALOGUE: Paraphrase what characters said. Max one brief embedded quote per 500 words.\n- SLEEP-APPROPRIATE: No graphic violence. Frame death/war poetically. Vary \"kill/blood/death\" language.\n- If Reflection Beat: Be earnest and conversational. Blend Hindu philosophy with accessibility. Deliver resolution.`;\n\nif (usedOpenings.length > 0) {\n  userPrompt += `\n\nOPENING VARIETY - These patterns were already used:\n${usedOpenings.map((o, i) => `- \"${o.substring(0, 40)}...\"`).join('\\\\n')}\n\nUse a DIFFERENT opening structure:\n- Continue action: \"The sun is higher now. Your back already aches.\"\n- New sensory hit: \"The smell changes as you enter the market.\"\n- Time jump: \"Three days pass. Nothing improves.\"\n- Dialogue fragment: \"'You're late,' someone mutters.\"\n- Question: \"Ever wondered what a battlefield smells like the morning after?\"`;\n}\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"openai/gpt-5.2\",\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.8\n    }\n  }\n}];"
+      },
+      "id": "999c2a23-a5b3-4e06-aedd-154499755927",
+      "name": "Build Regular Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2256,
+        32
+      ],
+      "notes": "Builds JSON for regular section API call"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "47dcbe81-799c-4496-a4da-d8093a54e6d4",
+      "name": "Generate Regular Section",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2768,
+        32
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates regular section"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sectionContent = $input.item.json.choices[0].message.content;\nconst loopData = $('Loop Over Sections').item.json;\n\nconst staticData = $getWorkflowStaticData('global');\n\n// Extract the first sentence/opening phrase (first 50 chars or until first period)\nconst openingPhrase = sectionContent.substring(0, 100).split('.')[0];\n\n// Initialize or append to used openings list\nif (!staticData.usedOpenings) {\n  staticData.usedOpenings = [];\n}\nstaticData.usedOpenings.push(openingPhrase);\n\n// Save content for next iteration\nstaticData.lastSectionContent = sectionContent;\nstaticData.lastSectionNumber = loopData.current_section.number;\n\n// Format the section with header\nconst formattedSection = `# **Section ${loopData.current_section.number}: ${loopData.current_section.title}**\\n\\n${sectionContent}`;\n\nreturn [{\n  json: {\n    topic: loopData.topic,\n    video_name: loopData.video_name,\n    voice_id: loopData.voice_id,\n    full_title: loopData.full_title,\n    total_sections: loopData.total_sections,\n    section_number: loopData.current_section.number,\n    section_title: loopData.current_section.title,\n    section_content: formattedSection,\n    raw_content: sectionContent,\n    word_count: sectionContent.split(/\\s+/).length\n  }\n}];"
+      },
+      "id": "c04cf414-dfd9-4dba-96b7-0e003ea7ba13",
+      "name": "Format Section",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2912,
+        -144
+      ],
+      "notes": "Adds section header and formats content"
+    },
+    {
+      "parameters": {},
+      "id": "f7698416-665d-4a72-9d0f-e0c69219f5b8",
+      "name": "Rate Limit Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3136,
+        -112
+      ],
+      "webhookId": "f0f017fd-ed88-4a1b-9c71-d29297f98382",
+      "notes": "5 second pause between sections"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "all_sections",
+        "options": {}
+      },
+      "id": "4ebb95e3-9571-4445-993a-c13226054d5b",
+      "name": "Aggregate All Sections",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        208
+      ],
+      "notes": "Collects all generated sections"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sections = $input.item.json.all_sections;\n\n// Sort by section number to ensure correct order\nsections.sort((a, b) => a.section_number - b.section_number);\n\n// Combine all sections with separator\nconst fullScript = sections.map(s => s.section_content).join('\\n\\n---\\n\\n');\n\n// Calculate total word count\nconst totalWords = sections.reduce((sum, s) => sum + s.word_count, 0);\n\n// Get metadata from first section\nconst metadata = sections[0];\n\nreturn [{\n  json: {\n    topic: metadata.topic,\n    video_name: metadata.video_name,\n    voice_id: metadata.voice_id,\n    full_title: metadata.full_title,\n    total_sections: metadata.total_sections,\n    total_words: totalWords,\n    full_script: fullScript,\n    sections: sections\n  }\n}];"
+      },
+      "id": "b29418fb-a0f5-4fb3-a8a5-871678caecc4",
+      "name": "Combine Full Script",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2096,
+        208
+      ],
+      "notes": "Combines all sections into the complete script"
+    },
+    {
+      "parameters": {
+        "folderId": "1Wze4CUlG6w55xffI8e-nv2dmW6S-sovE",
+        "title": "=SHSFS - {{ $('Build Outline Request').item.json.topic }} - {{ $now.setZone('America/New_York').toFormat('yyyy.MM.dd') }}"
+      },
+      "id": "24251b0b-a93d-4e55-a946-e2c717b87308",
+      "name": "Create Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        208
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "Creates the final Google Doc"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "output-doc-id",
+              "name": "document_id",
+              "value": "={{ $json.documentId }}",
+              "type": "string"
+            },
+            {
+              "id": "output-doc-url",
+              "name": "document_url",
+              "value": "=https://docs.google.com/document/d/{{ $json.documentId }}/edit",
+              "type": "string"
+            },
+            {
+              "id": "output-video-name",
+              "name": "video_name",
+              "value": "={{ $('Combine Full Script').item.json.video_name }}",
+              "type": "string"
+            },
+            {
+              "id": "output-voice-id",
+              "name": "voice_id",
+              "value": "={{ $('Combine Full Script').item.json.voice_id }}",
+              "type": "string"
+            },
+            {
+              "id": "output-total-words",
+              "name": "total_words",
+              "value": "={{ $('Combine Full Script').item.json.total_words }}",
+              "type": "number"
+            },
+            {
+              "id": "output-total-sections",
+              "name": "total_sections",
+              "value": "={{ $('Combine Full Script').item.json.total_sections }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7c004fa6-ef85-4a8f-ac19-084489a48542",
+      "name": "Output Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2720,
+        208
+      ],
+      "notes": "Final output with document URL and metadata"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create Google Doc').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "locationChoice": "location",
+              "text": "=={{ $('Combine Full Script').item.json.full_script }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2496,
+        208
+      ],
+      "id": "136f9121-dafc-4f69-b174-9703ba50960d",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clear staticData from any previous workflow runs\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastSectionContent = null;\nstaticData.lastSectionNumber = null;\nstaticData.usedOpenings = [];\n\n// Pass through all input data unchanged\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -176
+      ],
+      "id": "e88baadb-a519-4e0e-887a-5acf5cbba88d",
+      "name": "Clear Previous Run Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.item.json;\nconst editInput = $('📝 EDIT THIS - Your Input').first().json;\n\n// Check if we should use references\nif (!editInput.use_references || !editInput.reference_books) {\n  return [{\n    json: {\n      ...editInput,\n      reference_context: '',\n      has_references: false\n    }\n  }];\n}\n\n// Get requested book numbers\nconst requestedBooks = editInput.reference_books.split(',').map(n => n.trim());\n\n// Get all files from previous node\nconst allFiles = $input.all();\n\n// Filter to only the requested books\nconst neededFiles = allFiles.filter(file => {\n  const fileName = file.json.name;\n  // Match files like \"Book_01.txt\" or \"Book_02.txt\"\n  for (const bookNum of requestedBooks) {\n    const bookNumPadded = bookNum.padStart(2, '0');\n    if (fileName.includes(`Book_${bookNumPadded}`)) {\n      return true;\n    }\n  }\n  return false;\n});\n\n// Return file info for downloading\nreturn neededFiles.map(file => ({\n  json: {\n    fileId: file.json.id,\n    fileName: file.json.name,\n    originalInput: editInput\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        32
+      ],
+      "id": "fd7a364a-6b50-4727-a989-228e5ba7c94f",
+      "name": "Fetch Book Content"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1ZR-5ZDlR8RPw435SRlFk8BAwH4H-KaD1",
+            "mode": "list",
+            "cachedResultName": "Mahabharata Summaries",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1ZR-5ZDlR8RPw435SRlFk8BAwH4H-KaD1"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        816,
+        32
+      ],
+      "id": "36c7eff7-fcb8-4783-9af4-fe7ea31fd47e",
+      "name": "Get Book Files from Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YccFrdj90ivdga5k",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.fileId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        16
+      ],
+      "id": "2ed4fd34-f801-46f3-8e9f-44ba6050916a",
+      "name": "Download Book Content",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YccFrdj90ivdga5k",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allBooks = $input.all();\n\n// Get originalInput from the node where it still exists\nconst originalInput = $('Fetch Book Content').first().json.originalInput;\n\n// Text is now in json.data from Extract node\nconst bookContents = allBooks.map((book) => {\n  const fileName = book.json.fileName || 'Unknown Book';\n  const content = book.json.data || '[No content extracted]';\n  \n  return `\\n### ${fileName}\\n\\n${content}`;\n}).join('\\n\\n---\\n\\n');\n\nconst referenceContext = `\n\n=== REFERENCE MATERIAL - MAHABHARATA (KMG TRANSLATION) ===\n\nBooks provided for reference: ${originalInput.reference_books}\n\n${bookContents}\n\nUSING THIS MATERIAL:\n- Use these as your PRIMARY SOURCE for all names, events, sequences, and details\n- Maintain historical accuracy while applying your \"Sacred Hindu Stories for Sleep\" voice\n- The \"who benefited\" lens should be applied TO these events, not invented around them\n- Quote sparingly (1-2 direct quotes maximum per section) but reference extensively\n- Note patterns and power dynamics that emerge from the actual text\n\nCRITICAL: Let the source material drive the facts. Your voice provides the analysis and pacing.\n\n===\n\n`;\n\nreturn [{\n  json: {\n    ...originalInput,\n    reference_context: referenceContext,\n    has_references: true\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        240
+      ],
+      "id": "344cb4e8-6a93-4b41-a724-b61867c61d50",
+      "name": "Combine All Books"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        16
+      ],
+      "id": "2104c14a-a3b6-4301-9cb1-62775fceaa04",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        176
+      ],
+      "id": "32e1175e-300e-4809-a3cf-61239df1aa05",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get today's date in YYYY-MM-DD format\nconst today = new Date().toISOString().split('T')[0];\n\n// Get all rows from sheet\nconst allRows = $input.all();\n\n// Count scripts completed today\nconst completedToday = allRows.filter(row => {\n  const completedDate = row.json.date_completed;\n  if (!completedDate) return false;\n  // Handle different date formats\nconst dateStr = typeof completedDate === 'string' \n  ? completedDate.split(' ')[0]  // ✅ Splits on space for \"yyyy-MM-dd HH:mm:ss\"\n  : new Date(completedDate).toISOString().split('T')[0];\n  return dateStr === today;\n}).length;\n\n// Set your daily limit here (adjust as needed)\nconst DAILY_LIMIT = 2; // Change to 4 or 5 if you want\n\n// Calculate how many more we can do today\nconst remainingSlots = DAILY_LIMIT - completedToday;\n\n// Filter for pending topics (no doc_id means not processed yet)\nconst pendingTopics = allRows.filter(row => !row.json.doc_id);\n\n// Take only the number we can process today\nconst topicsToProcess = pendingTopics.slice(0, Math.max(0, remainingSlots));\n\n// Return results with metadata\nreturn topicsToProcess.map(row => ({\n  json: {\n    ...row.json,\n    _metadata: {\n      completedToday: completedToday,\n      dailyLimit: DAILY_LIMIT,\n      remainingSlots: remainingSlots,\n      totalPending: pendingTopics.length\n    }\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        -160
+      ],
+      "id": "2f9d209f-dca3-4213-a96a-18fca258fccd",
+      "name": "Check Today's Count"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        -160
+      ],
+      "id": "81503f54-1594-4ade-a447-bf94905e6cb3",
+      "name": "Read Topics Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1701eaf4-8b6b-4004-a8c4-ad95592ed05d",
+              "leftValue": "={{ $json._metadata.remainingSlots }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        -160
+      ],
+      "id": "6b83bc56-5cd2-4670-9b1e-303cac4ccac6",
+      "name": "Any Topics to Process?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        224,
+        176
+      ],
+      "id": "f16a8262-d09a-4fa9-bb6b-b9051eb22f3f",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.item.json;\n\nreturn [{\n  json: {\n    topic: row.topic,\n    video_name: row.video_name,\n    target_words: parseInt(row.target_words),\n    voice_id: row.voice_id || 'I3l9G0ww7jdDDZ7DbY0k', // default if empty\n    script_type: row.script_type || 'deep_dive',\n    // Preserve original row data for later update\n    reference_books: row.reference_books,\n    use_references: true,\n    _original_row: row\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        -176
+      ],
+      "id": "f3a9bef9-1c43-47d0-80c1-43089d9e236c",
+      "name": "📝 EDIT THIS - Your Input"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Build Outline Request').item.json._original_row.row_number }}",
+            "doc_id": "={{ $json.document_id }}",
+            "doc_link": "={{ $json.document_url }}",
+            "date_completed": "={{ $now.setZone('America/New_York').format('yyyy-MM-dd HH:mm:ss') }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reference_books",
+              "displayName": "reference_books",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2928,
+        208
+      ],
+      "id": "cf33487b-3ec8-40c3-94bd-89f2efe26841",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Topics Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Outline Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Outline": {
+      "main": [
+        [
+          {
+            "node": "Parse Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Outline": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Sections": {
+      "main": [
+        [
+          {
+            "node": "Aggregate All Sections",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Opening Section?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Opening Section?": {
+      "main": [
+        [
+          {
+            "node": "Build Opening Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Regular Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Opening Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Opening Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Opening Section": {
+      "main": [
+        [
+          {
+            "node": "Format Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Regular Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Regular Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Regular Section": {
+      "main": [
+        [
+          {
+            "node": "Format Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Section": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Delay": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Sections": {
+      "main": [
+        [
+          {
+            "node": "Combine Full Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Full Script": {
+      "main": [
+        [
+          {
+            "node": "Create Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Summary": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Output Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Previous Run Data": {
+      "main": [
+        [
+          {
+            "node": "📝 EDIT THIS - Your Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Book Content": {
+      "main": [
+        [
+          {
+            "node": "Download Book Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Book Files from Drive": {
+      "main": [
+        [
+          {
+            "node": "Fetch Book Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Book Content": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine All Books": {
+      "main": [
+        [
+          {
+            "node": "Build Outline Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Combine All Books",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Today's Count": {
+      "main": [
+        [
+          {
+            "node": "Any Topics to Process?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Topics Sheet": {
+      "main": [
+        [
+          {
+            "node": "Check Today's Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Topics to Process?": {
+      "main": [
+        [
+          {
+            "node": "Clear Previous Run Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 EDIT THIS - Your Input": {
+      "main": [
+        [
+          {
+            "node": "Get Book Files from Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Topics Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-01-23T12:00:51.053+01:00",
+          "Readable date": "January 23rd 2026, 12:00:51 pm",
+          "Readable time": "12:00:51 pm",
+          "Day of week": "Friday",
+          "Year": "2026",
+          "Month": "January",
+          "Day of month": "23",
+          "Hour": "12",
+          "Minute": "00",
+          "Second": "51",
+          "Timezone": "Europe/Berlin (UTC+01:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "23a2f273-b91a-4de5-ba32-2219edf6dc79",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-25T21:33:42.635Z",
+      "createdAt": "2026-01-25T21:33:42.635Z",
+      "role": "workflow:owner",
+      "workflowId": "iixzw2YUC7r3X07o6Dg5w",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T21:33:40.980Z",
+      "createdAt": "2026-01-25T21:33:40.980Z",
+      "id": "3tXWj4bbeGdd4akG",
+      "name": "SHSFS"
+    }
+  ]
+}
