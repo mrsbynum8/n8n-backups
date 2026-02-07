@@ -1,0 +1,760 @@
+{
+  "updatedAt": "2026-01-26T02:00:41.080Z",
+  "createdAt": "2026-01-26T02:00:21.132Z",
+  "id": "jB3reIo1GpbFrW-uTt0TJ",
+  "name": "001. MPV Script Generation (Topic → Google Doc)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1cbab6ee-52f8-4f08-8c9d-b2a848e3f06c",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        480,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "topic",
+              "name": "topic",
+              "value": "Going No Contact with Narcissistic Parents",
+              "type": "string"
+            },
+            {
+              "id": "video_name",
+              "name": "video_name",
+              "value": "GNC",
+              "type": "string"
+            },
+            {
+              "id": "target_words",
+              "name": "target_words",
+              "value": 2200,
+              "type": "number"
+            },
+            {
+              "id": "voice_id",
+              "name": "voice_id",
+              "value": "NFG5qt843uXKj4pFvR7C",
+              "type": "string"
+            },
+            {
+              "id": "510e8934-fa9f-4dcb-a300-72923696c8c6",
+              "name": "content_pillar",
+              "value": "rebuilding",
+              "type": "string"
+            },
+            {
+              "id": "script_type",
+              "name": "=script_type",
+              "value": "deep_dive",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e08ddac2-ac10-4bda-8d45-754fdc8ef69e",
+      "name": "📝 EDIT THIS - Your Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        16
+      ],
+      "notes": "EDIT THESE VALUES before running:\n- topic: Your video topic/title\n- video_name: Short name for spreadsheets (one word)\n- target_words: Total word count target (default 20000)\n- voice_id: ElevenLabs voice ID\n- script_type: 'deep_dive', 'compilation', or 'character_epic'"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.item.json;\n\nconst systemPrompt = `You are a master scriptwriter creating outlines for the YouTube channel 'Mr. PsycheVerse.' Your persona is THE SHADOW CARTOGRAPHER—an insightful, authoritative, and empathetic guide who has mapped the dark territory of narcissistic abuse extensively and now guides others through it with knowing recognition.\n\nCHANNEL IDENTITY:\n- Premier destination for adults healing from narcissistic family systems and relationships\n- Blends Jungian psychology with practical, actionable advice\n- Tone: Warm authority + dry wit + mythological perspective\n- Never preachy. Always validating. Unafraid to explore darker aspects.\n\nTARGET AUDIENCE:\n- Primary: Adults (25-45) who grew up in narcissistic family systems. They feel lost, struggle with self-esteem, experience anxiety, and find themselves in repeating patterns.\n- Secondary: Individuals recovering from narcissistic romantic relationships.\n\nTHREE CONTENT PILLARS:\n1. IDENTIFICATION: Help viewers identify narcissistic abuse and validate their experiences\n2. HEALING: Provide Jungian frameworks for deep healing (shadow work, individuation, inner child)\n3. REBUILDING: Practical advice for boundaries, self-esteem, and healthy relationships\n\nSCRIPT TYPES:\n- 'deep_dive': One psychological concept explored thoroughly (default)\n- 'pattern_recognition': Identifying narcissistic behaviors/tactics with examples\n- 'healing_framework': Step-by-step Jungian healing approach\n\nOUTPUT FORMAT:\nReturn ONLY valid JSON with no other text:\n{\n  \"title\": \"Full video title\",\n  \"sections\": [\n    {\n      \"number\": 1,\n      \"title\": \"Section Title\",\n      \"description\": \"What this section covers and the psychological angle\",\n      \"target_words\": 350\n    }\n  ]\n}`;\n\nconst userPrompt = `Create an outline for a Mr. PsycheVerse video about: ${input.topic}\n\nScript type: ${input.script_type}\nContent pillar: ${input.content_pillar}\nTarget total word count: ${input.target_words} words\n\nCreate 5-7 sections with word counts that total approximately ${input.target_words} words.\n\nSTRUCTURE RULES:\n- Section 1: THE HOOK & STORY (~350 words) - A powerful, relatable question that speaks to pain + an illustrative archetypal story\n- Section 2: THE THESIS (~250 words) - What this video will teach, anchored in Jungian concepts\n- Sections 3-5/6: MAIN CONTENT - Core psychological insights and actionable wisdom (distribute remaining words)\n- Final Section: SYNTHESIS & CTA (~300 words) - Summarize key takeaway, empower viewer, call to action\n\nFor IDENTIFICATION pillar: Focus on recognizing patterns, validating experiences, naming the abuse\nFor HEALING pillar: Focus on Jungian frameworks (shadow, individuation, inner child work)\nFor REBUILDING pillar: Focus on practical steps, boundaries, building healthy relationships\n\nDistribute word counts based on content needs. Make section titles compelling and specific.`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"anthropic/claude-opus-4.5\",\n      max_tokens: 4096,\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.7\n    }\n  }\n}];"
+      },
+      "id": "4fbbeed4-1577-4511-8de1-f5d14e5e4ccb",
+      "name": "Build Outline Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        480
+      ],
+      "notes": "Builds the JSON body for outline generation"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "668b6fe8-0841-4e63-9b56-772faac770fa",
+      "name": "Generate Outline",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        480
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates the story outline"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.item.json.choices[0].message.content;\nlet outline;\n\ntry {\n  outline = JSON.parse(response);\n} catch (e) {\n  const jsonMatch = response.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    outline = JSON.parse(jsonMatch[1]);\n  } else {\n    const jsonMatch2 = response.match(/\\{[\\s\\S]*\\}/);\n    if (jsonMatch2) {\n      outline = JSON.parse(jsonMatch2[0]);\n    } else {\n      throw new Error(\"Could not parse outline response as JSON: \" + response.substring(0, 200));\n    }\n  }\n}\n\nconst topic = $('📝 EDIT THIS - Your Input').item.json.topic;\nconst video_name = $('📝 EDIT THIS - Your Input').item.json.video_name;\nconst voice_id = $('📝 EDIT THIS - Your Input').item.json.voice_id;\nconst script_type = $('📝 EDIT THIS - Your Input').item.json.script_type;\nconst content_pillar = $('📝 EDIT THIS - Your Input').item.json.content_pillar;\n\nreturn outline.sections.map((section, index) => ({\n  json: {\n    topic: topic,\n    video_name: video_name,\n    voice_id: voice_id,\n    script_type: script_type,\n    content_pillar: content_pillar,\n    full_title: outline.title,\n    total_sections: outline.sections.length,\n    full_outline: outline.sections,\n    current_section: section,\n    section_index: index,\n    is_opening: section.number === 1,\n    is_final: section.number === outline.sections.length\n  }\n}));"
+      },
+      "id": "9e128211-cb0f-48bf-aca7-577313b7fbbb",
+      "name": "Parse Outline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        480
+      ],
+      "notes": "Parses the outline JSON and prepares for section-by-section generation"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ab6c6ba5-a4e7-4b09-9381-c60383132883",
+      "name": "Loop Over Sections",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        256
+      ],
+      "notes": "Processes one section at a time"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "is-opening",
+              "leftValue": "={{ $json.is_opening }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d4818527-0aac-4ced-b42a-3503ed2e4980",
+      "name": "Is Opening Section?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        240
+      ],
+      "notes": "Routes to Opening prompt or Regular prompt"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.item.json;\n\nconst systemPrompt = `You are a master scriptwriter for the YouTube channel 'Mr. PsycheVerse.' You are writing the OPENING SECTION which has a SPECIFIC FORMULA.\n\nYOUR PERSONA - THE SHADOW CARTOGRAPHER:\nYou are an insightful, authoritative, and empathetic guide who has mapped the dark territory of narcissistic abuse extensively. You speak with the gravitas of someone who deeply understands the human psyche. You validate without enabling. You illuminate without lecturing.\n\nYour voice has KNOWING RECOGNITION—not just clinical explanation. You see narcissistic patterns like ancient archetypes, because they ARE. The humor comes from seeing these same patterns repeat across millennia and relationships.\n\n=== MANDATORY OPENING FORMULA ===\n\n**PART 1 - THE HOOK (First 15 seconds / ~35 words):**\nStart with a powerful, relatable question that speaks directly to the viewer's pain point.\nExamples:\n- \"Have you ever walked away from a conversation with your parent feeling like you're going crazy?\"\n- \"Why do you keep finding yourself in relationships that feel exactly like the one you had with your mother?\"\n- \"What if everything you believe about yourself was programmed by someone who couldn't see the real you?\"\n\n**PART 2 - THE ILLUSTRATIVE STORY (60-90 seconds / ~150-200 words):**\nImmediately follow with a concise, archetypal story or example. This makes the abstract feel real and urgent.\n- Use second person (\"Imagine you're...\") or describe a composite scenario\n- Make it specific and visceral—not generic\n- End the story at a moment of tension or realization\n\n**PART 3 - THE TRANSITION (~50 words):**\n\"This is what we're exploring today. And by the end of this video, you'll understand...\"\nThen preview the key insight or transformation the viewer will gain.\n\n=== VOICE & HUMOR DEVICES ===\n\nTONE: Warm authority + dry wit. Like a wise friend who happens to have a psychology degree.\n\n1. PATTERN RECOGNITION HUMOR - The comedy of how textbook and predictable narcissists are. Mock the universality of their tactics without mocking the victim.\n\n2. MYTHOLOGICAL CALLBACKS - Connect modern narcissistic dynamics to ancient patterns, myths, or historical figures. This isn't new. Humans have been dealing with this forever.\n\n3. THE KNOWING ASIDE - Break the fourth wall to acknowledge what the viewer is feeling right now as they listen. Be specific and direct about the physical or emotional reaction they're likely having in this moment.\n\n4. ABSURDIST RECOGNITION - Find dark comedy in how universal and uncoordinated narcissistic behavior is. No meetings, no handbook, yet somehow they all do the same things.\n\n5. THE JUNGIAN REFRAME - Use psychological concepts to reframe what the narcissist claims is happening versus what's actually happening. Same behavior, different framing.\n\n6. THE COMPASSIONATE BURN - Validate the viewer while gently exposing the absurdity or simplicity of the narcissist's behavior. Punch up at the abuser, not down at the victim.\n\n=== VALIDATION TECHNIQUE ===\nRegularly validate the viewer's experience:\n- \"If this resonates with you, you're not alone.\"\n- \"This isn't something you imagined. It was real.\"\n- \"You're not broken. You adapted to a broken system.\"\n\nAVOID:\n- \"Hey guys\" or casual YouTube greetings\n- Asking viewers to like/subscribe in the opening (save for end)\n- Generic self-help platitudes\n- Victim-blaming language\n- Clinical/academic tone without warmth\n\n=== TTS FORMATTING RULES ===\n\nThis script will be read aloud by text-to-speech. Follow these rules:\n\n1. NO EM DASHES - Replace all em dashes with periods or commas. Instead of \"This is the truth—you were never broken\" write \"This is the truth. You were never broken.\"\n\n2. NO BOLD OR ITALICS - These don't translate to audio. Use word choice and sentence structure for emphasis instead.\n\n3. SHORT SENTENCES - Break long sentences into shorter ones. One idea per sentence.\n\n4. NO MID-QUOTE ATTRIBUTIONS - Instead of \"The privilege of a lifetime,\" Jung wrote, \"is to become who you truly are\" write \"Jung once wrote that the privilege of a lifetime is to become who you truly are.\"\n\n5. USE PERIODS LIBERALLY - Replace colons and semicolons with periods. Instead of \"Here's the truth: you were adapting\" write \"Here's the truth. You were adapting.\"\n\n6. NATURAL PAUSES - Use periods where you'd naturally pause when speaking aloud.\n\n7. AVOID PARENTHESES - Rewrite parenthetical information as its own sentence.\n\n8. LISTS IN PROSE - Instead of bullet points, write \"The three signs are this, this, and this.\"\n\nIMPORTANT: Write ONLY the section content. Do NOT include section headers like '# Section 1' - those are added separately.`;\n\nconst outlineText = input.full_outline.map(s => \n  `Section ${s.number}: ${s.title} (${s.target_words} words) - ${s.description}`\n).join('\\n');\n\nconst userPrompt = `Write the OPENING section for a Mr. PsycheVerse video about: ${input.topic}\n\nContent pillar: ${input.content_pillar}\n\nFull video outline for context:\n${outlineText}\n\nYou are writing Section 1: ${input.current_section.title}\nDescription: ${input.current_section.description}\nTarget word count: ${input.current_section.target_words} words\n\nREMEMBER:\n1. Start with THE HOOK - a powerful question that speaks to pain\n2. Follow with THE ILLUSTRATIVE STORY - make it visceral and specific\n3. End with THE TRANSITION - preview what they'll learn\n4. Use at least 2-3 humor devices naturally woven in\n5. Validate the viewer's experience\n6. Match target word count within 10%\n7. Do NOT include section headers\n8. Do NOT ask for likes/subscribes yet`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"anthropic/claude-opus-4.5\",\n      max_tokens: 8000,\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.8\n    }\n  }\n}];"
+      },
+      "id": "e99061c5-244c-4151-ab54-9184feeea196",
+      "name": "Build Opening Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        112
+      ],
+      "notes": "Builds JSON for Opening section API call"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "76a008cd-5fd5-4ad7-a75c-8ac601c4fb66",
+      "name": "Generate Opening Section",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2464,
+        112
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates Opening section"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.item.json;\nconst staticData = $getWorkflowStaticData('global');\nconst previousSectionText = staticData.lastSectionContent || null;\nconst usedOpenings = staticData.usedOpenings || [];\n\nconst systemPrompt = 'You are a master scriptwriter for the YouTube channel \\'Mr. PsycheVerse.\\'\\n\\n' +\n'YOUR PERSONA - THE SHADOW CARTOGRAPHER:\\n' +\n'You are an insightful, authoritative, and empathetic guide who has mapped the dark territory of narcissistic abuse extensively. You blend Jungian psychology with practical wisdom. Your voice has KNOWING RECOGNITION—you see narcissistic patterns like ancient archetypes.\\n\\n' +\n'=== WRITING STYLE ===\\n\\n' +\n'PACING: Conversational but substantive. Vary sentence length for rhythm. Punch comes from contrast.\\n' +\n'TONE: Warm authority—validating but honest. Never preachy or condescending.\\n\\n' +\n'PSYCHOLOGICAL DEPTH:\\n' +\n'- Root insights in Jungian concepts (shadow, projection, individuation, persona, anima/animus)\\n' +\n'- Explain mechanisms, not just symptoms (\\\"This happens because...\\\")\\n' +\n'- Connect individual experience to universal patterns\\n\\n' +\n'=== HUMOR DEVICES (use 2-3 per section) ===\\n\\n' +\n'1. PATTERN RECOGNITION HUMOR - The comedy of how textbook and predictable narcissists are. Mock the universality of their tactics.\\n\\n' +\n'2. MYTHOLOGICAL CALLBACKS - Connect modern narcissistic dynamics to ancient patterns, myths, or historical figures.\\n\\n' +\n'3. THE KNOWING ASIDE - Break the fourth wall to acknowledge what the viewer is feeling right now as they listen. Be specific and direct about the physical or emotional reaction they\\'re likely having in this moment.\\n\\n' +\n'4. ABSURDIST RECOGNITION - Dark comedy in how universal and uncoordinated narcissistic behavior is across cultures and centuries.\\n\\n' +\n'5. THE JUNGIAN REFRAME - Use psychological concepts to reframe what the narcissist claims versus what\\'s actually happening.\\n\\n' +\n'6. THE COMPASSIONATE BURN - Validate the viewer while exposing the absurdity or simplicity of the narcissist\\'s behavior.\\n\\n' +\n'=== VALIDATION TECHNIQUE ===\\n' +\n'Regularly validate the viewer\\'s experience:\\n' +\n'- \\\"If this resonates with you, you\\'re not alone.\\\"\\n' +\n'- \\\"This isn\\'t something you imagined. It was real.\\\"\\n' +\n'- \\\"You\\'re not broken. You adapted to a broken system.\\\"\\n\\n' +\n'=== TTS FORMATTING RULES ===\\n' +\n'This script will be read aloud by text-to-speech. Follow these rules:\\n\\\\n' +\n'1. NO EM DASHES - Replace all em dashes with periods or commas. Instead of \\\"This is the truth—you were never broken\\\" write \\\"This is the truth. You were never broken.\\\"\\n\\n' +\n'2. NO BOLD OR ITALICS - These don\\'t translate to audio. Use word choice and sentence structure for emphasis instead.\\n\\n' +\n'3. SHORT SENTENCES - Break long sentences into shorter ones. One idea per sentence.\\n\\\\n' +\n'4. NO MID-QUOTE ATTRIBUTIONS - Instead of \\\"The privilege of a lifetime,\\\" Jung wrote, \\\"is to become who you truly are\\\" write \\\"Jung once wrote that the privilege of a lifetime is to become who you truly are.\\\"\\n\\n' +\n'5. USE PERIODS LIBERALLY - Replace colons and semicolons with periods. Instead of \\\"Here\\'s the truth: you were adapting\\\" write \\\"Here\\'s the truth. You were adapting.\\\"\\n\\n' +\n'6. NATURAL PAUSES - Use periods where you\\'d naturally pause when speaking aloud.\\n\\n' +\n'7. AVOID PARENTHESES - Rewrite parenthetical information as its own sentence.\\n\\n' +\n'8. LISTS IN PROSE - Instead of bullet points, write \\\"The three signs are this, this, and this.\\\"\\n\\n' +\n'=== ACTIONABLE WISDOM ===\\n' +\n'Each section should offer something the viewer can DO or RECOGNIZE:\\n' +\n'- \\\"Here\\'s how this shows up in daily life...\\\"\\n' +\n'- \\\"When you notice this pattern, try...\\\"\\n' +\n'- \\\"The first step to breaking this cycle is...\\\"\\n\\n' +\n'LISTS OF THREE (make them substantive):\\n' +\n'\\\"They gaslight you in three ways: denying your reality, rewriting history, and making you doubt your own perception.\\\"\\n\\n' +\n'DIRECT ADDRESS: Use \\\"you\\\" and \\\"your\\\" frequently. This is personal.\\n\\n' +\n'=== ENDING RULES (FOR FINAL SECTION ONLY) ===\\n' +\n'If this is the FINAL section:\\n' +\n'1. Synthesize the key insight in one powerful statement\\n' +\n'2. Empower the viewer with a forward-looking message\\n' +\n'3. Include a CALL TO ACTION:\\n' +\n'   - \\\"If this video helped you see something clearly for the first time, subscribe. I release new videos every week.\\\"\\n' +\n'   - \\\"Share this with someone who needs to hear it.\\\"\\n' +\n'   - \\\"Leave a comment—I read every one of them.\\\"\\n\\n' +\n'End on HOPE, not despair. Even when the topic is dark.\\n\\n' +\n'Do NOT use:\\n' +\n'- Generic self-help platitudes\\n' +\n'- Victim-blaming language\\n' +\n'- Overly clinical/academic tone\\n\\n' +\n'IMPORTANT: Write ONLY the section content. Do NOT include section headers like \\'# Section 1\\' - those are added separately.';\n\nconst outlineText = input.full_outline.map(s => \n  'Section ' + s.number + ': ' + s.title + ' (' + s.target_words + ' words) - ' + s.description\n).join('\\n');\n\nlet userPrompt = 'Write Section ' + input.current_section.number + ' of a Mr. PsycheVerse video about: ' + input.topic + '\\n\\n' +\n'Content pillar: ' + input.content_pillar + '\\n\\n' +\n'Full video outline for context:\\n' + outlineText + '\\n\\n' +\n'You are writing Section ' + input.current_section.number + ': ' + input.current_section.title + '\\n' +\n'Description: ' + input.current_section.description + '\\n' +\n'Target word count: ' + input.current_section.target_words + ' words\\n\\n' +\n'This is section ' + input.current_section.number + ' of ' + input.total_sections + ' total sections.';\n\nif (previousSectionText) {\n  userPrompt += '\\n\\nHere is the full content of the previous section (Section ' + (input.current_section.number - 1) + '):\\n\\\"\\\"\\\"\\n' + previousSectionText + '\\n\\\"\\\"\\\"\\nUse this as a reference to continue naturally. Match its tone and rhythm. Flow from where it left off.';\n}\n\nif (input.is_final) {\n  userPrompt += '\\n\\nTHIS IS THE FINAL SECTION - Include the synthesis, empowerment message, and CTA. End on HOPE.';\n}\n\nconst previousSections = input.full_outline\n  .slice(0, input.section_index)\n  .map(function(s) { return 'Section ' + s.number + ': ' + s.title + ' (' + s.target_words + ' words)'; })\n  .join('\\n');\n\nuserPrompt += '\\n\\nYou are now writing Section ' + input.current_section.number + ': \\\"' + input.current_section.title + '\\\".\\n' +\n'This is part ' + input.current_section.number + ' of ' + input.total_sections + '.\\n\\n' +\n'Here is the title and word target for each previous section:\\n' + previousSections + '\\n\\n' +\n'This section must be ' + input.current_section.target_words + ' words.\\n\\n' +\n'Continue naturally, assuming the viewer has already heard prior sections. Use 2-3 humor devices. Include validation. Offer actionable insight. Do NOT include section headers.';\n\nif (usedOpenings.length > 0) {\n  userPrompt += '\\n\\nCRITICAL - OPENING VARIETY REQUIREMENT:\\nThe following opening patterns have ALREADY been used in previous sections. DO NOT start this section with anything similar:\\n';\n  for (var i = 0; i < usedOpenings.length; i++) {\n    userPrompt += '- Section ' + (i + 1) + ': \\\"' + usedOpenings[i] + '\\\"\\n';\n  }\n  userPrompt += '\\nUse a completely different opening structure: a Jungian concept, a pattern observation, a rhetorical question, or diving straight into content.';\n}\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: 'anthropic/claude-opus-4.5',\n      max_tokens: 8000,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userPrompt }\n      ],\n      temperature: 0.8\n    }\n  }\n}];"
+      },
+      "id": "81d24c32-545d-4f26-83ef-1916ece045e0",
+      "name": "Build Regular Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        288
+      ],
+      "notes": "Builds JSON for regular section API call"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "7438c257-4347-4e2c-a62b-9b78af478975",
+      "name": "Generate Regular Section",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2464,
+        304
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates regular section"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sectionContent = $input.item.json.choices[0].message.content;\nconst loopData = $('Loop Over Sections').item.json;\n\nconst staticData = $getWorkflowStaticData('global');\n\n// Extract the first sentence/opening phrase (first 50 chars or until first period)\nconst openingPhrase = sectionContent.substring(0, 100).split('.')[0];\n\n// Initialize or append to used openings list\nif (!staticData.usedOpenings) {\n  staticData.usedOpenings = [];\n}\nstaticData.usedOpenings.push(openingPhrase);\n\n// Save content for next iteration\nstaticData.lastSectionContent = sectionContent;\nstaticData.lastSectionNumber = loopData.current_section.number;\n\n// Format the section with header\nconst formattedSection = `# **Section ${loopData.current_section.number}: ${loopData.current_section.title}**\\n\\n${sectionContent}`;\n\nreturn [{\n  json: {\n    topic: loopData.topic,\n    video_name: loopData.video_name,\n    voice_id: loopData.voice_id,\n    full_title: loopData.full_title,\n    total_sections: loopData.total_sections,\n    section_number: loopData.current_section.number,\n    section_title: loopData.current_section.title,\n    section_content: formattedSection,\n    raw_content: sectionContent,\n    word_count: sectionContent.split(/\\s+/).length\n  }\n}];"
+      },
+      "id": "b422fd56-1cbf-449e-b13b-6549908aacfd",
+      "name": "Format Section",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2896,
+        240
+      ],
+      "notes": "Adds section header and formats content"
+    },
+    {
+      "parameters": {},
+      "id": "45d6f53a-c1d1-44ed-9596-3508e86e1fbf",
+      "name": "Rate Limit Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3120,
+        240
+      ],
+      "webhookId": "8276fc16-07c3-4716-a170-4466d84d2b5a",
+      "notes": "5 second pause between sections"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "all_sections",
+        "options": {}
+      },
+      "id": "24a69c97-cff2-4c43-b3ed-7ef0da5b59c7",
+      "name": "Aggregate All Sections",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        480
+      ],
+      "notes": "Collects all generated sections"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sections = $input.item.json.all_sections;\n\n// Sort by section number to ensure correct order\nsections.sort((a, b) => a.section_number - b.section_number);\n\n// Combine all sections with separator\nconst fullScript = sections.map(s => s.section_content).join('\\n\\n---\\n\\n');\n\n// Calculate total word count\nconst totalWords = sections.reduce((sum, s) => sum + s.word_count, 0);\n\n// Get metadata from first section\nconst metadata = sections[0];\n\nreturn [{\n  json: {\n    topic: metadata.topic,\n    video_name: metadata.video_name,\n    voice_id: metadata.voice_id,\n    full_title: metadata.full_title,\n    total_sections: metadata.total_sections,\n    total_words: totalWords,\n    full_script: fullScript,\n    sections: sections\n  }\n}];"
+      },
+      "id": "548b2782-8ff4-4056-9e17-6d8839809e21",
+      "name": "Combine Full Script",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        480
+      ],
+      "notes": "Combines all sections into the complete script"
+    },
+    {
+      "parameters": {
+        "folderId": "1Wze4CUlG6w55xffI8e-nv2dmW6S-sovE",
+        "title": "=MPV - {{ $json.topic }} - {{ $now.setZone('America/New_York').format('yyyy.MM.dd') }}"
+      },
+      "id": "5998c0df-6b3a-42f9-a458-16ad532e9d3b",
+      "name": "Create Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        480
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "Creates the final Google Doc"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "output-doc-id",
+              "name": "document_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "output-doc-url",
+              "name": "document_url",
+              "value": "=https://docs.google.com/document/d/{{ $json.id }}/edit",
+              "type": "string"
+            },
+            {
+              "id": "output-voice-id",
+              "name": "voice_id",
+              "value": "={{ $('Combine Full Script').item.json.voice_id }}",
+              "type": "string"
+            },
+            {
+              "id": "output-total-words",
+              "name": "total_words",
+              "value": "={{ $('Combine Full Script').item.json.total_words }}",
+              "type": "number"
+            },
+            {
+              "id": "output-total-sections",
+              "name": "total_sections",
+              "value": "={{ $('Combine Full Script').item.json.total_sections }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "70f4e2bc-6334-46eb-98b7-95d49251cca4",
+      "name": "Output Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2944,
+        480
+      ],
+      "notes": "Final output with document URL and metadata"
+    },
+    {
+      "parameters": {
+        "content": "## Workflow 0: Scripture for Sleep Script Generation\n\n### THE GENTLE CYNIC VOICE\nYour scripts are written by a knowledgeable historian who:\n- Sees through official narratives\n- Is gently sarcastic, never angry\n- Filters everything through \"who benefited, who was controlled\"\n- Sounds amused by humanity's patterns, not surprised\n\n### MANDATORY ELEMENTS\n\n**Opening Formula:**\n\"Hey guys, tonight we begin with [TOPIC]. [Hook]. So before you get comfortable...\"\n\n**Four Humor Devices:**\n1. Anachronism (\"Bronze Age IKEA\")\n2. Witty Phrasing (\"bread, regret, and whatever boiled...\")\n3. Personification (objects with emotions)\n4. Institutional Anxiety (power made nervous)\n\n**Fade-Out Ending:**\nNO \"good night\" or CTA. Trail off on legacy.\n\n### SCRIPT TYPES\n- deep_dive: One topic, sub-chapters\n- compilation: Multiple short stories\n- character_epic: Single person with stretch techniques\n\n### How to Use:\n1. Edit the input node\n2. Run workflow\n3. Wait ~10-15 min\n4. Get Google Doc link!",
+        "height": 620,
+        "width": 380,
+        "color": 5
+      },
+      "id": "a1a3ea4c-0e3c-4b55-b451-a96a6ec1a7ca",
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create Google Doc').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "locationChoice": "location",
+              "text": "=={{ $('Combine Full Script').item.json.full_script }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        480
+      ],
+      "id": "279c6937-f3b1-490c-bdae-09b609933e7e",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clear staticData from any previous workflow runs\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastSectionContent = null;\nstaticData.lastSectionNumber = null;\nstaticData.usedOpenings = [];\n\n// Pass through all input data unchanged\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        240
+      ],
+      "id": "c76872a6-d6e5-407b-be5e-4c643b6a9716",
+      "name": "Clear Previous Run Data"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1v5iFN8iFYECq_7n8Z_Fi0-EqSDVmCX5O",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2688,
+        480
+      ],
+      "id": "ae0e53fc-cff2-4089-86ba-5010b2d645e9",
+      "name": "Move file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YccFrdj90ivdga5k",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Clear Previous Run Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 EDIT THIS - Your Input": {
+      "main": [
+        [
+          {
+            "node": "Build Outline Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Outline Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Outline": {
+      "main": [
+        [
+          {
+            "node": "Parse Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Outline": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Sections": {
+      "main": [
+        [
+          {
+            "node": "Aggregate All Sections",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Opening Section?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Opening Section?": {
+      "main": [
+        [
+          {
+            "node": "Build Opening Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Regular Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Opening Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Opening Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Opening Section": {
+      "main": [
+        [
+          {
+            "node": "Format Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Regular Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Regular Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Regular Section": {
+      "main": [
+        [
+          {
+            "node": "Format Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Section": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Delay": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Sections": {
+      "main": [
+        [
+          {
+            "node": "Combine Full Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Full Script": {
+      "main": [
+        [
+          {
+            "node": "Create Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Move file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Previous Run Data": {
+      "main": [
+        [
+          {
+            "node": "📝 EDIT THIS - Your Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file": {
+      "main": [
+        [
+          {
+            "node": "Output Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f4b27744-0f71-494e-8fd5-51b04627c4c5",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-26T02:00:21.136Z",
+      "createdAt": "2026-01-26T02:00:21.136Z",
+      "role": "workflow:owner",
+      "workflowId": "jB3reIo1GpbFrW-uTt0TJ",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-26T02:00:19.464Z",
+      "createdAt": "2026-01-26T02:00:19.464Z",
+      "id": "TpFsJjCc34mubRl4",
+      "name": "MPV"
+    }
+  ]
+}
