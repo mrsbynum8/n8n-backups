@@ -1,0 +1,418 @@
+{
+  "updatedAt": "2026-02-04T04:38:06.851Z",
+  "createdAt": "2026-02-04T04:33:48.371Z",
+  "id": "NsQvTRmmHmaZ9fLzgh-yZ",
+  "name": "000-B. SFS Container - Visual Chain",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "067f9676-3a6e-44ca-920c-95824cd7bc76",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "path": "sfs-visual-container",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "644fa965-d23d-46df-bc3f-2b3cbeb028f2",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        160
+      ],
+      "webhookId": "sfs-visual-container"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"message\": \"Visual Container Started\"\n}",
+        "options": {}
+      },
+      "id": "834af5b7-7f12-4c8c-bfb7-d322a74afe42",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        208,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "ZYwVA9WqrGwDHT59WQN-F",
+        "options": {}
+      },
+      "id": "172ee1f6-9124-4216-887d-d12d7a9cd86c",
+      "name": "Step 3B: Script to Chapters",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        464,
+        0
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": "1wR80dnRbmIQCArsoKBxg",
+        "options": {}
+      },
+      "id": "8da97499-7829-4dd0-84c2-1db75ccbaf53",
+      "name": "Step 3C: Write Prompts",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        912,
+        0
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": "7eTLolS3Xq87upqhzzL2C",
+        "options": {}
+      },
+      "id": "2247590b-f4a8-4dee-8bf7-88e886ded739",
+      "name": "Step 4B: Generate Images",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "81675a0a-7788-4251-a6d8-a0b2c2751c4f",
+      "name": "Limit"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "a667df1c-d9c8-4ae1-b691-df85395a4090",
+      "name": "Limit1"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Step 3B: Script to Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Step 3B: Script to Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 3B: Script to Chapters": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 3C: Write Prompts": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Step 3C: Write Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Step 4B: Generate Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "ae9ccd43-0bf5-4c85-afc3-32c1b61325ce",
+  "activeVersionId": "ae9ccd43-0bf5-4c85-afc3-32c1b61325ce",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T04:33:48.379Z",
+      "createdAt": "2026-02-04T04:33:48.379Z",
+      "role": "workflow:owner",
+      "workflowId": "NsQvTRmmHmaZ9fLzgh-yZ",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-04T04:38:09.000Z",
+    "createdAt": "2026-02-04T04:38:06.861Z",
+    "versionId": "ae9ccd43-0bf5-4c85-afc3-32c1b61325ce",
+    "workflowId": "NsQvTRmmHmaZ9fLzgh-yZ",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "067f9676-3a6e-44ca-920c-95824cd7bc76",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "path": "sfs-visual-container",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "644fa965-d23d-46df-bc3f-2b3cbeb028f2",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1,
+        "position": [
+          0,
+          160
+        ],
+        "webhookId": "sfs-visual-container"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{\n  \"message\": \"Visual Container Started\"\n}",
+          "options": {}
+        },
+        "id": "834af5b7-7f12-4c8c-bfb7-d322a74afe42",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          208,
+          160
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": "ZYwVA9WqrGwDHT59WQN-F",
+          "options": {}
+        },
+        "id": "172ee1f6-9124-4216-887d-d12d7a9cd86c",
+        "name": "Step 3B: Script to Chapters",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1,
+        "position": [
+          464,
+          0
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "workflowId": "1wR80dnRbmIQCArsoKBxg",
+          "options": {}
+        },
+        "id": "8da97499-7829-4dd0-84c2-1db75ccbaf53",
+        "name": "Step 3C: Write Prompts",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1,
+        "position": [
+          912,
+          0
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "workflowId": "7eTLolS3Xq87upqhzzL2C",
+          "options": {}
+        },
+        "id": "2247590b-f4a8-4dee-8bf7-88e886ded739",
+        "name": "Step 4B: Generate Images",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1,
+        "position": [
+          1376,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          672,
+          0
+        ],
+        "id": "81675a0a-7788-4251-a6d8-a0b2c2751c4f",
+        "name": "Limit"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          0
+        ],
+        "id": "a667df1c-d9c8-4ae1-b691-df85395a4090",
+        "name": "Limit1"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Step 3B: Script to Chapters",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Webhook": {
+        "main": [
+          [
+            {
+              "node": "Step 3B: Script to Chapters",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Step 3B: Script to Chapters": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Step 3C: Write Prompts": {
+        "main": [
+          [
+            {
+              "node": "Limit1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Step 3C: Write Prompts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit1": {
+        "main": [
+          [
+            {
+              "node": "Step 4B: Generate Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version ae9ccd43",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
