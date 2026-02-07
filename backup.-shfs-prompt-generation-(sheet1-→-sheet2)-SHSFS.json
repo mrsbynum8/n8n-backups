@@ -1,0 +1,469 @@
+{
+  "updatedAt": "2026-02-03T03:25:43.541Z",
+  "createdAt": "2026-01-25T23:16:17.841Z",
+  "id": "l5epofWIJ6X66dw7JsOc9",
+  "name": "Backup. SHFS Prompt Generation (Sheet1 → Sheet2)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "db84f021-c46f-47d0-b4cb-531e25554584",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        304,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 225841298,
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=225841298"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4ad6e3c2-ba4f-43cd-acf3-d8ac1063d6a4",
+      "name": "Read Pending Chapters (Sheet1)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        624,
+        224
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Reads pending chapters from Sheet1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2bde85fe-de71-45f9-a964-03ada1e7260e",
+      "name": "Loop Over Chapters",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        960,
+        224
+      ],
+      "notes": "Process one chapter at a time"
+    },
+    {
+      "parameters": {
+        "jsCode": "const script = $input.item.json.script;\nconst wordCount = script.split(/\\s+/).length;\nconst imageCount = Math.round(wordCount / 60);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: $input.item.json.chapter_number,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+      },
+      "id": "d2ab3e3c-25a5-4146-9ba7-90699dacba43",
+      "name": "Calculate Image Count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        96
+      ],
+      "notes": "word count ÷ 50"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate detailed image prompts for Hindu sacred story sleep videos. Each prompt MUST be 5+ sentences describing a contemplative, devotional scene inspired by classical Indian temple art.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Soft gouache painting style inspired by classical Indian temple murals and devotional art\\n- Contemplative, devotional quality with sleep-friendly tones\\n- The flat, iconic composition of temple art but with softer edges for calming effect\\n- Historical/cultural accuracy (ancient Indian settings, traditional garments, period-appropriate architecture and materials)\\n- Warm, sacred color palette: ochre, terracotta, deep indigo, sunset orange, warm earth tones, touches of gold for divine light\\n- Focus on devotional atmosphere, character expressions showing inner spiritual states, symbolic elements\\n- Gentle, reverent treatment of all figures and scenes\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons shown explicitly\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n- Maintain respectful, sacred treatment of all Hindu deities, sages, and sacred figures\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}, {\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.script) }}\n    }\n  ],\n  \"temperature\": 1\n}",
+        "options": {}
+      },
+      "id": "f12f917b-56ed-46ec-bd41-83443824bf28",
+      "name": "Generate Prompts via OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        96
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Creates all image prompts for this chapter"
+    },
+    {
+      "parameters": {
+        "jsCode": "const openaiResponse = $input.item.json.choices[0].message.content;\nlet prompts;\n\ntry {\n  prompts = JSON.parse(openaiResponse);\n} catch (e) {\n  const jsonMatch = openaiResponse.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    prompts = JSON.parse(jsonMatch[1]);\n  } else {\n    throw new Error(\"Could not parse OpenAI response as JSON\");\n  }\n}\n\nconst videoName = $('Loop Over Chapters').item.json.video_name;\nconst chapterNum = $('Loop Over Chapters').item.json.chapter_number;\nconst rowNumber = $('Loop Over Chapters').item.json.row_number;\n\n// Format for Sheet2 - each prompt as a separate row\nreturn prompts.map((p, index) => ({\n  json: {\n    video_name: videoName,\n    chapter_number: chapterNum,\n    image_number: String(index + 1).padStart(2, '0'),\n    filename: `${videoName}-${chapterNum}-${String(index + 1).padStart(2, '0')}.png`,\n    prompt: p.prompt,\n    status: 'pending',\n    chapter_row_number: rowNumber\n  }\n}));"
+      },
+      "id": "ec2f804e-de8e-47e8-9ea1-7d785e9b189b",
+      "name": "Parse & Format for Sheet2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        96
+      ],
+      "notes": "Formats each prompt as a row for Sheet2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2013912948,
+          "mode": "list",
+          "cachedResultName": "Prompts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=2013912948"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "chapter_number": "={{ $json.chapter_number }}",
+            "image_number": "={{ $json.image_number }}",
+            "filename": "={{ $json.filename }}",
+            "prompt": "={{ $json.prompt }}",
+            "status": "pending"
+          },
+          "matchingColumns": [
+            "filename"
+          ],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_number",
+              "displayName": "image_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "696f9a81-6c1f-463e-91b4-e362a6d78f9c",
+      "name": "Write Prompts to Sheet2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        352
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Appends all prompts to Sheet2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 225841298,
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=225841298"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "completed",
+            "row_number": "={{ $('Loop Over Chapters').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "script",
+              "displayName": "script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "4a192c6e-6df4-4418-afc4-a7f851cf68d5",
+      "name": "Mark Chapter Complete (Sheet1)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1408,
+        352
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Marks this chapter as completed in Sheet1"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Pending Chapters (Sheet1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Pending Chapters (Sheet1)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Chapters": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Calculate Image Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Image Count": {
+      "main": [
+        [
+          {
+            "node": "Generate Prompts via OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Prompts via OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Parse & Format for Sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Format for Sheet2": {
+      "main": [
+        [
+          {
+            "node": "Write Prompts to Sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Prompts to Sheet2": {
+      "main": [
+        [
+          {
+            "node": "Mark Chapter Complete (Sheet1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Chapter Complete (Sheet1)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4653ee7f-7022-4fe1-8fe9-17c85b8c9ce0",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-25T23:16:17.846Z",
+      "createdAt": "2026-01-25T23:16:17.846Z",
+      "role": "workflow:owner",
+      "workflowId": "l5epofWIJ6X66dw7JsOc9",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T21:33:40.980Z",
+      "createdAt": "2026-01-25T21:33:40.980Z",
+      "id": "3tXWj4bbeGdd4akG",
+      "name": "SHSFS"
+    }
+  ]
+}
