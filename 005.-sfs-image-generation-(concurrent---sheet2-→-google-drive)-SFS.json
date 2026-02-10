@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-04T16:58:49.757Z",
+  "updatedAt": "2026-02-10T04:06:22.680Z",
   "createdAt": "2026-01-26T00:27:28.921Z",
   "id": "7eTLolS3Xq87upqhzzL2C",
   "name": "005. SFS Image Generation (CONCURRENT - Sheet2 → Google Drive)",
@@ -62,7 +62,7 @@
     },
     {
       "parameters": {
-        "batchSize": 20,
+        "batchSize": 10,
         "options": {}
       },
       "id": "4e72c675-054b-44c9-bf07-981a65f6cb9d",
@@ -582,7 +582,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "013ede2d-70b2-4ee3-aea3-063191a53ebb",
+  "versionId": "6095b8d8-e9bc-4598-8abe-6268aceb5d33",
   "activeVersionId": "013ede2d-70b2-4ee3-aea3-063191a53ebb",
   "triggerCount": 1,
   "shared": [
