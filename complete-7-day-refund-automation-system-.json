@@ -1,0 +1,991 @@
+{
+  "updatedAt": "2026-02-10T02:06:46.057Z",
+  "createdAt": "2026-02-10T01:54:21.505Z",
+  "id": "a9d3EfhS_UCprVAmOKVH3",
+  "name": "Complete 7-Day Refund Automation System",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "refund-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "21eafd4f-3eae-46be-9501-4aaca3db1d5e",
+      "name": "DAY 0 - Refund Request Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -3504,
+        48
+      ],
+      "webhookId": "refund-demo"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "a5005183-76f2-48e1-8106-05e0547bb767",
+      "name": "Audit: Request Initiated",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        -3280,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/audit/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "refund_request_initiated"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.body.client_id }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ $json }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4c995b00-3d37-477d-b24f-d0065b75acee",
+      "name": "Log to Audit Trail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -3280,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7e102c7c-1e4f-4521-9ad9-c430fc42629d",
+      "name": "Send Auto-Acknowledgment",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -3056,
+        48
+      ],
+      "webhookId": "180320a6-acb7-4bd4-8abe-178e0026bbf8"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"received\", \"message\": \"Refund request submitted\", \"client_id\": $json.body.client_id, \"request_id\": $json.body.request_id } }}",
+        "options": {}
+      },
+      "id": "adcc2661-6c1c-46a4-b325-d2f376d800fd",
+      "name": "Return Confirmation",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -2832,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "unit": "days"
+      },
+      "id": "5ed6d499-6626-4988-af60-49d5a277036f",
+      "name": "WAIT - Day 1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        -2624,
+        48
+      ],
+      "webhookId": "day1-wait"
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/billing/{{ $('DAY 0 - Refund Request Trigger').item.json.body.client_id }}",
+        "authentication": "genericCredentialType",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "1933d117-3c39-480f-8447-071eb67befba",
+      "name": "DAY 1-2 - Retrieve Billing Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2400,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "combineOperation": "any"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.hours_worked }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isEmpty"
+              }
+            },
+            {
+              "leftValue": "={{ $json.amount_paid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isEmpty"
+              }
+            },
+            {
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b6aae9bc-a0e7-4212-adea-ed80f4d7ff1a",
+      "name": "EXCEPTION CHECK - Data Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2176,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3f0f0dc8-e445-4c19-82df-809e588cdc99",
+      "name": "FLAG FOR MANUAL REVIEW",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1952,
+        -128
+      ],
+      "webhookId": "24af4b25-a956-485e-9ca4-8a3c1606de04"
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/audit/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "exception_flagged_manual_review"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $('DAY 0 - Refund Request Trigger').item.json.body.client_id }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "name": "reason",
+              "value": "invalid_billing_data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cce0f3e5-ae92-4643-809e-4e08c7057ad5",
+      "name": "Audit: Exception Logged",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1744,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Calculate refund based on billing data\nconst clientId = $('DAY 0 - Refund Request Trigger').item.json.body.client_id;\nconst billingData = $input.item.json;\n\nconst hoursWorked = billingData.hours_worked || 0;\nconst hourlyRate = 450;\nconst amountPaid = billingData.amount_paid || 0;\nconst taskCodes = billingData.task_codes || [];\n\n// Calculate billed amount\nconst billedAmount = hoursWorked * hourlyRate;\nconst refundAmount = Math.max(0, amountPaid - billedAmount);\n\n// Generate detailed report\nconst report = {\n  client_id: clientId,\n  request_date: $('DAY 0 - Refund Request Trigger').item.json.body.request_date,\n  calculation_date: new Date().toISO(),\n  hours_worked: hoursWorked,\n  hourly_rate: hourlyRate,\n  billed_amount: billedAmount,\n  amount_paid: amountPaid,\n  refund_amount: refundAmount,\n  task_codes: taskCodes,\n  percentage_refund: amountPaid > 0 ? ((refundAmount / amountPaid) * 100).toFixed(2) : 0,\n  report_summary: `Client worked ${hoursWorked} hours at $${hourlyRate}/hr totaling $${billedAmount}. Amount paid: $${amountPaid}. Refund due: $${refundAmount} (${((refundAmount / amountPaid) * 100).toFixed(1)}% of payment)`,\n  requires_approval: refundAmount > 0\n};\n\nreturn report;"
+      },
+      "id": "ebc79800-a277-41bd-be6c-070b94d766f7",
+      "name": "DAY 2 - Calculate Refund",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1952,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/audit/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "refund_calculated"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.client_id }}"
+            },
+            {
+              "name": "refund_amount",
+              "value": "={{ $json.refund_amount }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1700313-ebf2-4c8c-8655-f07faba9f582",
+      "name": "Audit: Calculation Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1952,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "unit": "days"
+      },
+      "id": "df1f8db5-e0ab-470d-93c6-26e6c98512f0",
+      "name": "WAIT - Day 3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        48
+      ],
+      "webhookId": "day3-wait"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c686c026-8ace-4830-8784-f1871d37c2cb",
+      "name": "DAY 3 - Generate & Send Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1520,
+        48
+      ],
+      "webhookId": "fbfa5d4d-ec78-44c6-8464-2f8150fc3792"
+    },
+    {
+      "parameters": {
+        "unit": "days"
+      },
+      "id": "198fa5b3-345b-41d3-a101-709cda7ec678",
+      "name": "WAIT - Day 4",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        -1296,
+        48
+      ],
+      "webhookId": "day4-wait"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8bf51e02-f0be-4429-b737-30c4cdd2768d",
+      "name": "DAY 4 - Route to Manager Approval",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1072,
+        -48
+      ],
+      "webhookId": "6f95ba45-d03d-4604-8475-ea85e393985a"
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/audit/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "approval_request_sent"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.client_id }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fcf74e1c-d80b-46ab-b554-f68ff1c5720a",
+      "name": "Audit: Approval Requested",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1072,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "refund-dispute",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "bca73f2f-c1d7-4625-a51d-41880ac4058f",
+      "name": "DISPUTE RESOLUTION - Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -1072,
+        560
+      ],
+      "webhookId": "dispute-trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/audit/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "dispute_initiated"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.body.client_id }}"
+            },
+            {
+              "name": "dispute_reason",
+              "value": "={{ $json.body.reason }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1d2f1f6-f750-4cfc-9f58-ed76c4bf9a7e",
+      "name": "Audit: Dispute Logged",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -864,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "17ccf197-cf6f-427b-bd15-7cfbd753718d",
+      "name": "Notify: Dispute Investigation",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -640,
+        560
+      ],
+      "webhookId": "8bc57840-e4e4-4d44-aa0d-fe8f3827a5df"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "adab1834-b54a-47fc-af7d-360fea5d916c",
+      "name": "REMINDER LOOP - Check Daily",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -864,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "unit": "days"
+      },
+      "id": "ed1ace88-a2ad-466c-8cf0-e3541bf98408",
+      "name": "Wait 24 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        16
+      ],
+      "webhookId": "reminder-wait"
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/refund/status/{{ $('DAY 4 - Route to Manager Approval').item.json.client_id }}",
+        "options": {}
+      },
+      "id": "29f72941-52b3-4e58-9248-1761c321156b",
+      "name": "Check Approval Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -416,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.approval_status }}",
+              "value2": "approved"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "71c1075b-699a-4ea7-a5c1-7998b0290efa",
+      "name": "Approved Yet?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -192,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c0de192b-6910-4593-9f17-0b1325dc4e2c",
+      "name": "Send Reminder Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        112
+      ],
+      "webhookId": "ed787ab9-ff5b-4949-9f9e-ece9c94982a6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8addc271-ec6c-4c87-87b7-673ee0757177",
+      "name": "DAY 4 - Send Client Waiver",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        -176
+      ],
+      "webhookId": "95ba4257-ec31-4c05-a5ca-189bb040a99b"
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "id": "f8dc317b-337f-48a7-9ed0-14aaa2b11483",
+      "name": "WAIT - Days 5-6",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -176
+      ],
+      "webhookId": "day6-wait"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process payment via Stripe API\nconst refundData = $input.item.json;\n\n// In production:\n// const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n// const refund = await stripe.refunds.create({\n//   charge: refundData.charge_id,\n//   amount: refundData.refund_amount * 100,\n//   reason: 'requested_by_customer'\n// });\n\n// Simulate successful payment\nreturn {\n  ...refundData,\n  payment_processed: true,\n  payment_date: new Date().toISO(),\n  payment_method: 'stripe_refund',\n  transaction_id: 're_' + Math.random().toString(36).substr(2, 12),\n  stripe_status: 'succeeded',\n  status: 'refund_issued'\n};"
+      },
+      "id": "312221fa-0054-49ac-8f34-f8f065d5e664",
+      "name": "DAY 6 - Process Payment (Stripe)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/audit/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "payment_processed"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.client_id }}"
+            },
+            {
+              "name": "transaction_id",
+              "value": "={{ $json.transaction_id }}"
+            },
+            {
+              "name": "amount",
+              "value": "={{ $json.refund_amount }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "03e057d3-4c88-4b24-9233-747ccc830a56",
+      "name": "Audit: Payment Logged",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        464,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "unit": "days"
+      },
+      "id": "caa10ce3-edec-4e5c-8dc3-7cdf10394f3b",
+      "name": "WAIT - Day 7",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -176
+      ],
+      "webhookId": "day7-wait"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d0ed6232-1603-42d9-93dc-7e8359379367",
+      "name": "DAY 7 - Send Confirmation & Close Case",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        912,
+        -176
+      ],
+      "webhookId": "a2822731-5827-49cc-bf75-f770d125f992"
+    },
+    {
+      "parameters": {
+        "url": "https://api.yourplatform.com/audit/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "case_closed"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.client_id }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "name": "final_status",
+              "value": "refund_issued_complete"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6b564167-57ce-4fd4-934d-78fd1e06a54f",
+      "name": "Audit: Case Closed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        912,
+        -352
+      ]
+    }
+  ],
+  "connections": {
+    "DAY 0 - Refund Request Trigger": {
+      "main": [
+        [
+          {
+            "node": "Audit: Request Initiated",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Audit Trail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit: Request Initiated": {
+      "main": [
+        [
+          {
+            "node": "Send Auto-Acknowledgment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Auto-Acknowledgment": {
+      "main": [
+        [
+          {
+            "node": "Return Confirmation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WAIT - Day 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAIT - Day 1": {
+      "main": [
+        [
+          {
+            "node": "DAY 1-2 - Retrieve Billing Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAY 1-2 - Retrieve Billing Data": {
+      "main": [
+        [
+          {
+            "node": "EXCEPTION CHECK - Data Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EXCEPTION CHECK - Data Valid?": {
+      "main": [
+        [
+          {
+            "node": "FLAG FOR MANUAL REVIEW",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DAY 2 - Calculate Refund",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FLAG FOR MANUAL REVIEW": {
+      "main": [
+        [
+          {
+            "node": "Audit: Exception Logged",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAY 2 - Calculate Refund": {
+      "main": [
+        [
+          {
+            "node": "WAIT - Day 3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Audit: Calculation Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAIT - Day 3": {
+      "main": [
+        [
+          {
+            "node": "DAY 3 - Generate & Send Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAY 3 - Generate & Send Report": {
+      "main": [
+        [
+          {
+            "node": "WAIT - Day 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAIT - Day 4": {
+      "main": [
+        [
+          {
+            "node": "DAY 4 - Route to Manager Approval",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Audit: Approval Requested",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAY 4 - Route to Manager Approval": {
+      "main": [
+        [
+          {
+            "node": "REMINDER LOOP - Check Daily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "REMINDER LOOP - Check Daily": {
+      "main": [
+        [
+          {
+            "node": "DAY 4 - Send Client Waiver",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 24 Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 24 Hours": {
+      "main": [
+        [
+          {
+            "node": "Check Approval Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval Status": {
+      "main": [
+        [
+          {
+            "node": "Approved Yet?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved Yet?": {
+      "main": [
+        [
+          {
+            "node": "DAY 4 - Send Client Waiver",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Reminder Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder Email": {
+      "main": [
+        [
+          {
+            "node": "REMINDER LOOP - Check Daily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAY 4 - Send Client Waiver": {
+      "main": [
+        [
+          {
+            "node": "WAIT - Days 5-6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAIT - Days 5-6": {
+      "main": [
+        [
+          {
+            "node": "DAY 6 - Process Payment (Stripe)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAY 6 - Process Payment (Stripe)": {
+      "main": [
+        [
+          {
+            "node": "WAIT - Day 7",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Audit: Payment Logged",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAIT - Day 7": {
+      "main": [
+        [
+          {
+            "node": "DAY 7 - Send Confirmation & Close Case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAY 7 - Send Confirmation & Close Case": {
+      "main": [
+        [
+          {
+            "node": "Audit: Case Closed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DISPUTE RESOLUTION - Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Audit: Dispute Logged",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit: Dispute Logged": {
+      "main": [
+        [
+          {
+            "node": "Notify: Dispute Investigation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "cd1df23b-8495-4458-b27e-f1a94c2049e5",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-10T01:54:21.538Z",
+      "createdAt": "2026-02-10T01:54:21.538Z",
+      "role": "workflow:owner",
+      "workflowId": "a9d3EfhS_UCprVAmOKVH3",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
