@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-04T01:57:50.429Z",
+  "updatedAt": "2026-02-10T03:54:54.402Z",
   "createdAt": "2026-01-25T23:21:31.122Z",
   "id": "1wR80dnRbmIQCArsoKBxg",
   "name": "002-B. SFS Prompt Generation (Sheet1 → Sheet2)",
@@ -75,7 +75,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 30 : 65;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+        "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 30 : 70;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
       },
       "id": "5a52e7e6-234e-421d-9fed-b9f386b73517",
       "name": "Calculate Image Count",
@@ -512,8 +512,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "cb5269d7-858f-4f31-8569-54b9c4d16234",
-  "activeVersionId": "cb5269d7-858f-4f31-8569-54b9c4d16234",
+  "versionId": "f5fdbfc1-0650-4fe2-a729-554973e817a5",
+  "activeVersionId": "f5fdbfc1-0650-4fe2-a729-554973e817a5",
   "triggerCount": 1,
   "shared": [
     {
@@ -525,9 +525,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-04T01:57:56.000Z",
-    "createdAt": "2026-02-04T01:57:50.431Z",
-    "versionId": "cb5269d7-858f-4f31-8569-54b9c4d16234",
+    "updatedAt": "2026-02-10T03:55:27.000Z",
+    "createdAt": "2026-02-10T03:54:54.404Z",
+    "versionId": "f5fdbfc1-0650-4fe2-a729-554973e817a5",
     "workflowId": "1wR80dnRbmIQCArsoKBxg",
     "nodes": [
       {
@@ -599,7 +599,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 30 : 65;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+          "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 30 : 70;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
         },
         "id": "5a52e7e6-234e-421d-9fed-b9f386b73517",
         "name": "Calculate Image Count",
@@ -1026,7 +1026,7 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version cb5269d7",
+    "name": "Version f5fdbfc1",
     "description": "",
     "autosaved": true
   },
