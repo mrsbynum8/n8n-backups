@@ -1,0 +1,417 @@
+{
+  "updatedAt": "2026-02-09T21:57:16.423Z",
+  "createdAt": "2026-02-09T19:54:16.648Z",
+  "id": "AEasXQewttjDB2K6rP0qz",
+  "name": "SEO Keyword Research Agent → Blog Workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "28872bcc-2f82-4fda-a837-b9182b71fbfa",
+      "name": "Weekly Schedule (Mon 6am)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1712,
+        -64
+      ],
+      "notes": "Automated weekly run — fires every Monday at 6am. Can be disabled when using manual webhook trigger instead."
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "seed-topic",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "26913791-ee7b-4624-91ce-afddb381f4ba",
+      "name": "Manual Trigger (Seed Topic)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1712,
+        144
+      ],
+      "webhookId": "db6ef0b5-16c6-4422-8201-4f2d379820a7",
+      "notes": "On-demand trigger — POST a JSON body with { \"seed_topic\": \"your topic\", \"market\": \"us\" } to kick off research manually."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize input from either trigger source\nconst input = $input.first().json;\n\nconst seedTopic = input.seed_topic || input.body?.seed_topic || 'default topic';\nconst market = input.market || input.body?.market || 'us';\nconst maxDifficulty = input.max_difficulty || input.body?.max_difficulty || 60;\nconst minVolume = input.min_volume || input.body?.min_volume || 100;\n\nreturn [{\n  json: {\n    seed_topic: seedTopic,\n    market: market,\n    max_difficulty: maxDifficulty,\n    min_volume: minVolume\n  }\n}];"
+      },
+      "id": "4eda121c-562e-4c98-8ed8-622717d7a3d2",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        48
+      ],
+      "notes": "Accepts input from either the schedule or webhook trigger and standardizes it — seed topic, market, difficulty cap, and minimum volume."
+    },
+    {
+      "parameters": {
+        "url": "=https://api.seranking.com/research/{{ $json.market }}/keywords/suggestions/?keyword={{ encodeURIComponent($json.seed_topic) }}&source=all",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "9b83a216-2c79-4927-a833-9eb4eff6f34d",
+      "name": "SE Ranking - Keyword Suggestions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1232,
+        -64
+      ],
+      "notes": "Pulls keyword suggestions from SE Ranking — related terms, questions, long-tail variations. Source=all pulls from all suggestion types."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.seranking.com/research/{{ $('Normalize Input').first().json.market }}/keywords/keyword-data/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ keywords: $json.suggestions.map(s => s.keyword).slice(0, 100) }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "3f1e1f3b-b1f2-44c7-8a92-1020b632c9d4",
+      "name": "SE Ranking - Keyword Metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -992,
+        -64
+      ],
+      "notes": "Batch lookup — pulls search volume, keyword difficulty, CPC, competition level, and seasonal trends for up to 100 keywords at once."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/webmasters/v3/sites/{{ encodeURIComponent($('Normalize Input').first().json.site_url) }}/searchAnalytics/query",
+        "authentication": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"startDate\": \"{{ new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] }}\",\n  \"endDate\": \"{{ new Date().toISOString().split('T')[0] }}\",\n  \"dimensions\": [\"query\"],\n  \"dimensionFilterGroups\": [{\n    \"filters\": [{\n      \"dimension\": \"query\",\n      \"operator\": \"contains\",\n      \"expression\": \"{{ $('Normalize Input').first().json.seed_topic }}\"\n    }]\n  }],\n  \"rowLimit\": 500\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "6317491a-12b1-47f7-bf2f-fb4dcb93e3ae",
+      "name": "Google Search Console - Existing Rankings",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -992,
+        144
+      ],
+      "notes": "Pulls 90 days of real ranking data from GSC — queries you already rank for related to the seed topic. Used to find gaps and avoid cannibalizing existing content."
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "0ec75e48-8d24-4bcf-9c3d-cb725099bc3b",
+      "name": "Merge SE Ranking + GSC Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -752,
+        48
+      ],
+      "notes": "Combines SE Ranking keyword metrics with Google Search Console existing ranking data for cross-referencing."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process, deduplicate, filter, and score keywords\nconst seRankingData = $('SE Ranking - Keyword Metrics').first().json;\nconst gscData = $('Google Search Console - Existing Rankings').first().json;\nconst config = $('Normalize Input').first().json;\n\n// Build set of existing rankings from GSC\nconst existingKeywords = new Map();\nif (gscData?.rows) {\n  for (const row of gscData.rows) {\n    existingKeywords.set(row.keys[0].toLowerCase(), {\n      impressions: row.impressions,\n      clicks: row.clicks,\n      position: row.position,\n      ctr: row.ctr\n    });\n  }\n}\n\n// Process SE Ranking keywords\nconst keywords = (seRankingData?.keywords || seRankingData || [])\n  .map(kw => {\n    const keyword = kw.keyword?.toLowerCase().trim();\n    const volume = kw.search_volume || 0;\n    const difficulty = kw.difficulty || 0;\n    const cpc = kw.cpc || 0;\n    const existing = existingKeywords.get(keyword);\n\n    // Intent tagging based on keyword patterns\n    let intent = 'informational';\n    if (/buy|price|cost|cheap|best|top|review|vs|compare/i.test(keyword)) {\n      intent = 'commercial';\n    } else if (/how|what|why|when|guide|tutorial|learn/i.test(keyword)) {\n      intent = 'informational';\n    } else if (/near me|service|hire|agency|consultant/i.test(keyword)) {\n      intent = 'transactional';\n    }\n\n    // Composite score: higher volume + lower difficulty + commercial intent = better\n    const volumeScore = Math.min(volume / 1000, 10);\n    const difficultyScore = (100 - difficulty) / 10;\n    const intentBonus = intent === 'commercial' ? 2 : intent === 'transactional' ? 3 : 0;\n    const gscBonus = existing && existing.position > 10 && existing.position < 50 ? 3 : 0; // striking distance\n    const compositeScore = parseFloat((volumeScore + difficultyScore + intentBonus + gscBonus).toFixed(2));\n\n    return {\n      keyword,\n      search_volume: volume,\n      difficulty,\n      cpc,\n      intent,\n      composite_score: compositeScore,\n      already_ranking: !!existing,\n      current_position: existing?.position || null,\n      current_impressions: existing?.impressions || 0,\n      striking_distance: existing && existing.position > 10 && existing.position < 50\n    };\n  })\n  // Remove duplicates\n  .filter((kw, index, self) => \n    index === self.findIndex(k => k.keyword === kw.keyword)\n  )\n  // Apply filters\n  .filter(kw => \n    kw.search_volume >= config.min_volume && \n    kw.difficulty <= config.max_difficulty\n  )\n  // Sort by composite score\n  .sort((a, b) => b.composite_score - a.composite_score);\n\nreturn [{\n  json: {\n    seed_topic: config.seed_topic,\n    total_keywords_found: keywords.length,\n    keywords: keywords,\n    striking_distance_keywords: keywords.filter(k => k.striking_distance),\n    top_10: keywords.slice(0, 10)\n  }\n}];"
+      },
+      "id": "5da33b71-3d4d-4d76-94cb-a13dfe8a16db",
+      "name": "Deduplicate, Filter & Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        48
+      ],
+      "notes": "Core logic: deduplicates, filters by volume/difficulty thresholds, tags intent (informational/commercial/transactional), calculates composite score, and flags 'striking distance' keywords from GSC data."
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an expert SEO content strategist. Given a scored list of keyword candidates, select the optimal primary keyword and 3-5 secondary keywords for a single blog post.\n\nSelection Rules:\n- Primary keyword: highest composite score, ideally commercial or transactional intent, reasonable volume\n- Secondary keywords: semantically related to primary, mix of intents, support the primary topic\n- Prefer 'striking distance' keywords (already ranking 10-50) as they represent quick wins\n- Avoid keyword cannibalization — don't pick keywords that would compete with existing high-ranking content\n\nRespond ONLY in this JSON format:\n{\n  \"primary_keyword\": {\n    \"keyword\": \"string\",\n    \"search_volume\": number,\n    \"difficulty\": number,\n    \"intent\": \"string\",\n    \"rationale\": \"1 sentence why this was selected\"\n  },\n  \"secondary_keywords\": [\n    {\n      \"keyword\": \"string\",\n      \"search_volume\": number,\n      \"difficulty\": number,\n      \"intent\": \"string\",\n      \"usage_hint\": \"how to use in the blog post (H2, intro, FAQ, etc.)\"\n    }\n  ],\n  \"suggested_title\": \"SEO-optimized blog post title\",\n  \"suggested_slug\": \"url-friendly-slug\",\n  \"content_angle\": \"2-3 sentence description of the recommended content angle\",\n  \"target_word_count\": number\n}",
+              "role": "system"
+            },
+            {
+              "content": "=Seed Topic: {{ $json.seed_topic }}\n\nTop Keyword Candidates (sorted by score):\n{{ JSON.stringify($json.top_10, null, 2) }}\n\nStriking Distance Keywords (already ranking 10-50):\n{{ JSON.stringify($json.striking_distance_keywords?.slice(0, 5), null, 2) }}\n\nTotal keywords analyzed: {{ $json.total_keywords_found }}\n\nSelect the best primary and secondary keywords for a blog post."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "bd9d66c6-e5ea-41f6-aa32-e13a2322ff5e",
+      "name": "AI Keyword Selector",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -336,
+        48
+      ],
+      "notes": "GPT-4o selects optimal primary + secondary keywords based on scores, intent, and striking distance data. Returns structured brief for the blog workflow."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the structured payload for the blog writing workflow\nconst aiResponse = JSON.parse($json.message.content);\nconst researchData = $('Deduplicate, Filter & Score').first().json;\n\nreturn [{\n  json: {\n    // Blog workflow payload\n    primary_keyword: aiResponse.primary_keyword,\n    secondary_keywords: aiResponse.secondary_keywords,\n    suggested_title: aiResponse.suggested_title,\n    suggested_slug: aiResponse.suggested_slug,\n    content_angle: aiResponse.content_angle,\n    target_word_count: aiResponse.target_word_count,\n    \n    // Metadata for tracking\n    seed_topic: researchData.seed_topic,\n    total_keywords_analyzed: researchData.total_keywords_found,\n    research_date: new Date().toISOString(),\n    \n    // Full research data (optional — for logging)\n    all_scored_keywords: researchData.top_10,\n    striking_distance: researchData.striking_distance_keywords\n  }\n}];"
+      },
+      "id": "6af8a46e-b712-4e29-b7c8-1f218bbfdf15",
+      "name": "Build Blog Workflow Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        48
+      ],
+      "notes": "Structures the final output — primary keyword, secondaries, title suggestion, content angle — ready to hand off to the existing blog writing workflow."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BLOG_WORKFLOW_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "373b6021-0b70-4411-83b8-f931c4f58dc6",
+      "name": "Trigger Blog Writing Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        -64
+      ],
+      "notes": "Fires the structured keyword brief to the existing blog writing workflow via webhook. Can be swapped for n8n's internal Execute Workflow node if preferred."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Keyword Research Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        },
+        "options": {}
+      },
+      "id": "6b68cd98-2eef-4163-851d-7791908d8ec2",
+      "name": "Log Research to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        208,
+        144
+      ],
+      "notes": "Logs every keyword research run — date, seed topic, selected keywords, scores. Builds a history of what's been targeted so you can track performance over time."
+    }
+  ],
+  "connections": {
+    "Weekly Schedule (Mon 6am)": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger (Seed Topic)": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [
+          {
+            "node": "SE Ranking - Keyword Suggestions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Search Console - Existing Rankings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SE Ranking - Keyword Suggestions": {
+      "main": [
+        [
+          {
+            "node": "SE Ranking - Keyword Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SE Ranking - Keyword Metrics": {
+      "main": [
+        [
+          {
+            "node": "Merge SE Ranking + GSC Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Search Console - Existing Rankings": {
+      "main": [
+        [
+          {
+            "node": "Merge SE Ranking + GSC Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge SE Ranking + GSC Data": {
+      "main": [
+        [
+          {
+            "node": "Deduplicate, Filter & Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deduplicate, Filter & Score": {
+      "main": [
+        [
+          {
+            "node": "AI Keyword Selector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Keyword Selector": {
+      "main": [
+        [
+          {
+            "node": "Build Blog Workflow Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Blog Workflow Payload": {
+      "main": [
+        [
+          {
+            "node": "Trigger Blog Writing Workflow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Research to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "67a95a7d-397b-4397-b754-cec06ca6a7a1",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-09T19:54:16.660Z",
+      "createdAt": "2026-02-09T19:54:16.660Z",
+      "role": "workflow:owner",
+      "workflowId": "AEasXQewttjDB2K6rP0qz",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-02-09T21:57:05.175Z",
+      "createdAt": "2026-02-09T21:57:05.175Z",
+      "id": "0IibCy3DliwMqYtL",
+      "name": "Keyword Research"
+    },
+    {
+      "updatedAt": "2026-02-09T19:54:15.071Z",
+      "createdAt": "2026-02-09T19:54:15.071Z",
+      "id": "4XmMRIwLtusciCDK",
+      "name": "AI Agent"
+    },
+    {
+      "updatedAt": "2026-02-09T21:57:05.172Z",
+      "createdAt": "2026-02-09T21:57:05.172Z",
+      "id": "xBPEyAQSbX9ummMe",
+      "name": "SEO"
+    }
+  ]
+}
