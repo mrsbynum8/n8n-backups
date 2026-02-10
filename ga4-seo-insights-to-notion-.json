@@ -1,0 +1,294 @@
+{
+  "updatedAt": "2026-02-09T23:00:03.056Z",
+  "createdAt": "2026-02-09T22:43:04.779Z",
+  "id": "ZyPyfpoaG-it80rAQCEtL",
+  "name": "GA4 SEO Insights to Notion",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "querySearchAnalytics"
+      },
+      "id": "83b184d8-095b-4777-bf87-c5a73bd6e72d",
+      "name": "Search Console - Get Query Data",
+      "type": "n8n-nodes-google-search-console.googleSearchConsole",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "id": "904236d2-ac17-4775-8460-6f3ea06334d4",
+      "name": "Weekly Schedule1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "runReport"
+      },
+      "id": "841e8419-af53-4423-bd8c-82a6635450ca",
+      "name": "GA4 - Get Traffic Data1",
+      "type": "n8n-nodes-base.googleAnalytics",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "combined_data",
+              "name": "combinedData",
+              "value": "={{ { ga4: $('GA4 - Get Traffic Data1').item.json, searchConsole: $input.item.json } }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c024f6b9-860e-47e7-a422-ab5ba472e4ff",
+      "name": "Merge Data Sources1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $credentials.apiKey }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "claude-3-5-sonnet-20241022"
+            },
+            {
+              "name": "max_tokens",
+              "value": "2000"
+            },
+            {
+              "name": "messages",
+              "value": "={{ [{ role: 'user', content: 'Analyze this SEO and traffic data and provide actionable insights:\\n\\nGA4 Data:\\n' + JSON.stringify($json.combinedData.ga4) + '\\n\\nSearch Console Data:\\n' + JSON.stringify($json.combinedData.searchConsole) + '\\n\\nProvide:\\n1. Top 3 opportunities (specific pages/keywords to optimize)\\n2. Top 3 problems (pages losing traffic, high bounce rates, ranking drops)\\n3. Recommended actions (concrete next steps, not vague suggestions)\\n\\nFormat as JSON with structure:\\n{\\n  \"opportunities\": [{\"page\": \"\", \"insight\": \"\", \"action\": \"\"}],\\n  \"problems\": [{\"page\": \"\", \"issue\": \"\", \"action\": \"\"}],\\n  \"summary\": \"\"\\n}' }] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d47bdd90-9593-4141-8620-197618dc6844",
+      "name": "AI - Generate SEO Insights1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1456,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const aiResponse = $input.first().json.content[0].text;\nconst parsed = JSON.parse(aiResponse);\n\nreturn [\n  {\n    json: {\n      opportunities: parsed.opportunities,\n      problems: parsed.problems,\n      summary: parsed.summary,\n      reportDate: new Date().toISOString().split('T')[0],\n      notionDatabaseId: 'YOUR_NOTION_DATABASE_ID'\n    }\n  }\n];"
+      },
+      "id": "e815f4f4-454a-48d7-9e67-d23aca2a2f24",
+      "name": "Structure for Notion1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": "={{ $json.notionDatabaseId }}",
+        "title": "=SEO Report - {{ $json.reportDate }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Summary",
+              "textContent": "={{ $json.summary }}"
+            }
+          ]
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "heading_2",
+              "textContent": "🎯 Top Opportunities"
+            },
+            {
+              "type": "bulleted_list_item",
+              "textContent": "={{ $json.opportunities[0].page }}: {{ $json.opportunities[0].insight }} → {{ $json.opportunities[0].action }}"
+            },
+            {
+              "type": "bulleted_list_item",
+              "textContent": "={{ $json.opportunities[1].page }}: {{ $json.opportunities[1].insight }} → {{ $json.opportunities[1].action }}"
+            },
+            {
+              "type": "bulleted_list_item",
+              "textContent": "={{ $json.opportunities[2].page }}: {{ $json.opportunities[2].insight }} → {{ $json.opportunities[2].action }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "⚠️ Issues to Address"
+            },
+            {
+              "type": "bulleted_list_item",
+              "textContent": "={{ $json.problems[0].page }}: {{ $json.problems[0].issue }} → {{ $json.problems[0].action }}"
+            },
+            {
+              "type": "bulleted_list_item",
+              "textContent": "={{ $json.problems[1].page }}: {{ $json.problems[1].issue }} → {{ $json.problems[1].action }}"
+            },
+            {
+              "type": "bulleted_list_item",
+              "textContent": "={{ $json.problems[2].page }}: {{ $json.problems[2].issue }} → {{ $json.problems[2].action }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0a68bb18-80e1-4d72-9fd5-1be0771ef13d",
+      "name": "Notion - Create Report Page1",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        -320
+      ]
+    }
+  ],
+  "connections": {
+    "Search Console - Get Query Data": {
+      "main": [
+        [
+          {
+            "node": "Merge Data Sources1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Schedule1": {
+      "main": [
+        [
+          {
+            "node": "GA4 - Get Traffic Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GA4 - Get Traffic Data1": {
+      "main": [
+        [
+          {
+            "node": "Search Console - Get Query Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Data Sources1": {
+      "main": [
+        [
+          {
+            "node": "AI - Generate SEO Insights1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Generate SEO Insights1": {
+      "main": [
+        [
+          {
+            "node": "Structure for Notion1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structure for Notion1": {
+      "main": [
+        [
+          {
+            "node": "Notion - Create Report Page1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "7976066a-2471-46ee-bc41-ac1c9ec40b84",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-09T22:43:04.781Z",
+      "createdAt": "2026-02-09T22:43:04.781Z",
+      "role": "workflow:owner",
+      "workflowId": "ZyPyfpoaG-it80rAQCEtL",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
