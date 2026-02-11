@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-03T03:26:45.785Z",
+  "updatedAt": "2026-02-11T02:43:29.567Z",
   "createdAt": "2026-01-25T22:41:16.640Z",
   "id": "4lu_6AxSHsO3uHr0714om",
   "name": "005. SHSFS Image Generation (CONCURRENT - Sheet2 → Google Drive)",
@@ -63,7 +63,7 @@
     },
     {
       "parameters": {
-        "batchSize": 20,
+        "batchSize": 10,
         "options": {}
       },
       "id": "2a1d29c4-7714-4007-b14d-b7ff6904d34c",
@@ -395,7 +395,8 @@
         352
       ],
       "id": "387dba8e-4653-4a89-8864-d6060eb74a0f",
-      "name": "Schedule Trigger"
+      "name": "Schedule Trigger",
+      "disabled": true
     }
   ],
   "connections": {
@@ -549,7 +550,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "6133d199-400f-4e34-8b2b-540a8b2b0842",
+  "versionId": "3b680595-7775-42af-9b88-a7769544acfe",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
