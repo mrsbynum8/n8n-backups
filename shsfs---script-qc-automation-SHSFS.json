@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-02-02T22:51:11.491Z",
+  "updatedAt": "2026-02-12T18:00:33.000Z",
   "createdAt": "2026-01-29T02:58:48.418Z",
   "id": "NvPvq2GiXPD80hkv",
   "name": "SHSFS - Script QC Automation",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -533,7 +533,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "9a0ff575-9182-41e2-a0cd-1ce0ac882218",
+  "versionId": "75fea278-925e-48aa-8fd6-94c9ccab57c7",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
