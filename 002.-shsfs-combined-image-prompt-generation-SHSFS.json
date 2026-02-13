@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-11T02:08:16.394Z",
+  "updatedAt": "2026-02-12T18:34:40.170Z",
   "createdAt": "2026-01-25T22:11:27.563Z",
   "id": "u4_u2ln94yCg6M0ziIFTb",
   "name": "002. SHSFS Combined Image Prompt Generation",
@@ -188,8 +188,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1584,
-        256
+        1600,
+        240
       ],
       "notes": "Process one chapter at a time"
     },
@@ -480,8 +480,8 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        2768,
-        240
+        2848,
+        224
       ],
       "id": "fb00e09f-9008-4de1-a126-b0a97f83eb3f",
       "name": "Limit1"
@@ -650,6 +650,7 @@
       ],
       "id": "05fc50bc-1bae-45b9-9644-79cf0777870d",
       "name": "Check for Ready Scripts",
+      "alwaysOutputData": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "1XqTJPtDuzHpqQbs",
@@ -924,6 +925,366 @@
       ],
       "id": "0b04334e-b0e1-4072-8769-52a78e8366ae",
       "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2013912948,
+          "mode": "list",
+          "cachedResultName": "Prompts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=2013912948"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d829f28b-bbe7-43af-ab70-49bf7ab44517",
+      "name": "Read Pending Prompts (Sheet2)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        752,
+        1344
+      ],
+      "executeOnce": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Reads all pending prompts from Sheet2"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "id": "51439ba7-4e31-43f8-a287-4bf0f81f2393",
+      "name": "Batch Prompts (10 at a time)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        976,
+        1280
+      ],
+      "notes": "Processes 10 prompts simultaneously (fal.ai concurrency limit)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://fal.run/fal-ai/gpt-image-1.5",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1536x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+        "options": {}
+      },
+      "id": "a1218c4f-05a9-4987-a891-1e6cae095281",
+      "name": "Generate Image via fal.ai",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        1344
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "z9A4PGMllFQCcjr1",
+          "name": "Fal.ai Auth"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Generates image (~70 seconds) - runs 10 at once!"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-images-concurrent",
+              "leftValue": "={{ $json.images[0].url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "677cce26-0e90-439a-befb-a7235fb54e24",
+      "name": "Generation Successful?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        1344
+      ],
+      "notes": "Checks if fal.ai returned an image"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.images[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "858f1093-ae56-4063-8aed-1d446f792c54",
+      "name": "Download Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1632,
+        1232
+      ],
+      "notes": "Downloads the generated PNG"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "preserve-filename",
+              "name": "filename",
+              "value": "={{ $('Batch Prompts (10 at a time)').item.json.filename }}",
+              "type": "string"
+            },
+            {
+              "id": "preserve-row-number",
+              "name": "row_number",
+              "value": "={{ $('Batch Prompts (10 at a time)').item.json.row_number }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "25a3be38-3c17-4fc4-b6f7-414165889428",
+      "name": "Preserve Metadata",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        1232
+      ],
+      "notes": "Keeps original filename and row number with binary data"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.filename }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1rSkzEFyJP80-ua4WpV7l2kPRCzhOxXmT",
+          "mode": "list",
+          "cachedResultName": "SHSFS Images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1rSkzEFyJP80-ua4WpV7l2kPRCzhOxXmT"
+        },
+        "options": {}
+      },
+      "id": "c3bff700-0403-488f-ac01-5edc72c02c6d",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2080,
+        1232
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YccFrdj90ivdga5k",
+          "name": "Google Drive account"
+        }
+      },
+      "notes": "Uploads with correct filename"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2013912948,
+          "mode": "list",
+          "cachedResultName": "Prompts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=2013912948"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "completed",
+            "row_number": "={{ $('Read Pending Prompts (Sheet2)').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "image_number",
+              "displayName": "image_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "57530917-ba6a-4d5b-a9d2-d112b836b359",
+      "name": "Mark Prompt Complete (Sheet2)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2288,
+        1232
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Updates status in Sheet2"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "188f0651-c7e7-4f4d-88bc-ef2631ff0f37",
+      "name": "Delay Between Batches",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        1120
+      ],
+      "webhookId": "4b9e0a23-6a54-4740-929b-3a53dda98dfe",
+      "notes": "10 second pause between batches of 10"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        1056
+      ],
+      "id": "307f62c1-6439-4416-a376-679f6a255d6a",
+      "name": "Limit3"
     }
   ],
   "connections": {
@@ -1222,6 +1583,130 @@
           }
         ]
       ]
+    },
+    "Read Pending Prompts (Sheet2)": {
+      "main": [
+        [
+          {
+            "node": "Batch Prompts (10 at a time)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch Prompts (10 at a time)": {
+      "main": [
+        [
+          {
+            "node": "Delay Between Batches",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Image via fal.ai",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image via fal.ai": {
+      "main": [
+        [
+          {
+            "node": "Generation Successful?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generation Successful?": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Batch Prompts (10 at a time)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Preserve Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preserve Metadata": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Mark Prompt Complete (Sheet2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Prompt Complete (Sheet2)": {
+      "main": [
+        [
+          {
+            "node": "Batch Prompts (10 at a time)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Between Batches": {
+      "main": [
+        [
+          {
+            "node": "Limit3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Scripts Ready - Skip": {
+      "main": [
+        [
+          {
+            "node": "Read Pending Prompts (Sheet2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1233,7 +1718,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "81b4308b-bcc3-4523-a4be-82ac7e55ddbf",
+  "versionId": "8df34726-2777-4043-928b-81fb5f21ab89",
   "activeVersionId": "c2fbc231-152d-4bdf-8444-eb72dd8772a4",
   "triggerCount": 1,
   "shared": [
