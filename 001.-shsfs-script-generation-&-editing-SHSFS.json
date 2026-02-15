@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-12T18:00:21.321Z",
+  "updatedAt": "2026-02-14T22:00:10.030Z",
   "createdAt": "2026-01-25T21:33:42.630Z",
   "id": "iixzw2YUC7r3X07o6Dg5w",
   "name": "001. SHSFS Script Generation & Editing",
@@ -521,7 +521,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Get today's date in YYYY-MM-DD format\nconst today = new Date().toISOString().split('T')[0];\n\n// Get all rows from sheet\nconst allRows = $input.all();\n\n// Count scripts completed today\nconst completedToday = allRows.filter(row => {\n  const completedDate = row.json.date_completed;\n  if (!completedDate) return false;\n  // Handle different date formats\nconst dateStr = typeof completedDate === 'string' \n  ? completedDate.split(' ')[0]  // ✅ Splits on space for \"yyyy-MM-dd HH:mm:ss\"\n  : new Date(completedDate).toISOString().split('T')[0];\n  return dateStr === today;\n}).length;\n\n// Set your daily limit here (adjust as needed)\nconst DAILY_LIMIT = 2; // Change to 4 or 5 if you want\n\n// Calculate how many more we can do today\nconst remainingSlots = DAILY_LIMIT - completedToday;\n\n// Filter for pending topics (no doc_id means not processed yet)\nconst pendingTopics = allRows.filter(row => !row.json.doc_id);\n\n// Take only the number we can process today\nconst topicsToProcess = pendingTopics.slice(0, Math.max(0, remainingSlots));\n\n// Return results with metadata\nreturn topicsToProcess.map(row => ({\n  json: {\n    ...row.json,\n    _metadata: {\n      completedToday: completedToday,\n      dailyLimit: DAILY_LIMIT,\n      remainingSlots: remainingSlots,\n      totalPending: pendingTopics.length\n    }\n  }\n}));"
+        "jsCode": "// Get today's date in YYYY-MM-DD format\nconst today = new Date().toISOString().split('T')[0];\n\n// Get all rows from sheet\nconst allRows = $input.all();\n\n// Count scripts completed today\nconst completedToday = allRows.filter(row => {\n  const completedDate = row.json.date_completed;\n  if (!completedDate) return false;\n  // Handle different date formats\nconst dateStr = typeof completedDate === 'string' \n  ? completedDate.split(' ')[0]  // ✅ Splits on space for \"yyyy-MM-dd HH:mm:ss\"\n  : new Date(completedDate).toISOString().split('T')[0];\n  return dateStr === today;\n}).length;\n\n// Set your daily limit here (adjust as needed)\nconst DAILY_LIMIT = 4; // Change to 4 or 5 if you want\n\n// Calculate how many more we can do today\nconst remainingSlots = DAILY_LIMIT - completedToday;\n\n// Filter for pending topics (no doc_id means not processed yet)\nconst pendingTopics = allRows.filter(row => !row.json.doc_id);\n\n// Take only the number we can process today\nconst topicsToProcess = pendingTopics.slice(0, Math.max(0, remainingSlots));\n\n// Return results with metadata\nreturn topicsToProcess.map(row => ({\n  json: {\n    ...row.json,\n    _metadata: {\n      completedToday: completedToday,\n      dailyLimit: DAILY_LIMIT,\n      remainingSlots: remainingSlots,\n      totalPending: pendingTopics.length\n    }\n  }\n}));"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1669,7 +1669,7 @@
       }
     ]
   },
-  "versionId": "454aa6ad-a564-495b-b4fd-d378e69a856d",
+  "versionId": "d9f7fb7f-cf60-4065-afe9-54c179983b23",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
