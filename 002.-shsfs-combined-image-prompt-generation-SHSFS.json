@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-15T03:12:18.748Z",
+  "updatedAt": "2026-02-15T22:31:12.835Z",
   "createdAt": "2026-01-25T22:11:27.563Z",
   "id": "u4_u2ln94yCg6M0ziIFTb",
   "name": "002. SHSFS Combined Image Prompt Generation",
@@ -224,7 +224,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"deepseek/deepseek-v3.2\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate detailed image prompts for Hindu sacred story sleep videos. Each prompt MUST be 5+ sentences describing a contemplative, devotional scene inspired by classical Indian temple art.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Soft gouache painting style inspired by classical Indian temple murals and devotional art\\n- Contemplative, devotional quality with sleep-friendly tones\\n- The flat, iconic composition of temple art but with softer edges for calming effect\\n- Historical/cultural accuracy (ancient Indian settings, traditional garments, period-appropriate architecture and materials)\\n- Warm, sacred color palette: ochre, terracotta, deep indigo, sunset orange, warm earth tones, touches of gold for divine light\\n- Focus on devotional atmosphere, character expressions showing inner spiritual states, symbolic elements\\n- Gentle, reverent treatment of all figures and scenes\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons shown explicitly\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n- Maintain respectful, sacred treatment of all Hindu deities, sages, and sacred figures\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}, {\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.script) }}\n    }\n  ],\n  \"temperature\": 1\n}",
+        "jsonBody": "={\n  \"model\": \"deepseek/deepseek-v3.2\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate detailed image prompts for Hindu sacred story sleep videos. Each prompt MUST be 5+ sentences describing a contemplative, devotional scene inspired by classical Indian temple art.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Soft gouache painting style inspired by classical Indian temple murals and devotional art\\n- Contemplative, devotional quality with sleep-friendly tones\\n- The flat, iconic composition of temple art but with softer edges for calming effect\\n- Historical/cultural accuracy (ancient Indian settings, traditional garments, period-appropriate architecture and materials)\\n- Warm, sacred color palette: ochre, terracotta, deep indigo, sunset orange, warm earth tones, touches of gold for divine light\\n- Focus on devotional atmosphere, character expressions showing inner spiritual states, symbolic elements\\n- Gentle, reverent treatment of all figures and scenes\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons shown explicitly\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n- Maintain respectful, sacred treatment of all Hindu deities, sages, and sacred figures\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}, {\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.script) }}\n    }\n  ],\n  \"temperature\": 1,\n  \"max_tokens\": 28192\n}",
         "options": {}
       },
       "id": "4f3af98c-7032-448c-83df-d842fa5becdd",
@@ -488,19 +488,6 @@
     },
     {
       "parameters": {
-        "jsCode": "// Get script content and video name\nconst scriptContent = $input.item.json.content;\nconst videoName = $('Extract Script Info').first().json.video_name;\n\n// Extract section titles from script for chapter list\nconst sectionRegex = /# \\*\\*Section \\d+: ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nwhile ((match = sectionRegex.exec(scriptContent)) !== null) {\n  sections.push(match[1].trim());\n}\n\nconst systemPrompt = `You are an SEO specialist for the YouTube channel \"Sacred Hindu Stories for Sleep.\"\n\nCHANNEL CONTEXT:\n- Creates 2-3 hour sleep-friendly audio content from Hindu sacred texts\n- Target audience: People seeking spiritual engagement + sleep assistance\n- No mid-roll ads, extended runtime for sleep\n- Uses authoritative Kisari Mohan Ganguli translation\n- Immersive storytelling style with \"gentle cynic\" analytical voice\n\nSEO PACKAGE STRUCTURE:\n\n1. VIDEO TITLES (3 options):\n   \n   CRITICAL: DO NOT include \"Hindu Stories for Sleep\" or \"Fall Asleep to\" in titles.\n   Branding happens in channel name, descriptions, and hashtags - NOT in titles.\n   \n   FORMAT: [Mystery Hook Question/Statement] | [Evocative Subtitle]\n   \n   HOOK FORMULAS (First Half):\n   - \"Who Was Really More [Adjective]?\" \n   - \"Why [Character] Couldn't [Action]\"\n   - \"How Did [Event] Happen in the Mahabharata?\"\n   - \"What Did [Character] Actually [Do]?\"\n   - \"[Character] vs [Character] - [Question]\"\n   - \"The [Subject] - [Defining Question]\"\n   \n   EVOCATIVE SUBTITLE FORMULAS (Second Half):\n   - \"From X to Y\" (journey/transformation arc)\n   - \"The [Role] Who [Action]\" (defining characteristic)\n   - \"[Emotional/Epic Phrase]\" (The End of an Avatar, The Bet That Started a War)\n   - \"[Stakes/Consequence]\" (Rejected by Gods, Cursed by Gurus)\n   - \"The [Superlative] in the Mahabharata\" (The Greatest Rivalry)\n   - \"[List of Things]\" (Curses, Karma & Cosmic Debts)\n   \n   Provide 3 distinct options:\n   - Option 1 (Question Hook): [Question] | [Evocative Subtitle]\n   - Option 2 (Statement Hook): [Statement] | [Evocative Subtitle]\n   - Option 3 (Complete Story): The Complete Story of [Subject] | [Character Arc Phrase]\n   \n   EXAMPLES:\n   - Karna vs Arjuna - Who Was Really More Powerful? | The Greatest Rivalry in the Mahabharata\n   - How Did Krishna Die in the Mahabharata? | The End of an Avatar\n   - Why Krishna Couldn't Save Abhimanyu | The Question Nobody Answers\n   - The Dice Game - When Yudhishthira Gambled Everything | The Bet That Started a War\n   - The Complete Story of Karna | Rejected by Gods, Cursed by Gurus\n\n2. VIDEO DESCRIPTION (250-350 words):\n   \n   CRITICAL FORMATTING REQUIREMENT:\n   Format the description as a markdown code block by wrapping it in triple backticks.\n   This ensures emojis copy correctly as text instead of images.\n   \n   Content structure:\n   Start with: \"Fall asleep to the calm, in-depth story of [Topic] from the Mahabharata. This video contains NO mid-roll ads.\"\n   \n   Include:\n   - 2-3 sentence hook (create intrigue)\n   - Clock emoji CHAPTERS section (list all section titles with 00:00 timestamps)\n   - Book emoji IN THIS VIDEO (5 bullet points of key topics)\n   - Context about why topic matters (1-2 sentences)\n   - \"Perfect for falling asleep, relaxation, study, or anyone curious about Hindu sacred texts.\"\n   - \"Based on the authoritative Kisari Mohan Ganguli translation of the Mahabharata.\"\n   - \"Bell emoji Subscribe for more: @SacredHinduStoriesforSleep\"\n   - Comma-separated keyword string for algorithm\n   - End with: #HinduStories #Mahabharata #[Topic] #SleepStories #HinduMythology\n\n3. VIDEO TAGS:\n   CRITICAL: Total character count must be UNDER 500 CHARACTERS (including commas and spaces).\n   Provide as a single comma-separated string.\n   \n   Prioritize in this order:\n   - Brand terms (3-5): sacred hindu stories for sleep, hindu stories for sleep, mahabharata for sleep\n   - High-value topic terms (5-8): [character name], [character] mahabharata, [event name], story of [character]\n   - Sleep/discovery terms (5-7): fall asleep to, sleep stories, hindu mythology, mahabharata documentary, ancient india\n   \n   Count your characters carefully. The final string must be under 500 characters total.\n\n4. HASHTAGS (exactly 5):\n   Format: #HinduStories #Mahabharata #[MainTopic] #SleepStories #[Category]\n   Always include #HinduStories first, then 4 others relevant to content\n\n5. THUMBNAIL CONCEPTS (3-4 options):\n   \n   CRITICAL: EVERY thumbnail MUST include text_line1 and text_line2 fields. These are REQUIRED, not optional.\n   \n   Style: 19th-century romantic oil painting (Raja Ravi Varma influence)\n   Formula: MEDIUM CLOSE-UP (waist up) + Face fills 40-50% of frame + Centered composition + Epic action BEHIND at smaller scale\n   \n   THUMBNAIL TEXT OVERLAY REQUIREMENTS (MANDATORY FOR EVERY THUMBNAIL):\n   \n   text_line1: Main topic in ALL CAPS, keep to 1-3 words maximum\n   Examples: \"KARNA\", \"THE DICE GAME\", \"KRISHNA'S DEATH\", \"KURUKSHETRA\"\n   \n   text_line2: Evocative subtitle in Title Case, keep to 3-6 words\n   Examples: \"The Greatest Warrior\", \"When Everything Was Lost\", \"End of an Avatar\", \"The Final Battle\"\n   \n   THUMBNAIL TEXT EXAMPLES:\n   - text_line1: \"KARNA VS ARJUNA\" and text_line2: \"The Greatest Rivalry\"\n   - text_line1: \"DRAUPADI\" and text_line2: \"The Queen Who Lost Everything\"\n   - text_line1: \"KRISHNA'S DEATH\" and text_line2: \"End of an Avatar\"\n   - text_line1: \"THE DICE GAME\" and text_line2: \"The Bet That Started a War\"\n   \n   For each thumbnail, provide:\n   - concept: Brief scene description (1-2 sentences)\n   - text_line1: Main topic in ALL CAPS (1-3 words) [REQUIRED]\n   - text_line2: Evocative subtitle in Title Case (3-6 words) [REQUIRED]\n   - prompt: Full image generation prompt following this structure:\n   \n   \"Frameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT, [subject] from the waist up positioned in the CENTER of the frame, [expression/action], face fills 40-50% of frame, CLOTHING/ERA: Ancient India, [specific garments], DRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene], [environmental details], 19th-century romantic oil painting style, Raja Ravi Varma influence, [subject] dominates foreground, [action] visible but secondary, symmetrical composition, no frame, no border, edge-to-edge, [appropriate forehead markings based on character type]\"\n   \n   Traditional forehead markings:\n   - Married women: bindi + sindoor in hair parting\n   - Unmarried women: bindi only\n   - Kings/warriors: simple tilaka in sandalwood paste\n   - Ascetics: three horizontal ash lines\n   - Priests: U-shaped tilaka\n\nOUTPUT FORMAT:\nReturn valid JSON with the description formatted as a code block using three backtick characters.\n\nStructure:\n{\n  \"titles\": {\n    \"option1\": \"string\",\n    \"option2\": \"string\",\n    \"option3\": \"string\"\n  },\n  \"description\": \"triple-backtick newline full-description-here newline triple-backtick\",\n  \"tags\": \"comma, separated, tag, list\",\n  \"hashtags\": \"#Hash1 #Hash2 #Hash3 #Hash4 #Hash5\",\n  \"thumbnails\": [\n    {\n      \"concept\": \"string\",\n      \"text_line1\": \"STRING IN CAPS\",\n      \"text_line2\": \"String In Title Case\",\n      \"prompt\": \"string\"\n    }\n  ]\n}\n\nCRITICAL REMINDERS:\n- Wrap description in code block with three backtick characters at start and end\n- Every thumbnail MUST have text_line1 and text_line2 fields\n- Tags must be under 500 characters total`;\n\nconst userPrompt = `Generate a complete SEO package for this Hindu Stories for Sleep video.\n\nSCRIPT SECTIONS:\n${sections.map((s, i) => `Section ${i + 1}: ${s}`).join('\\n')}\n\nFULL SCRIPT:\n${scriptContent}\n\nGenerate the complete SEO package in JSON format. \n\nCRITICAL REMINDERS:\n1. Format description as a code block with three backticks at beginning and end\n2. Tags must be UNDER 500 characters total\n3. EVERY thumbnail must include text_line1 and text_line2 fields\n4. Provide 3-4 complete thumbnail options with all required fields`;\n\nreturn [{\n  json: {\n    video_name: videoName,\n    requestBody: {\n      model: \"anthropic/claude-sonnet-4.5\",\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.7\n    }\n  }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2672,
-        672
-      ],
-      "id": "d888a726-f85b-4038-b505-0461cbf15f90",
-      "name": "Build SEO Request"
-    },
-    {
-      "parameters": {
         "operation": "get",
         "documentURL": "={{ $('Extract Script Info').item.json.document_id }}"
       },
@@ -536,13 +523,13 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Sacred Hindu Stories for Sleep, a YouTube channel creating 2-3 hour immersive sleep content from Hindu sacred texts (primarily the Mahabharata).\\n\\nCHANNEL VOICE:\\n- Immersive storyteller who puts you IN ancient India\\n- Warm, unhurried, sensory-rich\\n- Second-person immersion: \\\"you're standing on a beach at twilight\\\"\\n- Humor about the absurdity of situations characters face\\n- Uses authoritative Kisari Mohan Ganguli translation\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nCRITICAL: DO NOT include \\\"Hindu Stories for Sleep\\\" or \\\"Fall Asleep to\\\" in titles. Branding happens in channel name, descriptions, and hashtags — NOT in titles.\\n\\nFORMAT: [Mystery Hook Question/Statement] | [Evocative Subtitle]\\n\\nHook Formulas (First Half):\\n- \\\"Who Was Really More [Adjective]?\\\"\\n- \\\"Why [Character] Couldn't [Action]\\\"\\n- \\\"How Did [Event] Happen in the Mahabharata?\\\"\\n- \\\"What Did [Character] Actually [Do]?\\\"\\n- \\\"[Character] vs [Character] - [Question]\\\"\\n- \\\"The [Subject] - [Defining Question]\\\"\\n\\nEvocative Subtitle Formulas (Second Half):\\n- \\\"From X to Y\\\" (journey/transformation arc)\\n- \\\"The [Role] Who [Action]\\\" (defining characteristic)\\n- \\\"[Emotional/Epic Phrase]\\\" (The End of an Avatar, The Bet That Started a War)\\n- \\\"[Stakes/Consequence]\\\" (Rejected by Gods, Cursed by Gurus)\\n- \\\"The [Superlative] in the Mahabharata\\\" (The Greatest Rivalry)\\n- \\\"[List of Things]\\\" (Curses, Karma & Cosmic Debts)\\n\\nProvide 3 distinct options:\\n- Option 1 (Question Hook): [Question] | [Evocative Subtitle]\\n- Option 2 (Statement Hook): [Statement] | [Evocative Subtitle]\\n- Option 3 (Complete Story): The Complete Story of [Subject] | [Character Arc Phrase]\\n\\nExamples:\\n- Karna vs Arjuna - Who Was Really More Powerful? | The Greatest Rivalry in the Mahabharata\\n- How Did Krishna Die in the Mahabharata? | The End of an Avatar\\n- The Complete Story of Karna | Rejected by Gods, Cursed by Gurus\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic] from the Mahabharata. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook — pose a question or highlight something surprising about the topic]\\n\\n⏱️ CHAPTERS\\n00:00 - Opening\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters or what makes it interesting]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about Hindu sacred texts and ancient Indian stories.\\n\\nBased on the authoritative Kisari Mohan Ganguli translation of the Mahabharata.\\n\\n🔔 Subscribe for more: @SacredHinduStoriesforSleep\\n\\n[Comma-separated keyword string for algorithm pickup]\\n\\n#HinduStories #Mahabharata #[Topic] #SleepStories #HinduMythology\\n\\nIMPORTANT:\\n- Extract actual chapter titles from the script's section headers\\n- Output the ENTIRE DESCRIPTION in a markdown code block (```text) so emojis copy correctly\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters):\\n\\nProvide ALL tags in a single comma-separated line, prioritized by search value:\\n\\nTag Priority Order:\\n1. Brand terms (3-5): sacred hindu stories for sleep, hindu stories for sleep, mahabharata for sleep\\n2. Topic-specific terms (5-8): [character name], [character] mahabharata, story of [character], [event name], [parva name]\\n3. Sleep/relaxation terms (5-7): fall asleep to, sleep stories, relaxing stories, calm narration, bedtime stories for adults\\n4. Discovery terms (5-7): hindu mythology, mahabharata documentary, ancient india, hindu sacred texts, indian epic\\n\\nCount your characters carefully. The final string must be under 500 characters total.\\n\\n---\\n\\n## HASHTAGS (Exactly 5):\\n\\nFormat:\\n#HinduStories #Mahabharata #[MainTopic] #SleepStories #[Category]\\n\\nAlways include #HinduStories first. Categories: Dharma, Karma, AncientIndia, HinduMythology, Kurukshetra, etc.\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** Ancient India, [specific garments — sari, dhoti, jewelry, armor]\\n\\n**Thumbnail Text (for Canva overlay):**\\n- Line 1: [TOPIC NAME IN CAPS — e.g., \\\"KARNA\\\" not \\\"Karna's Final Battle\\\"]\\n- Line 2: [Curiosity-invoking dramatic hook — make them NEED to click]\\n\\nNOTE: Line 1 is ALWAYS the main video topic (1-3 words, ALL CAPS), regardless of which specific scene this thumbnail depicts. Line 2 should create intrigue, mystery, or dramatic tension — NOT just describe the scene. Examples: \\\"The Greatest Warrior\\\" / \\\"Rejected by Gods\\\" / \\\"The Bet That Started a War\\\"\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: Ancient India, [specific garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Raja Ravi Varma influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n[Include appropriate forehead markings based on character type]\\n\\nForehead Markings Reference:\\n- Married women: Red/black bindi + sindoor in hair parting\\n- Unmarried women: Bindi only\\n- Kings/Warriors: Simple tilaka in sandalwood paste or kumkum\\n- Ascetics/Sages: Three horizontal ash lines (tripundra)\\n- Priests: U-shaped tilaka in sandalwood paste\\nCRITICAL: For Mahabharata-era characters, avoid modern sectarian symbols. Use simpler, pre-sectarian styles.\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2848,
+        2768,
         672
       ],
       "id": "d0a6ee95-b3b6-4320-811e-76bc5bc2615c",
@@ -556,12 +543,12 @@
     },
     {
       "parameters": {
-        "jsCode": "const response = $input.item.json.choices[0].message.content;\nconst videoName = $('Extract Script Info').item.json.video_name;\nlet seo;\ntry {\n  // Try direct parse\n  seo = JSON.parse(response);\n} catch (e) {\n  // Try extracting from markdown code block\n  const jsonMatch = response.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    seo = JSON.parse(jsonMatch[1]);\n  } else {\n    // Try finding JSON object\n    const jsonMatch2 = response.match(/\\{[\\s\\S]*\\}/);\n    if (jsonMatch2) {\n      seo = JSON.parse(jsonMatch2[0]);\n    } else {\n      throw new Error(\"Could not parse SEO response as JSON: \" + response.substring(0, 200));\n    }\n  }\n}\n\n// Format for Slack message\nconst slackMessage = `🎬 **SEO PACKAGE READY: ${videoName}**\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📋 **VIDEO TITLES**\n**Option 1 (Brand Standard):**\n${seo.titles.option1}\n\n**Option 2 (Mystery Hook):**\n${seo.titles.option2}\n\n**Option 3 (Complete Story):**\n${seo.titles.option3}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📝 **DESCRIPTION**\n${seo.description}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🏷️ **TAGS**\n${seo.tags}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n#️⃣ **HASHTAGS**\n${seo.hashtags}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🖼️ **THUMBNAIL CONCEPTS**\n${seo.thumbnails.map((thumb, i) => `\n**Concept ${i + 1}:** ${thumb.concept}\n**Text Line 1:** ${thumb.text_line1}\n**Text Line 2:** ${thumb.text_line2}\n**Prompt:**\n\\`\\`\\`\n${thumb.prompt}\n\\`\\`\\`\n`).join('\\n')}\n`;\n\nreturn [{\n  json: {\n    video_name: videoName,\n    slack_message: slackMessage,\n    seo_package: seo\n  }\n}];"
+        "jsCode": "const seoResponse = $input.item.json.choices[0].message.content;\nconst videoName = $('Extract Script Info').item.json.video_name;\n\nreturn [{\n  json: {\n    video_name: videoName,\n    seo_package: seoResponse\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3056,
+        3024,
         672
       ],
       "id": "658fedc2-8697-4a28-aa44-8e0e49020c32",
@@ -596,27 +583,6 @@
         }
       },
       "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "hours",
-              "hoursInterval": 6
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        16,
-        160
-      ],
-      "id": "7dfb12eb-da93-4315-814e-81699b60d24f",
-      "name": "Schedule Trigger",
-      "disabled": true
     },
     {
       "parameters": {
@@ -1287,6 +1253,184 @@
       ],
       "id": "307f62c1-6439-4416-a376-679f6a255d6a",
       "name": "Limit3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "tts_status": "",
+            "image_status": "chdone"
+          },
+          "matchingColumns": [
+            "video_name"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reference_books",
+              "displayName": "reference_books",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "edit_status",
+              "displayName": "edit_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scheduled Date",
+              "displayName": "Scheduled Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2592,
+        0
+      ],
+      "id": "50298818-5e2e-4872-8e54-53b6e720ac0d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1422,7 +1566,7 @@
       "main": [
         [
           {
-            "node": "Read Pending Chapters (Sheet1)",
+            "node": "Update row in sheet",
             "type": "main",
             "index": 0
           }
@@ -1441,17 +1585,6 @@
       ]
     },
     "Get Script from Google Doc": {
-      "main": [
-        [
-          {
-            "node": "Build SEO Request",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Build SEO Request": {
       "main": [
         [
           {
@@ -1554,17 +1687,6 @@
       ]
     },
     "Mark Script Complete": {
-      "main": [
-        [
-          {
-            "node": "Check for Ready Scripts",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Schedule Trigger": {
       "main": [
         [
           {
@@ -1709,6 +1831,17 @@
           }
         ]
       ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Read Pending Chapters (Sheet1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1720,7 +1853,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "0d06200e-9998-40ba-9c02-43e8652b41a7",
+  "versionId": "ba01c0a0-3204-4b03-85a8-ac2cc90777fb",
   "activeVersionId": "c2fbc231-152d-4bdf-8444-eb72dd8772a4",
   "triggerCount": 1,
   "shared": [
