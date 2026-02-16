@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-14T22:00:10.030Z",
+  "updatedAt": "2026-02-15T21:07:52.288Z",
   "createdAt": "2026-01-25T21:33:42.630Z",
   "id": "iixzw2YUC7r3X07o6Dg5w",
   "name": "001. SHSFS Script Generation & Editing",
@@ -13,8 +13,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -608,
-        -160
+        496,
+        448
       ]
     },
     {
@@ -498,26 +498,6 @@
       ],
       "id": "2104c14a-a3b6-4301-9cb1-62775fceaa04",
       "name": "Extract from File"
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "hours",
-              "hoursInterval": 4
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -624,
-        176
-      ],
-      "id": "32e1175e-300e-4809-a3cf-61239df1aa05",
-      "name": "Schedule Trigger"
     },
     {
       "parameters": {
@@ -1507,17 +1487,6 @@
         ]
       ]
     },
-    "Schedule Trigger": {
-      "main": [
-        [
-          {
-            "node": "Read Topics Sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get Google Doc": {
       "main": [
         [
@@ -1647,29 +1616,8 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "Schedule Trigger": [
-      {
-        "json": {
-          "timestamp": "2026-01-23T12:00:51.053+01:00",
-          "Readable date": "January 23rd 2026, 12:00:51 pm",
-          "Readable time": "12:00:51 pm",
-          "Day of week": "Friday",
-          "Year": "2026",
-          "Month": "January",
-          "Day of month": "23",
-          "Hour": "12",
-          "Minute": "00",
-          "Second": "51",
-          "Timezone": "Europe/Berlin (UTC+01:00)"
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ]
-  },
-  "versionId": "d9f7fb7f-cf60-4065-afe9-54c179983b23",
+  "pinData": {},
+  "versionId": "4fb84c14-ec8f-40c4-94e5-9c31ee2ef46d",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
