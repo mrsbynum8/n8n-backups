@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-04T02:19:32.974Z",
+  "updatedAt": "2026-02-16T18:08:40.954Z",
   "createdAt": "2026-01-25T23:18:25.112Z",
   "id": "RcrPI43JHDgZsxlXZ83Xv",
   "name": "001. NEW SFS Script Generation (Topic → Google Doc)",
@@ -706,6 +706,395 @@
       "id": "ad3f6952-1d58-4537-85a0-de68deb7992e",
       "name": "Webhook",
       "webhookId": "430e49a3-532e-4d0e-860e-afa92055705b"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.doc_id }}"
+      },
+      "id": "bdc491e0-c699-41f4-a0ae-3a7879264071",
+      "name": "Get Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -912,
+        832
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract plain text from Google Docs response (Simplify mode)\nconst doc = $input.first().json;\nconst documentId = $json.documentId;\n\n// With Simplify ON, content comes as a direct string\nconst scriptText = doc.content || '';\n\n// Calculate approximate end index for the update\n// Google Docs indices are 1-based, and we need the position after the last character\nconst endIndex = scriptText.length + 1;\n\nreturn [{\n  json: {\n    documentId,\n    scriptText,\n    endIndex,\n    wordCount: scriptText.split(/\\s+/).filter(w => w.length > 0).length\n  }\n}];"
+      },
+      "id": "2a85ac5e-0787-4d12-b8ed-3e578ea2d38d",
+      "name": "Extract Script Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare QC Prompt Node - v4 (with full style guide)\n// Paste this into your \"Prepare QC Prompt\" Code node in n8n\n\nconst scriptData = $('Extract Script Text').first().json;\n\nconst qcPrompt = `You are a CRITICAL script editor for \"Scriptures for Sleep,\" a YouTube channel. Your job is to find problems and enforce the style guide below.\n\nIMPORTANT: First-draft scripts ALWAYS have room for improvement. A thorough QC typically identifies 5-25 issues. If you find zero issues, you are not looking hard enough.\n\n---\n\n# COMPLETE STYLE GUIDE\n\n## Rule 1: Monologue Only\nDirect-to-audience monologue from a single narrator. Brief embedded character quotes are permitted (see Rule 11), but never voice-act or \"become\" different characters.\n\n## Rule 2: Second-Person Immersion is Key\nThe listener is IN the world, not hearing about it. Use \"you,\" \"your,\" \"you're\" constantly. This is the backbone of the style.\n\nGOOD EXAMPLES:\n- \"Congratulations, you've just woken up in 1200 BCE. The good news: you're alive. The bad news: so are the fleas.\"\n- \"You try to stretch, but immediately regret it because the air is freezing and your joints ache.\"\n\n## Rule 3: Pacing = Short Sentences + Fragment Punchlines\nSlow, deliberate cadence. Short, declarative sentences and frequent paragraph breaks.\nFor punchlines and transitions, use ultra-short fragments. Follow the rhythm: [Setup sentence]. [Pause beat]. [Punchline fragment].\n\nEXAMPLE: \"The army spread across the valley like a shadow moving over water, thousands upon thousands of men who had marched for weeks. They waited. Nobody moved. Somewhere, a horse sneezed.\"\n\n## Rule 4: Humor is Non-Negotiable\nThe tone is always witty. The comedy comes from describing ancient absurdity with modern vocabulary—like a friend telling you about a terrible Airbnb they stayed at.\n\n## Rule 5: The Humor Formula\nTHE CORE FORMULA: Modern concept/vocabulary + ancient reality = comedy\n\nA. Anachronism - Compare ancient concepts to modern ones using casual modern language.\nB. Witty Phrasing - Unexpected word choices and entertainingly specific descriptions.\nC. Personification - Give inanimate objects human emotions and social behaviors.\nD. Lists of Three with Gross Specifics - \"human waste, animal droppings, and mystery liquids you'd rather not examine\"\n\n## Rule 6: The Three-Part Opening Structure (SACRED - DO NOT MODIFY)\n\n**PART 1 — THE HOOK (before any greeting):**\nStart with 2-4 sentences that make the listener want to EXPERIENCE this world. Experiential, not analytical.\n\n**PART 2 — THE RITUAL FORMULA (MANDATORY - NEVER DELETE OR MOVE):**\n\"Hey guys, tonight we begin with [TOPIC]... like the video and subscribe... dim the lights... let's ease into tonight's journey together.\"\n\n**PART 3 — THE SCENE-DROP:**\nDrop the listener directly into the world with second-person immersion.\nDo NOT start with \"Picture this\" or \"Imagine\"—just drop them in.\n\n⚠️ THE RITUAL FORMULA IS UNTOUCHABLE. It must stay between HOOK and SCENE DROP. Never suggest removing, moving, or modifying it.\n\n## Rule 7: The Sensory Expansion Formula\nBe GROSS and SPECIFIC. Don't poeticize—entertainingly horrify.\n\nThe Formula:\n1. Name the sense\n2. List 2-3 specific, gross components\n3. Add the listener's reaction\n\nBAD: \"It smelled bad.\"\nGOOD: \"The smell? A fragrant symphony. Stale beer, human sweat, goat, and something you pray isn't mold but know in your soul probably is. You try breathing through your mouth. It doesn't help.\"\n\n## Rule 8: Humanize Through Experience\nPresent biblical figures as people having a bad time. Show what their lives actually FELT like—the discomforts, the boredom, the grossness.\n\n## Rule 9: Show, Don't Preach\nThis is a story, not a sermon. Let the narrative carry meaning through experience. Never moralize during the story.\n\n## Rule 10: The Fade-Out Ending (NO Closing CTA)\nNEVER end with: \"Good night,\" \"Thanks for watching,\" \"See you next time,\" or any call to action.\nINSTEAD, trail off on a quiet, thematic note about legacy, endurance, or continuation.\n\n## Rule 11: Brief Dialogue Quotes\nKeep quotes to 1-2 sentences and embed naturally. NEVER switch voices or perform characters.\n\n## Rule 12: Spoken Chapter Transitions\nBegin each major section with a verbal transition that's story-focused, not meta.\n\nGOOD: \"And now we arrive at the part nobody talks about.\"\nBAD: \"In this next section, we'll examine...\"\n\n## Rule 13: Voice Labeling (CRITICAL)\nNever use internal terminology like \"the gentle cynic notices\" in scripts. Never use analytical observations like \"notice who benefits.\" Simply tell the story through immersive experience.\n\nWRONG: \"Notice who benefits from this arrangement.\"\nWRONG: \"The timing is almost too convenient.\"\nRIGHT: Just show the situation. Let the listener draw conclusions.\n\n## Rule 14: The Reflection Beat\nA dedicated section in the second-to-last position where you \"close the Bible\" and share what the story meant. 800-1200 words. Conversational, not preachy.\n\n---\n\n# PHRASES TO AVOID (Flag these as violations)\n\nANALYTICAL DRIFT:\n- \"Who benefited from this being true?\"\n- \"Notice the pattern here\"\n- \"The timing is almost too convenient\"\n- \"Institutional anxiety\"\n- \"The gentle cynic notices\"\n- Any phrase that sounds like a thesis statement\n\nPOETIC DISTANCE:\n- BAD: \"The dust settled slowly, as if time itself had paused.\"\n- GOOD: \"The dust got in your teeth. It always got in your teeth.\"\n\nESSAY SCAFFOLDING:\n- \"Let's examine...\"\n- \"Consider...\"\n- \"From a historical perspective...\"\n- \"In this story\"\n- \"Let's explore\"\n- \"Picture this\"\n- \"Can you imagine\"\n- \"You might be wondering\"\n- \"It's important to note\"\n- \"Interestingly\"\n- \"In conclusion\"\n- \"Without further ado\"\n\nMETA-REFERENCES:\n- \"The texts say...\"\n- \"According to scripture...\"\n- \"The story tells us...\"\n- \"camera\" / \"scene\" / \"narrator\" / \"chapter\"\n- Any phrase directly addressing the YouTube audience inside the narrative\n\n---\n\n# YOUR TASK\n\nAnalyze the script and return a JSON response with suggested find/replace changes.\n\n## CRITICAL COPY-PASTE RULES:\n1. **EXACT TEXT ONLY**: The \"find\" field must contain text EXACTLY as it appears in the script\n2. **DO NOT PARAPHRASE**: If the script says \"It's a boat\" you cannot write \"It was a boat\"\n3. **COPY-PASTE LITERALLY**: Select the text from the script and copy it exactly\n4. **NO TRUNCATION**: Never use \"...\" to shorten the find text\n5. **AVOID OVERLAPPING REPLACEMENTS**: Each replacement should target a distinct piece of text\n\n## OUTPUT FORMAT (JSON):\n{\n  \"assessment\": {\n    \"word_count\": <number>,\n    \"second_person_immersion_score\": <1-10>,\n    \"comedically_appalled_tone_score\": <1-10>,\n    \"pacing_score\": <1-10>,\n    \"reflection_beat_status\": \"present_strong\" | \"present_weak\" | \"missing\",\n    \"hard_no_count\": <number of forbidden phrases found>,\n    \"ready_for_production\": <boolean>,\n    \"production_blockers\": [\"list of issues that must be fixed\"]\n  },\n  \"replacements\": [\n    {\n      \"rule_violated\": \"Rule X: Name\",\n      \"issue\": \"Brief description of the problem\",\n      \"find\": \"EXACT text from script - copy-paste only\",\n      \"replace\": \"Improved version\",\n      \"priority\": \"critical\" | \"high\" | \"medium\" | \"low\"\n    }\n  ]\n}\n\n## REPLACEMENT PRIORITIES:\n- **critical**: Forbidden phrases, broken immersion, structure violations\n- **high**: Pacing issues, missing sensory details, weak transitions\n- **medium**: Tone adjustments, minor wording improvements\n- **low**: Style polish, optional enhancements\n\n## THINGS TO PRESERVE (DO NOT CHANGE):\n- The Ritual Formula section (subscribe/like/dim the lights)\n- Intentional stylistic fragments\n- Specific biblical names and references\n- The Reflection Beat section structure\n- Section/Chapter Headers and Header Formatting (DO NOT CHANGE)\n\n## DOUBLE-CHECK BEFORE SUBMITTING:\n- Did I copy the \"find\" text EXACTLY from the script?\n- Are my replacements targeting DIFFERENT parts of the text (no overlaps)?\n- Did I preserve the Ritual Formula?\n- Did I avoid suggesting meta language like \"camera\" or \"scene\"?\n\nReturn ONLY the JSON object, no other text.\n\n---\n\n# SCRIPT TO ANALYZE:\n\n${scriptData.scriptText}`;\n\nreturn [{\n  json: {\n    prompt: qcPrompt,\n    documentId: scriptData.documentId,\n    wordCount: scriptData.wordCount\n  }\n}];\n"
+      },
+      "id": "cf5fc9c8-6503-48cd-8ddb-1f2310b9de74",
+      "name": "Prepare QC Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "HTTP-Referer",
+              "value": "https://scriptureforsleep.com"
+            },
+            {
+              "name": "X-Title",
+              "value": "Scripture for Sleep QC"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"openai/gpt-5.2\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.prompt) }}\n    }\n  ],\n  \"temperature\": 0.3,\n  \"max_tokens\": 16000\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "4c4d7afe-0730-4bce-9603-6252c717c9f4",
+      "name": "OpenRouter QC Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -256,
+        832
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qh7wXpPCIXnZmiDW",
+          "name": "GenAIPro Auth"
+        },
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst previousData = $('Prepare QC Prompt').first().json;\n\n// Extract the content from OpenRouter's response format\nlet content = response.choices?.[0]?.message?.content || response.content || '';\n\n// Clean up the response (remove any markdown code fences if present)\ncontent = content.replace(/^```json\\s*/i, '').replace(/\\s*```$/i, '').trim();\n\n// Parse the JSON\nlet parsed;\ntry {\n  parsed = JSON.parse(content);\n} catch (e) {\n  // If parsing fails, try to extract JSON from the response\n  const jsonMatch = content.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    try {\n      parsed = JSON.parse(jsonMatch[0]);\n    } catch (e2) {\n      throw new Error('Failed to parse JSON from AI response: ' + e.message + '\\n\\nRaw content: ' + content.substring(0, 500));\n    }\n  } else {\n    throw new Error('No JSON found in AI response: ' + content.substring(0, 500));\n  }\n}\n\n// Validate structure\nif (!parsed.assessment) {\n  parsed.assessment = {\n    word_count: previousData.wordCount,\n    second_person_immersion_score: 0,\n    comedically_appalled_tone_score: 0,\n    pacing_score: 0,\n    reflection_beat_status: 'unknown',\n    hard_no_count: 0,\n    ready_for_production: false,\n    production_blockers: ['Could not parse assessment']\n  };\n}\n\nif (!Array.isArray(parsed.replacements)) {\n  parsed.replacements = [];\n}\n\nreturn [{\n  json: {\n    documentId: previousData.documentId,\n    scriptText: previousData.scriptText,\n    endIndex: previousData.endIndex,\n    assessment: parsed.assessment,\n    replacements: parsed.replacements,\n    replacementCount: parsed.replacements.length,\n    readyForProduction: parsed.assessment.ready_for_production\n  }\n}];"
+      },
+      "id": "001b4ca8-95c3-4ef3-8ffa-5fd1d7b4e741",
+      "name": "Parse QC Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Apply Replacements Node - v2 (with overlap detection)\n// Paste this into your \"Apply Replacements\" Code node in n8n\n\nconst scriptData = $('Extract Script Text').first().json;\nconst qcResponse = $('Parse QC Response').first().json;\n\nlet currentText = scriptData.scriptText;\nconst replacements = qcResponse.replacements || [];\n\nconst results = {\n  applied: [],\n  failed: [],\n  skippedOverlap: []\n};\n\n// Helper: Normalize whitespace for flexible matching\nfunction normalizeWhitespace(str) {\n  return str.replace(/\\s+/g, ' ').trim();\n}\n\n// Helper: Check word boundaries\nfunction isWordBoundaryMatch(text, startIndex, matchLength) {\n  const beforeChar = startIndex > 0 ? text[startIndex - 1] : ' ';\n  const afterChar = startIndex + matchLength < text.length ? text[startIndex + matchLength] : ' ';\n  const wordBoundary = /[\\s.,!?;:'\"()\\[\\]{}\\-—–\\n\\r]/;\n  return (startIndex === 0 || wordBoundary.test(beforeChar)) &&\n         (startIndex + matchLength === text.length || wordBoundary.test(afterChar));\n}\n\n// Helper: Find text with flexible whitespace\nfunction findWithFlexibleWhitespace(text, searchStr) {\n  const normalizedSearch = normalizeWhitespace(searchStr);\n  const searchRegex = normalizedSearch\n    .replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')\n    .replace(/ /g, '\\\\s+');\n\n  const regex = new RegExp(searchRegex, 'g');\n  const matches = [];\n  let match;\n\n  while ((match = regex.exec(text)) !== null) {\n    if (isWordBoundaryMatch(text, match.index, match[0].length)) {\n      matches.push({\n        index: match.index,\n        length: match[0].length,\n        matchedText: match[0]\n      });\n    }\n  }\n\n  return matches;\n}\n\n// Step 1: Find all match positions FIRST\nconst replacementsWithPositions = [];\n\nfor (const replacement of replacements) {\n  const findText = replacement.find;\n\n  // Skip truncated entries\n  if (findText.endsWith('...') || findText.length < 10) {\n    results.failed.push({\n      find: findText.substring(0, 50) + '...',\n      reason: 'Find text too short or truncated'\n    });\n    continue;\n  }\n\n  const matches = findWithFlexibleWhitespace(currentText, findText);\n\n  if (matches.length === 0) {\n    results.failed.push({\n      find: findText.substring(0, 50) + '...',\n      reason: 'Text not found in script'\n    });\n    continue;\n  }\n\n  if (matches.length > 1) {\n    results.failed.push({\n      find: findText.substring(0, 50) + '...',\n      reason: 'Multiple matches found (' + matches.length + ') - need more specific text'\n    });\n    continue;\n  }\n\n  replacementsWithPositions.push({\n    ...replacement,\n    startIndex: matches[0].index,\n    endIndex: matches[0].index + matches[0].length,\n    matchedText: matches[0].matchedText\n  });\n}\n\n// Step 2: Sort by position (END to START) to avoid index shifting\nreplacementsWithPositions.sort((a, b) => b.startIndex - a.startIndex);\n\n// Step 3: Detect and skip overlapping replacements\nconst appliedRanges = [];\n\nfor (const replacement of replacementsWithPositions) {\n  // Check if this replacement overlaps with any already-applied replacement\n  const overlaps = appliedRanges.some(range =>\n    (replacement.startIndex < range.end && replacement.endIndex > range.start)\n  );\n\n  if (overlaps) {\n    results.skippedOverlap.push({\n      find: replacement.find.substring(0, 50) + '...',\n      reason: 'Skipped - overlaps with another replacement'\n    });\n    continue;\n  }\n\n  // Apply the replacement\n  currentText =\n    currentText.substring(0, replacement.startIndex) +\n    replacement.replace +\n    currentText.substring(replacement.endIndex);\n\n  // Track this range (adjusted for the new text length)\n  appliedRanges.push({\n    start: replacement.startIndex,\n    end: replacement.startIndex + replacement.replace.length\n  });\n\n  results.applied.push({\n    rule: replacement.rule_violated || 'unspecified',\n    priority: replacement.priority || 'medium',\n    original: replacement.matchedText.substring(0, 50) + (replacement.matchedText.length > 50 ? '...' : ''),\n    replacement: replacement.replace.substring(0, 50) + (replacement.replace.length > 50 ? '...' : '')\n  });\n}\n\nreturn [{\n  json: {\n    documentId: scriptData.documentId,\n    updatedText: currentText,\n    originalLength: scriptData.scriptText.length,\n    newLength: currentText.length,\n    stats: {\n      totalReplacements: replacements.length,\n      appliedSuccessfully: results.applied.length,\n      failed: results.failed.length,\n      skippedOverlap: results.skippedOverlap.length\n    },\n    appliedChanges: results.applied,\n    failedReplacements: results.failed,\n    skippedReplacements: results.skippedOverlap,\n    assessment: qcResponse.assessment\n  }\n}];\n"
+      },
+      "id": "71120626-1325-4e64-88a3-8327d3aca036",
+      "name": "Apply Replacements",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://docs.googleapis.com/v1/documents/{{ $json.documentId }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"requests\": [\n    {\n      \"deleteContentRange\": {\n        \"range\": {\n          \"startIndex\": 1,\n          \"endIndex\": {{ $json.originalLength }}\n        }\n      }\n    },\n    {\n      \"insertText\": {\n        \"location\": {\n          \"index\": 1\n        },\n        \"text\": {{ JSON.stringify($json.updatedText) }}\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "20d7f5f0-aa96-4c03-afce-b0e03fd17308",
+      "name": "Update Google Doc",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        832
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doc_id": "={{ $('Loop Over Items').item.json.doc_id }}",
+            "edit_status": "complete",
+            "image_status": "ready",
+            "tts_status": "ready"
+          },
+          "matchingColumns": [
+            "doc_id"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "edit_status",
+              "displayName": "edit_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        832
+      ],
+      "id": "ea898d59-e61a-421d-99c3-bbcad476cc63",
+      "name": "Mark Complete",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1152,
+        832
+      ],
+      "id": "1629a682-59e5-4213-8d53-7265c1cc54e7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        640
+      ],
+      "id": "901a3a4f-bf1d-4beb-ae60-1101a0e00247"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "edit_status",
+              "lookupValue": "ready"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1360,
+        832
+      ],
+      "id": "1638151c-136a-402f-93ea-dceddd21174a",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "422c0796-e09a-4751-84bb-1359a365dd36",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1552,
+        608
+      ],
+      "id": "ef16fab9-6795-4592-ae17-bb2c69de8d50",
+      "name": "Webhook1",
+      "webhookId": "422c0796-e09a-4751-84bb-1359a365dd36"
     }
   ],
   "connections": {
@@ -985,7 +1374,13 @@
     },
     "Update Sheet with Results": {
       "main": [
-        []
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Webhook": {
@@ -993,6 +1388,134 @@
         [
           {
             "node": "Read Topics Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Extract Script Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Script Text": {
+      "main": [
+        [
+          {
+            "node": "Prepare QC Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare QC Prompt": {
+      "main": [
+        [
+          {
+            "node": "OpenRouter QC Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter QC Analysis": {
+      "main": [
+        [
+          {
+            "node": "Parse QC Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse QC Response": {
+      "main": [
+        [
+          {
+            "node": "Apply Replacements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Replacements": {
+      "main": [
+        [
+          {
+            "node": "Update Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Mark Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Complete": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
             "type": "main",
             "index": 0
           }
@@ -1032,7 +1555,7 @@
       }
     ]
   },
-  "versionId": "8db14796-a3dc-4d09-9cfd-6cfd9835a892",
+  "versionId": "a37e55cd-dbb3-417a-9e23-eab9be97ba9d",
   "activeVersionId": "8db14796-a3dc-4d09-9cfd-6cfd9835a892",
   "triggerCount": 1,
   "shared": [
