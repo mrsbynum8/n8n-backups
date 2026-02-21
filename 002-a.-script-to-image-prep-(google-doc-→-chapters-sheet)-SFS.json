@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-16T19:29:51.496Z",
+  "updatedAt": "2026-02-20T15:43:26.090Z",
   "createdAt": "2026-01-25T23:20:43.283Z",
   "id": "ZYwVA9WqrGwDHT59WQN-F",
   "name": "002-A. Script to Image Prep (Google Doc → Chapters Sheet)",
@@ -499,7 +499,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Scripture for Sleep, a YouTube channel creating 2-3 hour biblical sleep content.\\n\\nCHANNEL VOICE:\\n- Comedically appalled storyteller (like telling about a terrible Airbnb)\\n- Warm, amused, incredulous\\n- Second-person immersion: \\\"you wake up in 1200 BCE\\\"\\n- Modern vocabulary describing ancient absurdity\\n- Entertainingly disgusted by ancient living conditions\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nOption 1 (Brand Standard): Fall Asleep to [Topic] | [Evocative Subtitle]\\nOption 2 (Mystery Hook): [Intriguing Question] | Bible Stories for Sleep\\nOption 3 (Complete Story): The Complete Story of [Subject] | Bible Stories for Sleep\\n\\nSubtitle Formulas:\\n- \\\"From X to Y\\\" (journey arc): From Slavery to Sinai\\n- \\\"The [Role] Who [Did Something]\\\": The Prophet Who Saw the End\\n- Evocative phrase: Forty Years in the Wilderness\\n- List preview: Messengers, Warriors & Guardians\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic]. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook—pose a question or highlight something surprising about the topic]\\n\\n⏱️ CHAPTERS\\n00:00 - Introduction\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters or what makes it interesting]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about biblical history and ancient stories.\\n\\n🔔 Subscribe for more Bible stories for sleep: @ScriptureforSleepOfficial\\n\\n#BibleStories #[Topic] #[Topic2] #SleepStories #BibleHistory\\n\\nIMPORTANT:\\n- Extract actual chapter titles from the script's \\\"Section N: Title\\\" headers\\n- Output the ENTIRE DESCRIPTION in a markdown code block (```text) so emojis copy correctly\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters):\\n\\nProvide ALL tags in a single comma-separated line, prioritized by search value:\\n\\nFormat:\\n[topic] bible story, [topic] explained, story of [topic], bible stories for sleep, fall asleep to bible stories, scripture for sleep, [book] explained, sleep bible stories, relaxing bible stories, bible documentary, old testament stories, biblical history, bedtime bible, sleep stories, calm narration\\n\\nTag Priority Order:\\n1. Topic-specific terms (highest search value)\\n2. Brand terms (channel recognition)\\n3. Sleep/relaxation terms (audience intent)\\n4. Discovery terms (browse traffic)\\n\\n---\\n\\n## HASHTAGS (Exactly 5):\\n\\nFormat:\\n#BibleStories #[MainTopic] #[SecondaryTopic] #SleepStories #[Category]\\n\\nCategories: OldTestament, NewTestament, BiblicalMysteries, BiblicalHistory, BibleExplained\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** [Specific time period and garments from this reference]\\n  - Egyptian (1200 BCE): Golden nemes headdress, uraeus cobra, white linen\\n  - Babylonian (6th century BCE): Ornate robes, gold embroidery\\n  - Persian (5th century BCE): Elaborate court dress, crown\\n  - Patriarchs (2000-1800 BCE): Bronze Age nomadic, wool robes\\n  - Judges (1100 BCE): Iron Age Israelite, linen, bronze armor\\n  - United Kingdom (1000 BCE): Iron Age Israelite king's robes\\n  - Prophets (850 BCE): Rough hairy prophet's cloak, simple wool\\n  - New Testament (1st century CE): Simple wool/linen robes\\n\\n**Thumbnail Text (for Canva overlay):**\\n- Line 1: [VIDEO TOPIC IN CAPS - e.g., \\\"JOSEPH\\\" not \\\"Joseph in Prison\\\"]\\n- Line 2: [Curiosity-invoking dramatic hook - make them NEED to click]\\n\\nNOTE: Line 1 is ALWAYS the main video topic, regardless of which specific scene this thumbnail depicts. Line 2 should create intrigue, mystery, or dramatic tension - NOT just describe the scene. Examples: \\\"The Betrayal That Saved Nations\\\" / \\\"What Happened in the Pit\\\" / \\\"The Dream That Changed Everything\\\"\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: [specific time period and garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Gustave Doré influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
+        "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.6\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Scripture for Sleep, a YouTube channel creating 2-3 hour biblical sleep content.\\n\\nCHANNEL VOICE:\\n- Comedically appalled storyteller (like telling about a terrible Airbnb)\\n- Warm, amused, incredulous\\n- Second-person immersion: \\\"you wake up in 1200 BCE\\\"\\n- Modern vocabulary describing ancient absurdity\\n- Entertainingly disgusted by ancient living conditions\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nTitles do one job: get found. They must be keyword-functional. Evocative language belongs in the thumbnail text, NOT the title.\\n\\nOption 1 (Brand Standard): Fall Asleep to [Topic] | Bible Stories for Sleep\\nOption 2 (Mystery Hook): Fall Asleep to [Topic] | Biblical Mysteries for Sleep\\nOption 3 (Complete Story): The Complete Story of [Subject] | Bible Stories for Sleep\\n\\nTitle rules:\\n- \\\"Bible Stories for Sleep\\\" must appear in every title as a brand anchor\\n- The topic name carries the search value — keep it clear and recognizable\\n- Do NOT use evocative subtitles like \\\"The Man Who Spoke with God\\\" in titles — that's thumbnail text's job\\n- Target 65-95 characters\\n- If the topic has strong search volume (Moses, David, Revelation), lead with the name\\n\\nWHAT NOT TO DO:\\n❌ \\\"Fall Asleep to Moses | The Man Who Spoke with God\\\" — evocative subtitle wastes keyword space\\n✅ \\\"Fall Asleep to Moses | Old Testament Bible Stories for Sleep\\\" — every word is searchable\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nHASHTAGS go at the very bottom of the description body. YouTube reads hashtags from the description — do not put them in a separate field.\\n\\nDescription hook: The 2-3 sentence hook must reference something the casual viewer has already heard of — a widely recognized name, concept, or event they're curious about but don't fully understand. NOT an obscure detail that only makes sense after watching.\\n\\n✅ GOOD: \\\"The Four Horsemen of the Apocalypse. Most people have heard the phrase. Almost nobody knows what the Bible actually says they are.\\\"\\n❌ BAD: \\\"John was on Patmos when a voice spoke to him and changed everything.\\\" (meaningless without context)\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic]. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook — reference something widely recognized that viewers are curious about but don't fully understand]\\n\\n⏱️ CHAPTERS\\n00:00 - Introduction\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about biblical history.\\n\\n🔔 Subscribe for more: @ScriptureforSleepOfficial\\n\\n🎙️ Prefer screen-free listening? Find us on podcast platforms — or play the full audio playlist here: https://www.youtube.com/playlist?list=PLnvFipPRN0NDhN9sFmX-IaurhpRRm1vUk\\n\\n✨ VIDEOS TO WATCH NEXT ✨\\n[Link 1 — most thematically related video]\\n[Link 2 — second most related video]\\n🌙 Full Playlist (put it on & fall asleep): https://www.youtube.com/playlist?list=PLnvFipPRN0NByOpwSz7__rf4gNXzRNPXQ\\n\\n[HASHTAGS — paste full hashtag block here, see Section 4]\\n\\nIMPORTANT:\\n- Extract actual chapter titles from the script's section headers\\n- Output the ENTIRE DESCRIPTION in a markdown code block (```text) so emojis copy correctly\\n- Leave Link 1 and Link 2 in the Videos to Watch Next section as placeholder text — they will be filled in manually\\n- The podcast link and Full Playlist link are hardcoded — output them exactly as shown, every time\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters, SEPARATE FIELD):\\n\\nProvide ALL tags in a single comma-separated code block. Use all four layers below, prioritized in order. Trim from Layer 4 first if you need to fit the 500-character limit.\\n\\nLayer 1 — Topic-Specific (always first, highest search value):\\n[topic] bible story, [topic] explained, story of [topic], [book] explained, [topic] kjv\\n\\nLayer 2 — Brand & Channel:\\nbible stories for sleep, fall asleep to bible stories, scripture for sleep, sleep bible stories, relaxing bible stories, bible documentary, biblical history, bedtime bible, calm narration\\n\\nLayer 3 — Abide App Targeting (always include — captures paid-app audience seeking free alternative):\\nabide, abide bible stories, abide sleep meditation, abide app meditation, sleep in god's word, sleep with gods word, christian meditation for sleep\\n\\nLayer 4 — Sleep & Wellness Discovery (trim here first if needed):\\nfall asleep fast, sleep better, sleep routine, mental health, insomnia relief, deep sleep, relaxing stories, sleep meditation, sleep stories\\n\\nAlso add: bible stories animated (people searching for animated content find audio and stay)\\n\\n---\\n\\n## HASHTAGS (20-25, placed at the bottom of the description body):\\n\\nThe first 3 hashtags appear above your video title in the YouTube UI — make those the most important.\\n\\nPosition 1-3 (always these three, always first):\\n#BibleStories #[MainTopic] #ScriptureForSleep\\n\\nCore sleep/wellness layer (always include all of these):\\n#FallAsleepFast #SleepMeditation #InsomniaRelief #MentalHealth #DeepSleep #SleepWithScripture #BibleAudio #CalmingNarration #FaithAndRest #BedtimeBible\\n\\nDiscovery/category layer (always include all of these):\\n#BiblicalHistory #OldTestament #ChristianSleep #RestInGod #Abide\\n\\nTopic-specific layer (add 2-4 based on the script content):\\n#[MainTopic] #[SecondaryTopic] #[RelevantBiblicalConcept] #[RelevantEra]\\n\\nOutput all hashtags as a single unbroken block, no line breaks between them.\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** [Specific time period and garments from this reference]\\n  - Egyptian (1200 BCE): Golden nemes headdress, uraeus cobra, white linen\\n  - Babylonian (6th century BCE): Ornate robes, gold embroidery\\n  - Persian (5th century BCE): Elaborate court dress, crown\\n  - Patriarchs (2000-1800 BCE): Bronze Age nomadic, wool robes\\n  - Judges (1100 BCE): Iron Age Israelite, linen, bronze armor\\n  - United Kingdom (1000 BCE): Iron Age Israelite king's robes\\n  - Prophets (850 BCE): Rough hairy prophet's cloak, simple wool\\n  - New Testament (1st century CE): Simple wool/linen robes\\n\\n**Thumbnail Text (for Canva overlay):**\\n- Line 1: MAIN TOPIC IN CAPS — the widely recognized subject (e.g., \\\"MOSES\\\", \\\"THE NEPHILIM\\\", \\\"THE BOOK OF REVELATION\\\"). Something the viewer has already heard of. Never an obscure detail.\\n- Line 2: EVOCATIVE HOOK — story-driven, curiosity-gap language that makes someone feel there's a narrative worth experiencing. This is where the channel's storytelling voice lives. Examples: \\\"The Man Who Spoke with God\\\" / \\\"The Brother They Left for Dead\\\" / \\\"The Night God Changed His Name\\\"\\n\\nNOTE: Line 2 does the job that evocative subtitles used to do in titles. It should stop the scroll, not describe the scene literally.\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: [specific time period and garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Gustave Doré influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n\\n---\\n\\n## PLAYLIST ASSIGNMENT:\\n\\nBased on the script content, specify which of the channel's 5 active playlists this video belongs in. A video can and should appear in multiple playlists if thematically appropriate. The Start Here full playlist receives every video automatically — do not include it here.\\n\\nThe 5 active playlists and what belongs in each:\\n- 🔍 Biblical Mysteries & Hidden Knowledge → forbidden texts, unexplained events, apocrypha, hidden figures, \\\"banned\\\" or \\\"secret\\\" or \\\"strange\\\" or \\\"mysteries\\\" angles\\n- 📖 The Complete Books → full walkthroughs of individual biblical books\\n- 👼 Angels, Demons & the Supernatural → angels, fallen angels, Nephilim, Satan, visions, apocalyptic content, miracles\\n- 👥 People of the Bible → individual characters, character epics, compilations of biblical figures\\n- 🏛️ The Ancient World → daily life, historical context, what ancient life actually felt like\\n\\nAdditional mapping rules:\\n- Jesus content → People of the Bible (+ Biblical Mysteries if mystery angle)\\n- Revelation → The Complete Books + Angels, Demons & the Supernatural\\n- Characters with supernatural encounters → People of the Bible + Angels, Demons & the Supernatural\\n- When in doubt, assign to more playlists rather than fewer\\n\\nOutput format:\\n📋 PLAYLIST ASSIGNMENT\\nAdd this video to:\\n✅ [Playlist Name]\\n✅ [Playlist Name] (if applicable)\\n✅ [Playlist Name] (if applicable)\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -633,7 +633,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 35 : 75;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+        "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 49 : 175;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
       },
       "id": "43f7ac8d-382e-48bb-84a5-3d2d304d75fc",
       "name": "Calculate Image Count",
@@ -662,7 +662,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "= {\n\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n\n  \"messages\": [\n\n    {\n\n      \"role\": \"system\",\n\n     \"content\": \"You generate detailed watercolor painting image prompts for biblical contemplative sleep story videos. Each prompt MUST be 5+ sentences describing a dramatic, emotionally evocative watercolor scene.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Dramatic Biblical watercolor painting style with soft, bleeding edges\\n- Contemplative, thoughtful, quietly beautiful tone\\n- Biblical/historical accuracy (Bronze Age settings, ancient clothing, period-appropriate materials)\\n- Deep purples, twilight blues, warm amber tones for nighttime atmosphere\\n- Focus on emotional weight, character expressions, symbolic elements\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A Biblical watercolor painting of...\\\"}, {\\\"prompt\\\": \\\"A Biblical watercolor painting of...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n\n    },\n\n    {\n\n      \"role\": \"user\",\n\n      \"content\": {{ JSON.stringify($json.script) }}\n\n    }\n\n  ],\n\n  \"temperature\": 1,\n  \"max_tokens\": 28192\n\n} ",
+        "jsonBody": "= {\n\n  \"model\": \"anthropic/claude-sonnet-4.6\",\n\n  \"messages\": [\n\n    {\n\n      \"role\": \"system\",\n\n     \"content\": \"You generate detailed watercolor painting image prompts for biblical contemplative sleep story videos. Each prompt MUST be 5+ sentences describing a dramatic, emotionally evocative watercolor scene.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Dramatic Biblical watercolor painting style with soft, bleeding edges\\n- Contemplative, thoughtful, quietly beautiful tone\\n- Biblical/historical accuracy (Bronze Age settings, ancient clothing, period-appropriate materials)\\n- Deep purples, twilight blues, warm amber tones for nighttime atmosphere\\n- Focus on emotional weight, character expressions, symbolic elements\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A Biblical watercolor painting of...\\\"}, {\\\"prompt\\\": \\\"A Biblical watercolor painting of...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n\n    },\n\n    {\n\n      \"role\": \"user\",\n\n      \"content\": {{ JSON.stringify($json.script) }}\n\n    }\n\n  ],\n\n  \"temperature\": 1,\n  \"max_tokens\": 28192\n\n} ",
         "options": {}
       },
       "id": "796e3dc3-7d62-48a0-85ea-624db13da506",
@@ -928,22 +928,6 @@
         -1104,
         528
       ]
-    },
-    {
-      "parameters": {
-        "path": "d3c6d20d-0c10-4a7b-b401-9aac6cd1f35a",
-        "responseMode": "lastNode",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -784,
-        544
-      ],
-      "id": "31fd71a6-5594-4cce-8af8-e375de1a55f0",
-      "name": "Webhook1",
-      "webhookId": "d3c6d20d-0c10-4a7b-b401-9aac6cd1f35a"
     }
   ],
   "connections": {
@@ -1209,17 +1193,6 @@
           }
         ]
       ]
-    },
-    "Webhook1": {
-      "main": [
-        [
-          {
-            "node": "Read Pending Chapters (Sheet1)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "settings": {
@@ -1233,8 +1206,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "c5e02594-d911-4c84-a686-6af2e7133495",
-  "activeVersionId": "d296f8eb-dfc6-4daa-bdce-23de2f58e33d",
+  "versionId": "09234a00-0dfb-4bd1-9c15-76f2f4eaeb2b",
+  "activeVersionId": "09234a00-0dfb-4bd1-9c15-76f2f4eaeb2b",
   "triggerCount": 1,
   "shared": [
     {
@@ -1246,9 +1219,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-10T03:31:59.000Z",
-    "createdAt": "2026-02-10T03:31:45.469Z",
-    "versionId": "d296f8eb-dfc6-4daa-bdce-23de2f58e33d",
+    "updatedAt": "2026-02-20T15:43:38.000Z",
+    "createdAt": "2026-02-20T15:43:26.092Z",
+    "versionId": "09234a00-0dfb-4bd1-9c15-76f2f4eaeb2b",
     "workflowId": "ZYwVA9WqrGwDHT59WQN-F",
     "nodes": [
       {
@@ -1502,6 +1475,7 @@
         ],
         "id": "ca7652a6-4406-40a9-8749-e4b17a461f3d",
         "name": "Get row(s) in sheet",
+        "alwaysOutputData": true,
         "credentials": {
           "googleSheetsOAuth2Api": {
             "id": "1XqTJPtDuzHpqQbs",
@@ -1557,17 +1531,6 @@
         "name": "Loop Over Items"
       },
       {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "name": "Replace Me",
-        "typeVersion": 1,
-        "position": [
-          -688,
-          288
-        ],
-        "id": "2daf3d96-1f4b-4606-bee5-d18244054097"
-      },
-      {
         "parameters": {
           "operation": "update",
           "documentId": {
@@ -1588,7 +1551,7 @@
             "mappingMode": "defineBelow",
             "value": {
               "doc_id": "={{ $('Read Google Doc').item.json.documentId }}",
-              "image_status": "chapters"
+              "image_status": "chdone"
             },
             "matchingColumns": [
               "doc_id"
@@ -1754,7 +1717,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.5\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Scripture for Sleep, a YouTube channel creating 2-3 hour biblical sleep content.\\n\\nCHANNEL VOICE:\\n- Comedically appalled storyteller (like telling about a terrible Airbnb)\\n- Warm, amused, incredulous\\n- Second-person immersion: \\\"you wake up in 1200 BCE\\\"\\n- Modern vocabulary describing ancient absurdity\\n- Entertainingly disgusted by ancient living conditions\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nOption 1 (Brand Standard): Fall Asleep to [Topic] | [Evocative Subtitle]\\nOption 2 (Mystery Hook): [Intriguing Question] | Bible Stories for Sleep\\nOption 3 (Complete Story): The Complete Story of [Subject] | Bible Stories for Sleep\\n\\nSubtitle Formulas:\\n- \\\"From X to Y\\\" (journey arc): From Slavery to Sinai\\n- \\\"The [Role] Who [Did Something]\\\": The Prophet Who Saw the End\\n- Evocative phrase: Forty Years in the Wilderness\\n- List preview: Messengers, Warriors & Guardians\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic]. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook—pose a question or highlight something surprising about the topic]\\n\\n⏱️ CHAPTERS\\n00:00 - Introduction\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters or what makes it interesting]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about biblical history and ancient stories.\\n\\n🔔 Subscribe for more Bible stories for sleep: @ScriptureforSleepOfficial\\n\\n#BibleStories #[Topic] #[Topic2] #SleepStories #BibleHistory\\n\\nIMPORTANT:\\n- Extract actual chapter titles from the script's \\\"Section N: Title\\\" headers\\n- Output the ENTIRE DESCRIPTION in a markdown code block (```text) so emojis copy correctly\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters):\\n\\nProvide ALL tags in a single comma-separated line, prioritized by search value:\\n\\nFormat:\\n[topic] bible story, [topic] explained, story of [topic], bible stories for sleep, fall asleep to bible stories, scripture for sleep, [book] explained, sleep bible stories, relaxing bible stories, bible documentary, old testament stories, biblical history, bedtime bible, sleep stories, calm narration\\n\\nTag Priority Order:\\n1. Topic-specific terms (highest search value)\\n2. Brand terms (channel recognition)\\n3. Sleep/relaxation terms (audience intent)\\n4. Discovery terms (browse traffic)\\n\\n---\\n\\n## HASHTAGS (Exactly 5):\\n\\nFormat:\\n#BibleStories #[MainTopic] #[SecondaryTopic] #SleepStories #[Category]\\n\\nCategories: OldTestament, NewTestament, BiblicalMysteries, BiblicalHistory, BibleExplained\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** [Specific time period and garments from this reference]\\n  - Egyptian (1200 BCE): Golden nemes headdress, uraeus cobra, white linen\\n  - Babylonian (6th century BCE): Ornate robes, gold embroidery\\n  - Persian (5th century BCE): Elaborate court dress, crown\\n  - Patriarchs (2000-1800 BCE): Bronze Age nomadic, wool robes\\n  - Judges (1100 BCE): Iron Age Israelite, linen, bronze armor\\n  - United Kingdom (1000 BCE): Iron Age Israelite king's robes\\n  - Prophets (850 BCE): Rough hairy prophet's cloak, simple wool\\n  - New Testament (1st century CE): Simple wool/linen robes\\n\\n**Thumbnail Text (for Canva overlay):**\\n- Line 1: [VIDEO TOPIC IN CAPS - e.g., \\\"JOSEPH\\\" not \\\"Joseph in Prison\\\"]\\n- Line 2: [Curiosity-invoking dramatic hook - make them NEED to click]\\n\\nNOTE: Line 1 is ALWAYS the main video topic, regardless of which specific scene this thumbnail depicts. Line 2 should create intrigue, mystery, or dramatic tension - NOT just describe the scene. Examples: \\\"The Betrayal That Saved Nations\\\" / \\\"What Happened in the Pit\\\" / \\\"The Dream That Changed Everything\\\"\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: [specific time period and garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Gustave Doré influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
+          "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.6\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Scripture for Sleep, a YouTube channel creating 2-3 hour biblical sleep content.\\n\\nCHANNEL VOICE:\\n- Comedically appalled storyteller (like telling about a terrible Airbnb)\\n- Warm, amused, incredulous\\n- Second-person immersion: \\\"you wake up in 1200 BCE\\\"\\n- Modern vocabulary describing ancient absurdity\\n- Entertainingly disgusted by ancient living conditions\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nTitles do one job: get found. They must be keyword-functional. Evocative language belongs in the thumbnail text, NOT the title.\\n\\nOption 1 (Brand Standard): Fall Asleep to [Topic] | Bible Stories for Sleep\\nOption 2 (Mystery Hook): Fall Asleep to [Topic] | Biblical Mysteries for Sleep\\nOption 3 (Complete Story): The Complete Story of [Subject] | Bible Stories for Sleep\\n\\nTitle rules:\\n- \\\"Bible Stories for Sleep\\\" must appear in every title as a brand anchor\\n- The topic name carries the search value — keep it clear and recognizable\\n- Do NOT use evocative subtitles like \\\"The Man Who Spoke with God\\\" in titles — that's thumbnail text's job\\n- Target 65-95 characters\\n- If the topic has strong search volume (Moses, David, Revelation), lead with the name\\n\\nWHAT NOT TO DO:\\n❌ \\\"Fall Asleep to Moses | The Man Who Spoke with God\\\" — evocative subtitle wastes keyword space\\n✅ \\\"Fall Asleep to Moses | Old Testament Bible Stories for Sleep\\\" — every word is searchable\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nHASHTAGS go at the very bottom of the description body. YouTube reads hashtags from the description — do not put them in a separate field.\\n\\nDescription hook: The 2-3 sentence hook must reference something the casual viewer has already heard of — a widely recognized name, concept, or event they're curious about but don't fully understand. NOT an obscure detail that only makes sense after watching.\\n\\n✅ GOOD: \\\"The Four Horsemen of the Apocalypse. Most people have heard the phrase. Almost nobody knows what the Bible actually says they are.\\\"\\n❌ BAD: \\\"John was on Patmos when a voice spoke to him and changed everything.\\\" (meaningless without context)\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic]. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook — reference something widely recognized that viewers are curious about but don't fully understand]\\n\\n⏱️ CHAPTERS\\n00:00 - Introduction\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about biblical history.\\n\\n🔔 Subscribe for more: @ScriptureforSleepOfficial\\n\\n🎙️ Prefer screen-free listening? Find us on podcast platforms — or play the full audio playlist here: https://www.youtube.com/playlist?list=PLnvFipPRN0NDhN9sFmX-IaurhpRRm1vUk\\n\\n✨ VIDEOS TO WATCH NEXT ✨\\n[Link 1 — most thematically related video]\\n[Link 2 — second most related video]\\n🌙 Full Playlist (put it on & fall asleep): https://www.youtube.com/playlist?list=PLnvFipPRN0NByOpwSz7__rf4gNXzRNPXQ\\n\\n[HASHTAGS — paste full hashtag block here, see Section 4]\\n\\nIMPORTANT:\\n- Extract actual chapter titles from the script's section headers\\n- Output the ENTIRE DESCRIPTION in a markdown code block (```text) so emojis copy correctly\\n- Leave Link 1 and Link 2 in the Videos to Watch Next section as placeholder text — they will be filled in manually\\n- The podcast link and Full Playlist link are hardcoded — output them exactly as shown, every time\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters, SEPARATE FIELD):\\n\\nProvide ALL tags in a single comma-separated code block. Use all four layers below, prioritized in order. Trim from Layer 4 first if you need to fit the 500-character limit.\\n\\nLayer 1 — Topic-Specific (always first, highest search value):\\n[topic] bible story, [topic] explained, story of [topic], [book] explained, [topic] kjv\\n\\nLayer 2 — Brand & Channel:\\nbible stories for sleep, fall asleep to bible stories, scripture for sleep, sleep bible stories, relaxing bible stories, bible documentary, biblical history, bedtime bible, calm narration\\n\\nLayer 3 — Abide App Targeting (always include — captures paid-app audience seeking free alternative):\\nabide, abide bible stories, abide sleep meditation, abide app meditation, sleep in god's word, sleep with gods word, christian meditation for sleep\\n\\nLayer 4 — Sleep & Wellness Discovery (trim here first if needed):\\nfall asleep fast, sleep better, sleep routine, mental health, insomnia relief, deep sleep, relaxing stories, sleep meditation, sleep stories\\n\\nAlso add: bible stories animated (people searching for animated content find audio and stay)\\n\\n---\\n\\n## HASHTAGS (20-25, placed at the bottom of the description body):\\n\\nThe first 3 hashtags appear above your video title in the YouTube UI — make those the most important.\\n\\nPosition 1-3 (always these three, always first):\\n#BibleStories #[MainTopic] #ScriptureForSleep\\n\\nCore sleep/wellness layer (always include all of these):\\n#FallAsleepFast #SleepMeditation #InsomniaRelief #MentalHealth #DeepSleep #SleepWithScripture #BibleAudio #CalmingNarration #FaithAndRest #BedtimeBible\\n\\nDiscovery/category layer (always include all of these):\\n#BiblicalHistory #OldTestament #ChristianSleep #RestInGod #Abide\\n\\nTopic-specific layer (add 2-4 based on the script content):\\n#[MainTopic] #[SecondaryTopic] #[RelevantBiblicalConcept] #[RelevantEra]\\n\\nOutput all hashtags as a single unbroken block, no line breaks between them.\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** [Specific time period and garments from this reference]\\n  - Egyptian (1200 BCE): Golden nemes headdress, uraeus cobra, white linen\\n  - Babylonian (6th century BCE): Ornate robes, gold embroidery\\n  - Persian (5th century BCE): Elaborate court dress, crown\\n  - Patriarchs (2000-1800 BCE): Bronze Age nomadic, wool robes\\n  - Judges (1100 BCE): Iron Age Israelite, linen, bronze armor\\n  - United Kingdom (1000 BCE): Iron Age Israelite king's robes\\n  - Prophets (850 BCE): Rough hairy prophet's cloak, simple wool\\n  - New Testament (1st century CE): Simple wool/linen robes\\n\\n**Thumbnail Text (for Canva overlay):**\\n- Line 1: MAIN TOPIC IN CAPS — the widely recognized subject (e.g., \\\"MOSES\\\", \\\"THE NEPHILIM\\\", \\\"THE BOOK OF REVELATION\\\"). Something the viewer has already heard of. Never an obscure detail.\\n- Line 2: EVOCATIVE HOOK — story-driven, curiosity-gap language that makes someone feel there's a narrative worth experiencing. This is where the channel's storytelling voice lives. Examples: \\\"The Man Who Spoke with God\\\" / \\\"The Brother They Left for Dead\\\" / \\\"The Night God Changed His Name\\\"\\n\\nNOTE: Line 2 does the job that evocative subtitles used to do in titles. It should stop the scroll, not describe the scene literally.\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: [specific time period and garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Gustave Doré influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n\\n---\\n\\n## PLAYLIST ASSIGNMENT:\\n\\nBased on the script content, specify which of the channel's 5 active playlists this video belongs in. A video can and should appear in multiple playlists if thematically appropriate. The Start Here full playlist receives every video automatically — do not include it here.\\n\\nThe 5 active playlists and what belongs in each:\\n- 🔍 Biblical Mysteries & Hidden Knowledge → forbidden texts, unexplained events, apocrypha, hidden figures, \\\"banned\\\" or \\\"secret\\\" or \\\"strange\\\" or \\\"mysteries\\\" angles\\n- 📖 The Complete Books → full walkthroughs of individual biblical books\\n- 👼 Angels, Demons & the Supernatural → angels, fallen angels, Nephilim, Satan, visions, apocalyptic content, miracles\\n- 👥 People of the Bible → individual characters, character epics, compilations of biblical figures\\n- 🏛️ The Ancient World → daily life, historical context, what ancient life actually felt like\\n\\nAdditional mapping rules:\\n- Jesus content → People of the Bible (+ Biblical Mysteries if mystery angle)\\n- Revelation → The Complete Books + Angels, Demons & the Supernatural\\n- Characters with supernatural encounters → People of the Bible + Angels, Demons & the Supernatural\\n- When in doubt, assign to more playlists rather than fewer\\n\\nOutput format:\\n📋 PLAYLIST ASSIGNMENT\\nAdd this video to:\\n✅ [Playlist Name]\\n✅ [Playlist Name] (if applicable)\\n✅ [Playlist Name] (if applicable)\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -1829,6 +1792,360 @@
         "id": "5088d06e-80d9-47fc-a2ae-845969936154",
         "name": "Webhook",
         "webhookId": "b5a36cfa-11d5-4d42-b46f-f2cd2953d118"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1287119606,
+            "mode": "list",
+            "cachedResultName": "Chapters",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1287119606"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "status",
+                "lookupValue": "pending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "da1fc627-46bd-443d-ba97-29da620046c9",
+        "name": "Read Pending Chapters (Sheet1)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -416,
+          752
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Reads pending chapters from Sheet1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "aa960fff-431b-4bf5-8f4e-07f29672cd3c",
+        "name": "Loop Over Chapters",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -64,
+          752
+        ],
+        "notes": "Process one chapter at a time"
+      },
+      {
+        "parameters": {
+          "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 49 : 175;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+        },
+        "id": "43f7ac8d-382e-48bb-84a5-3d2d304d75fc",
+        "name": "Calculate Image Count",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          288,
+          624
+        ],
+        "notes": "word count ÷ 50"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openRouterApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "= {\n\n  \"model\": \"anthropic/claude-sonnet-4.6\",\n\n  \"messages\": [\n\n    {\n\n      \"role\": \"system\",\n\n     \"content\": \"You generate detailed watercolor painting image prompts for biblical contemplative sleep story videos. Each prompt MUST be 5+ sentences describing a dramatic, emotionally evocative watercolor scene.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Dramatic Biblical watercolor painting style with soft, bleeding edges\\n- Contemplative, thoughtful, quietly beautiful tone\\n- Biblical/historical accuracy (Bronze Age settings, ancient clothing, period-appropriate materials)\\n- Deep purples, twilight blues, warm amber tones for nighttime atmosphere\\n- Focus on emotional weight, character expressions, symbolic elements\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A Biblical watercolor painting of...\\\"}, {\\\"prompt\\\": \\\"A Biblical watercolor painting of...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n\n    },\n\n    {\n\n      \"role\": \"user\",\n\n      \"content\": {{ JSON.stringify($json.script) }}\n\n    }\n\n  ],\n\n  \"temperature\": 1,\n  \"max_tokens\": 28192\n\n} ",
+          "options": {}
+        },
+        "id": "796e3dc3-7d62-48a0-85ea-624db13da506",
+        "name": "Generate Prompts via OpenAI",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          496,
+          624
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        },
+        "notes": "Creates all image prompts for this chapter"
+      },
+      {
+        "parameters": {
+          "jsCode": "const openaiResponse = $input.item.json.choices[0].message.content;\nlet prompts;\n\ntry {\n  prompts = JSON.parse(openaiResponse);\n} catch (e) {\n  const jsonMatch = openaiResponse.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    prompts = JSON.parse(jsonMatch[1]);\n  } else {\n    throw new Error(\"Could not parse OpenAI response as JSON\");\n  }\n}\n\nconst videoName = $('Loop Over Chapters').item.json.video_name;\nconst chapterNum = $('Loop Over Chapters').item.json.chapter_number;\nconst rowNumber = $('Loop Over Chapters').item.json.row_number;\n\n// Format for Sheet2 - each prompt as a separate row\nreturn prompts.map((p, index) => ({\n  json: {\n    video_name: videoName,\n    chapter_number: chapterNum,\n    image_number: String(index + 1).padStart(2, '0'),\n    filename: `${videoName}-${chapterNum}-${String(index + 1).padStart(2, '0')}.png`,\n    prompt: p.prompt,\n    status: 'pending',\n    chapter_row_number: rowNumber\n  }\n}));"
+        },
+        "id": "8e9e204a-5257-4ca8-adc4-ab58ec2ad123",
+        "name": "Parse & Format for Sheet2",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          704,
+          624
+        ],
+        "notes": "Formats each prompt as a row for Sheet2"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1502887379,
+            "mode": "list",
+            "cachedResultName": "Prompts",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1502887379"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "chapter_number": "={{ $json.chapter_number }}",
+              "image_number": "={{ $json.image_number }}",
+              "filename": "={{ $json.filename }}",
+              "prompt": "={{ $json.prompt }}",
+              "status": "pending"
+            },
+            "matchingColumns": [
+              "filename"
+            ],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "image_number",
+                "displayName": "image_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "filename",
+                "displayName": "filename",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "prompt",
+                "displayName": "prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "9c54ae8f-3968-41ba-85dd-1d8aa640f342",
+        "name": "Write Prompts to Sheet2",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          288,
+          848
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Appends all prompts to Sheet2"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1287119606,
+            "mode": "list",
+            "cachedResultName": "Chapters",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1287119606"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "status": "completed",
+              "row_number": "={{ $('Loop Over Chapters').item.json.row_number }}"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "script",
+                "displayName": "script",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "567f7ea1-924b-4b0d-886c-28694a39ecc5",
+        "name": "Mark Chapter Complete (Sheet1)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          544,
+          848
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Marks this chapter as completed in Sheet1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          288,
+          464
+        ],
+        "id": "05420b1b-b47a-48af-890e-aa8fc352b847",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "content": "## Workflow 1: Prompt Generation\n\n### What This Does:\n1. Reads pending chapters from Sheet1\n2. Calculates how many images needed (word count ÷ 50)\n3. Generates ALL prompts via OpenAI\n4. Writes prompts to Sheet2 with status='pending'\n5. Marks chapter as 'completed' in Sheet1\n\n### Sheet1 Columns:\nvideo_name, chapter_number, script, status, row_number\n\n### Sheet2 Columns:\nvideo_name, chapter_number, image_number, filename, prompt, status, row_number\n\n### Benefits:\n- Review/edit prompts before generating images\n- Separate prompt creation from expensive image generation\n- Only pay for image generation after reviewing prompts",
+          "height": 532,
+          "width": 440,
+          "color": 5
+        },
+        "id": "75922f5b-59c2-40d2-a9e3-a8e6854e9d4c",
+        "name": "Instructions1",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1104,
+          528
+        ]
       }
     ],
     "connections": {
@@ -1920,7 +2237,7 @@
           ],
           [
             {
-              "node": "Replace Me",
+              "node": "Read Pending Chapters (Sheet1)",
               "type": "main",
               "index": 0
             }
@@ -1931,7 +2248,7 @@
         "main": [
           [
             {
-              "node": "Replace Me",
+              "node": "Read Pending Chapters (Sheet1)",
               "type": "main",
               "index": 0
             }
@@ -2010,11 +2327,95 @@
             }
           ]
         ]
+      },
+      "Read Pending Chapters (Sheet1)": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Chapters",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Chapters": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Calculate Image Count",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculate Image Count": {
+        "main": [
+          [
+            {
+              "node": "Generate Prompts via OpenAI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Prompts via OpenAI": {
+        "main": [
+          [
+            {
+              "node": "Parse & Format for Sheet2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse & Format for Sheet2": {
+        "main": [
+          [
+            {
+              "node": "Write Prompts to Sheet2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write Prompts to Sheet2": {
+        "main": [
+          [
+            {
+              "node": "Mark Chapter Complete (Sheet1)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Chapter Complete (Sheet1)": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Chapters",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version d296f8eb",
-    "description": "optimized thumbnail text prompt",
+    "name": "Version 09234a00",
+    "description": "added playlist instructions for seo",
     "autosaved": true
   },
   "tags": [
