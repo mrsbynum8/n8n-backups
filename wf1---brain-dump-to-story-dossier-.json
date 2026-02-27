@@ -1,59 +1,44 @@
 {
-  "updatedAt": "2026-02-26T04:59:41.203Z",
+  "updatedAt": "2026-02-27T04:35:07.291Z",
   "createdAt": "2026-02-26T04:54:09.966Z",
   "id": "bV3hJCL0bd-H1QEslHuUc",
   "name": "WF1 - Brain Dump to Story Dossier",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
       "parameters": {
-        "formTitle": "Make It Black. Make It Modern. — New Book Brain Dump",
-        "formDescription": "Fill this out with everything you know about your next book. Messy is fine. The AI will shape it.",
+        "formTitle": "Make It Black. Make It Modern. — New Book",
+        "formDescription": "Tell the AI which fairy tale you want to retell. Everything else — characters, world, cast, tone — the AI builds from the series templates.",
         "formFields": {
           "values": [
             {
-              "fieldLabel": "Book Title (optional — can be a working title or leave blank)"
-            },
-            {
               "fieldLabel": "Which fairy tale is this retelling?",
+              "placeholder": "e.g. Cinderella, Little Red Riding Hood, Rumpelstiltskin",
               "requiredField": true
             },
             {
-              "fieldLabel": "City and Setting",
-              "requiredField": true
+              "fieldLabel": "City preference (optional — leave blank and the AI will choose)",
+              "placeholder": "e.g. Atlanta, Chicago, New Orleans, Houston"
             },
             {
-              "fieldLabel": "Who is the protagonist and what is her world?",
+              "fieldLabel": "Anything specific you want in this book (optional)",
               "fieldType": "textarea",
-              "requiredField": true
-            },
-            {
-              "fieldLabel": "How does the fairy tale element show up in the modern world?",
-              "fieldType": "textarea",
-              "requiredField": true
-            },
-            {
-              "fieldLabel": "Tone and vibe"
-            },
-            {
-              "fieldLabel": "Additional brain dump — anything else about this book",
-              "fieldType": "textarea"
+              "placeholder": "A vibe, a trope you love, a setting detail, anything. Or leave blank."
             }
           ]
         },
-        "responseMode": "lastNode",
         "options": {}
       },
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.2,
       "position": [
-        240,
-        224
+        528,
+        896
       ],
-      "id": "fb3c7656-3bb0-4612-a1bf-4e635690cc74",
+      "id": "dc9e2f57-54c5-4edd-a02d-e59c86727b79",
       "name": "Book Brain Dump Form",
-      "webhookId": "3852a284-c224-4940-9bcf-b048b00494a9"
+      "webhookId": "ecae803d-ca28-4d67-a237-df053ec52cde"
     },
     {
       "parameters": {
@@ -91,10 +76,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        496,
-        224
+        784,
+        896
       ],
-      "id": "b545c50a-6196-471e-8588-b2fcf464a270",
+      "id": "d32cc626-e76b-4d9c-88a7-91c72c01cfda",
       "name": "📄 DOC IDs — UPDATE HERE"
     },
     {
@@ -105,10 +90,10 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        752,
-        16
+        1040,
+        688
       ],
-      "id": "b3d608dd-830b-4b3d-a955-7e30dfe67473",
+      "id": "d37ee4f8-567c-4310-97cf-d2aa08958625",
       "name": "Fetch Trope Template",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -125,10 +110,10 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        752,
-        160
+        1040,
+        832
       ],
-      "id": "f5b6945e-7007-484b-a99f-dba7af571582",
+      "id": "3fef713c-32d2-43ad-a192-bb7f6ab50be9",
       "name": "Fetch Plot Template",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -145,10 +130,10 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        752,
-        304
+        1040,
+        976
       ],
-      "id": "d3662da6-bb2f-4307-b3d4-61cef685d45e",
+      "id": "78c07be0-d100-4506-b1bb-c1df47a759b8",
       "name": "Fetch Character Template",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -165,10 +150,10 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        752,
-        448
+        1040,
+        1120
       ],
-      "id": "4ce914c9-1404-4423-bb67-182be95a6cf7",
+      "id": "7690148e-31fc-4e9a-9db5-fee0b80eb337",
       "name": "Fetch Worldbuilding Template",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -179,123 +164,13 @@
     },
     {
       "parameters": {
-        "mode": "combine",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3,
-      "position": [
-        1024,
-        224
-      ],
-      "id": "a0ab5f98-e92d-4455-8940-0f35c86fca5c",
-      "name": "Merge Templates"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have been given a writer's brain dump for a new book in the series \"Make It Black. Make It Modern.\" — a series of fairy tale retellings with Black women protagonists set in modern American cities.\n\nYou also have four series templates:\n\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nWRITER'S BRAIN DUMP:\n\nWorking Title: {{ $('Book Brain Dump Form').item.json['Book Title (optional — can be a working title or leave blank)'] || 'Untitled' }}\nFairy Tale Source: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity and Setting: {{ $('Book Brain Dump Form').item.json['City and Setting'] }}\nProtagonist and World: {{ $('Book Brain Dump Form').item.json['Who is the protagonist and what is her world?'] }}\nModern Fairy Tale Elements: {{ $('Book Brain Dump Form').item.json['How does the fairy tale element show up in the modern world?'] }}\nTone and Vibe: {{ $('Book Brain Dump Form').item.json['Tone and vibe'] || 'Not specified' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Additional brain dump — anything else about this book'] || 'None provided' }}\n\n---\n\nUsing the brain dump as your raw material and the four templates as your structural guidelines, create a comprehensive STORY DOSSIER with all ten sections:\n\n## 1. SERIES PLACEMENT\n## 2. CORE PREMISE (logline + expanded paragraph)\n## 3. THEMATIC SPINE\n## 4. THE WORLD — MUNDANE LAYER\n## 5. THE WORLD — MAGICAL LAYER\n## 6. THE STAKES (external, internal, relational)\n## 7. CAST OVERVIEW (Protagonist, Love Interest, Villain, Elder/Mentor, Best Friend)\n## 8. FAIRY TALE MAPPING (table of fairy tale elements to modern equivalents)\n## 9. TONE AND STYLE NOTES\n## 10. OPEN QUESTIONS FOR THE AUTHOR (3-5 genuine story questions)",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [
-        1280,
-        224
-      ],
-      "id": "74fc8468-bb66-4705-bf3d-d83aca4425b6",
-      "name": "Build Story Dossier"
-    },
-    {
-      "parameters": {
-        "model": "anthropic/claude-sonnet-4-6",
-        "options": {
-          "maxTokens": 8000,
-          "temperature": 0.8
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        1280,
-        400
-      ],
-      "id": "494a71d7-3931-4e99-bd9f-1d8ec87116ba",
-      "name": "Build Dossier Model"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=You are a senior developmental editor with deep expertise in adult commercial fiction for Black women readers and in the fairy tale retelling genre.\n\nYou have just received a Story Dossier for a new book in the \"Make It Black. Make It Modern.\" series. Your job is to critique it rigorously and honestly.\n\nHere is the dossier:\n\n{{ $json.output }}\n\nEvaluate the dossier on eight dimensions. For each give a rating (Strong / Solid / Needs Work / Weak) and specific actionable feedback:\n\n1. HOOK STRENGTH — Does the premise grab immediately? Would a Black woman reader want this story?\n2. FAIRY TALE FIDELITY — Are the fairy tale bones clear and well-transformed? At least 4 key beats mapped?\n3. CULTURAL AUTHENTICITY — Does this feel grounded in Black women's contemporary experience? Is the city specific?\n4. PROTAGONIST FULLNESS — Active, flawed, gifted, specific — or does she feel underdeveloped?\n5. MAGIC BALANCE — Culturally grounded, subtle, properly constrained? Complicates rather than solves?\n6. COMMERCIAL VIABILITY — BookTok potential? Right tropes? Enough romance heat? HEA/HFN set up?\n7. SERIES FIT — Adds something unique? Honors the series promise?\n8. WHAT'S MISSING — What's underdeveloped, contradictory, or absent?\n\nEnd with:\n- 3 specific STRENGTHS to preserve\n- 3 specific PROBLEMS to fix\n- 1 BIG QUESTION that could make or break the book",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [
-        1536,
-        224
-      ],
-      "id": "62ebaa1c-1675-49e4-9cfb-96bb168baad4",
-      "name": "Critique Dossier"
-    },
-    {
-      "parameters": {
-        "model": "anthropic/claude-sonnet-4-6",
-        "options": {
-          "maxTokens": 4000,
-          "temperature": 0.7
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        1536,
-        400
-      ],
-      "id": "21c381a1-cab7-48fe-80b4-b90fa7996b64",
-      "name": "Critique Dossier Model"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have two documents:\n\n1. The original Story Dossier:\n{{ $('Build Story Dossier').item.json.output }}\n\n2. The editorial critique:\n{{ $json.output }}\n\nRewrite the Story Dossier implementing the critique's recommendations:\n- Fix every problem identified\n- Answer the big question if possible, or flag it clearly\n- Strengthen weak sections\n- Preserve the three strengths called out\n- Keep everything specific to this book and this writer's vision — do NOT make it generic\n\nProduce the complete rewritten dossier with all ten sections. This is the version that will be used for outlining.",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [
-        1792,
-        224
-      ],
-      "id": "50a1e89d-7f43-4d76-a00e-8bdaa3c043df",
-      "name": "Rewrite Dossier"
-    },
-    {
-      "parameters": {
-        "model": "anthropic/claude-sonnet-4-6",
-        "options": {
-          "maxTokens": 8000,
-          "temperature": 0.8
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        1792,
-        400
-      ],
-      "id": "cff65dfb-e1d1-42be-bcd3-b6da9a1935d7",
-      "name": "Rewrite Dossier Model"
-    },
-    {
-      "parameters": {
         "operation": "update",
         "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.DOSSIER_OUTPUT_DOC_ID }}",
         "actionsUi": {
           "actionFields": [
             {
               "action": "insert",
-              "text": "=================================================================\nSTORY DOSSIER — {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} RETELLING\nGenerated: {{ $now.toFormat('MMMM d, yyyy') }}\n=================================================================\n\n--- SECTION 1: ORIGINAL DOSSIER ---\n\n{{ $('Build Story Dossier').item.json.output }}\n\n\n--- SECTION 2: EDITORIAL CRITIQUE ---\n\n{{ $('Critique Dossier').item.json.output }}\n\n\n--- SECTION 3: FINAL DOSSIER (USE THIS FOR OUTLINING) ---\n\n{{ $('Rewrite Dossier').item.json.output }}\n\n"
+              "text": "=================================================================\nSTORY DOSSIER — {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} RETELLING\nGenerated: {{ $now.toFormat('MMMM d, yyyy') }}\n=================================================================\n\n--- SECTION 1: BRAINSTORM OPTIONS ---\n\n{{ $('Brainstorm').item.json.output }}\n\n\n--- SECTION 2: SELECTED CONCEPT ---\n\n{{ $('Pick the Best').item.json.output }}\n\n\n--- SECTION 3: FULL DOSSIER (FIRST DRAFT) ---\n\n{{ $('Complete Story Dossier').item.json.output }}\n\n\n--- SECTION 4: EDITORIAL CRITIQUE ---\n\n{{ $('Dossier Critique').item.json.output }}\n\n\n--- SECTION 5: FINAL DOSSIER (USE THIS FOR OUTLINING) ---\n\n{{ $('Dossier Rewrite').item.json.output }}\n\n"
             }
           ]
         }
@@ -303,10 +178,10 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        2064,
-        224
+        2848,
+        816
       ],
-      "id": "d9c8b310-6b39-4766-bdab-98488cc1ab16",
+      "id": "21c1bc22-3fc2-4dfc-883f-b289508a9b42",
       "name": "Save Dossier to Google Doc",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -317,18 +192,178 @@
     },
     {
       "parameters": {
-        "respondWith": "text",
-        "responseBody": "=Your Story Dossier is ready!\n\nBook: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} retelling — {{ $('Book Brain Dump Form').item.json['City and Setting'] }}\n\nSaved to your Google Doc with three sections:\n1. Original dossier\n2. Editorial critique\n3. Final revised dossier (use this for outlining)\n\nReview the open questions in Section 3 before running Workflow 2.",
+        "promptType": "define",
+        "text": "=You are a creative story developer specializing in adult contemporary magical realism for Black women readers.\n\nYou are developing a new book for the series \"Make It Black. Make It Modern.\" — fairy tale retellings with Black women protagonists in modern American cities.\n\nSERIES TEMPLATES:\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nAUTHOR INPUT:\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference — choose the best city' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n\n---\n\nUsing the fairy tale and the series templates, brainstorm 3 distinct story directions for this book. Each direction should feel genuinely different — different city, different industry, different protagonist wound, different way the fairy tale maps to modern life.\n\nFor each direction provide:\n- CONCEPT TITLE (working title)\n- CITY & INDUSTRY (the specific world she lives in)\n- PROTAGONIST SNAPSHOT (who she is, her wound, her gift — no name yet)\n- THE FAIRY TALE HOOK (how the source tale maps to this modern world)\n- THE MAGIC (what form it takes in this version)\n- THE ROMANCE TROPE (primary trope)\n- WHY THIS WORKS (why this direction is commercially strong for Black BookTok)\n\nMake each option bold and specific. No generic pitches.",
         "options": {}
       },
-      "type": "n8n-nodes-base.respondToWebhook",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1392,
+        896
+      ],
+      "id": "a7623214-70fc-494d-8ff2-997e2928b21c",
+      "name": "Brainstorm"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
       "position": [
-        2320,
-        224
+        1392,
+        1072
       ],
-      "id": "459e8a20-0508-471f-88dd-ab4cb61c5973",
-      "name": "Form Response"
+      "id": "8be7166b-575c-4c9a-8648-45a7e0c5b6da",
+      "name": "Brainstorm Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior acquisitions editor who specializes in commercial fiction for Black women readers.\n\nYou have been given 3 story directions for a new book in the \"Make It Black. Make It Modern.\" fairy tale retelling series.\n\nHere are the 3 options:\n{{ $json.output }}\n\nEvaluate each option against these criteria:\n1. Commercial hook — would this immediately grab a Black BookTok reader?\n2. Fairy tale fidelity — are the bones clear and well-transformed?\n3. Protagonist strength — is there a genuinely compelling woman at the center?\n4. Series fit — does it add something unique the other books in the series won't have?\n5. Magic balance — is the magical element culturally grounded and appropriately subtle?\n\nThen SELECT THE SINGLE STRONGEST OPTION. Explain exactly why it wins over the others.\n\nAfter your selection, EXPAND the winning concept into a fuller premise paragraph (200-300 words) that captures the emotional core, the conflict engine, the romance setup, and the fairy tale transformation. This expanded premise is what the next agent will build the full dossier from.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1648,
+        896
+      ],
+      "id": "c46109c1-5b12-42cc-976b-8f47e2fc1249",
+      "name": "Pick the Best"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        1072
+      ],
+      "id": "1c07fa64-101a-46cb-a0c8-c082d585261f",
+      "name": "Pick the Best Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have a selected and expanded story concept. Your job is to build it into a complete Story Dossier.\n\nSERIES TEMPLATES (use these as your structural guide):\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nSELECTED CONCEPT:\n{{ $json.output }}\n\n---\n\nBuild a complete STORY DOSSIER with all ten sections. Make bold, specific creative decisions — invent character names, specific neighborhoods, specific cultural details. Do not be vague.\n\n## 1. SERIES PLACEMENT\nHow this book fits the series and what unique territory it covers.\n\n## 2. CORE PREMISE\n- One-sentence logline\n- One-paragraph expanded premise\n\n## 3. THEMATIC SPINE\n- Primary theme\n- 2-3 supporting themes\n- How the fairy tale source illuminates these in a modern Black American context\n\n## 4. THE WORLD — MUNDANE LAYER\nSpecific city, neighborhoods, locations, cultural texture details (food, music, institutions)\n\n## 5. THE WORLD — MAGICAL LAYER\nSpecific form of magic, who carries it, the rules, what it costs, arc across the story\n\n## 6. THE STAKES\n- External stakes\n- Internal stakes\n- Relational stakes\n\n## 7. CAST PROFILES\n\nFor EACH of the five core characters — Protagonist, Love Interest, \nAntagonist, Elder/Mentor, Best Friend — provide a separate, equally \nweighted entry in the following fixed format. Do not give the protagonist \nmore depth than others. Every character needs all six fields.\n\n### [Character Name] — [Role]\n\n**Physical signature:** One specific detail that distinguishes them on sight \nor in motion. Not a full description — the one thing.\n\n**Core wound:** One sentence. A specific event or pattern, not a category. \n\"Abandonment\" fails. \"Her mother left without saying goodbye three days \nafter her quinceañera and never gave a reason\" passes.\n\n**Core motivation:** What they are actively reaching for during this story. \nConcrete and specific.\n\n**Their version of the story:** What do THEY think is happening, and what \ndo they want from the protagonist? (This question applies to all five \ncharacters — the best friend and mentor have their own agenda too.)\n\n**Voice marker:** One sentence that captures how they talk — rhythm, \nvocabulary, what they reach for under pressure.\n\n**Function in the plot:** One sentence on what specific pressure or resource \nthey provide to the protagonist's arc.\n\n---\n\n[Repeat for all five characters before moving to Section 8]\n\n### Minor Characters\n\nFor each minor character present in this story, provide a single entry:\n\n**[Character Name] — [Role]**\nOne sentence: who they are, what they want, and what specific function \nthey serve in the plot. Name at least 4-6 minor characters. If a \ncharacter appears in more than one scene, they need an entry here.\n\n## 8. FAIRY TALE MAPPING\nComplete table mapping each fairy tale element to its modern equivalent\n\n## 9. TONE AND STYLE NOTES\nEmotional texture, romance tropes, heat level, narrative voice, 2-3 comparable titles\n\n## 10. OPEN QUESTIONS FOR THE AUTHOR\n3-5 genuine story questions that still need a human creative decision",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1904,
+        896
+      ],
+      "id": "b7ed8641-ef33-4558-b6cb-e5ca95b01ee0",
+      "name": "Complete Story Dossier"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        1072
+      ],
+      "id": "defe66ef-587c-49cc-beed-f5fe22c54113",
+      "name": "Complete Story Dossier Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior developmental editor with deep expertise in adult commercial fiction for Black women readers and in the fairy tale retelling genre.\n\nYou have received a Story Dossier for a new book in the \"Make It Black. Make It Modern.\" series.\n\nHere is the dossier:\n{{ $json.output }}\n\nEvaluate it rigorously on eight dimensions. For each give a rating (Strong / Solid / Needs Work / Weak) and specific, actionable feedback:\n\n1. HOOK STRENGTH — Does the premise grab immediately? Would a Black woman reader want this story?\n2. FAIRY TALE FIDELITY — Are the bones clear and well-transformed? At least 4 key beats mapped?\n3. CULTURAL AUTHENTICITY — Grounded in Black women's contemporary experience? Is the city specific?\n4. PROTAGONIST FULLNESS — Active, flawed, gifted, specific? Or underdeveloped?\n5. MAGIC BALANCE — Culturally grounded, subtle, properly constrained? Complicates rather than solves?\n6. COMMERCIAL VIABILITY — BookTok potential? Right tropes? Romance heat? HEA/HFN set up?\n7. SERIES FIT — Adds something unique? Honors the series promise without repeating other titles?\n8. WHAT'S MISSING — What's underdeveloped, contradictory, or absent?\n\nEnd with:\n- 3 specific STRENGTHS to preserve in the rewrite\n- 3 specific PROBLEMS that must be fixed\n- 1 BIG QUESTION the dossier hasn't answered that could make or break the book",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2160,
+        896
+      ],
+      "id": "803ea9fa-33f3-4abb-952c-54dd86d8bdfe",
+      "name": "Dossier Critique"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        1072
+      ],
+      "id": "5df53060-f59f-42df-852b-b2c1f97d293f",
+      "name": "Dossier Critique Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have two documents:\n\n1. The Story Dossier:\n{{ $('Complete Story Dossier').item.json.output }}\n\n2. The editorial critique:\n{{ $json.output }}\n\nRewrite the Story Dossier implementing the critique's recommendations:\n- Fix every problem identified\n- Answer the big question if possible, or flag it clearly for the author\n- Strengthen every weak section\n- Preserve the three strengths called out\n- Keep everything specific — do NOT make it generic\n\nProduce the complete rewritten dossier with all ten sections. This is the final version that will be saved and used for outlining.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2448,
+        896
+      ],
+      "id": "09306b1a-f5ff-4e1b-9b08-f7445a5aa520",
+      "name": "Dossier Rewrite"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2416,
+        1072
+      ],
+      "id": "d4e06935-2fdc-40e9-9c99-acce0e6ee15e",
+      "name": "Dossier Rewrite Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
     }
   ],
   "connections": {
@@ -350,21 +385,6 @@
             "node": "Fetch Trope Template",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Fetch Plot Template",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Character Template",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Worldbuilding Template",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -373,7 +393,7 @@
       "main": [
         [
           {
-            "node": "Merge Templates",
+            "node": "Fetch Plot Template",
             "type": "main",
             "index": 0
           }
@@ -382,82 +402,81 @@
     },
     "Fetch Plot Template": {
       "main": [
-        [
-          {
-            "node": "Merge Templates",
-            "type": "main",
-            "index": 1
-          }
-        ]
+        []
       ]
     },
-    "Merge Templates": {
+    "Save Dossier to Google Doc": {
+      "main": [
+        []
+      ]
+    },
+    "Fetch Character Template": {
       "main": [
         [
           {
-            "node": "Build Story Dossier",
+            "node": "Fetch Worldbuilding Template",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Build Dossier Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Build Story Dossier",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Build Story Dossier": {
+    "Fetch Worldbuilding Template": {
       "main": [
         [
           {
-            "node": "Critique Dossier",
+            "node": "Brainstorm",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Critique Dossier Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Critique Dossier",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Critique Dossier": {
+    "Brainstorm": {
       "main": [
         [
           {
-            "node": "Rewrite Dossier",
+            "node": "Pick the Best",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Rewrite Dossier Model": {
-      "ai_languageModel": [
+    "Pick the Best": {
+      "main": [
         [
           {
-            "node": "Rewrite Dossier",
-            "type": "ai_languageModel",
+            "node": "Complete Story Dossier",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Rewrite Dossier": {
+    "Complete Story Dossier": {
+      "main": [
+        [
+          {
+            "node": "Dossier Critique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dossier Critique": {
+      "main": [
+        [
+          {
+            "node": "Dossier Rewrite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dossier Rewrite": {
       "main": [
         [
           {
@@ -468,12 +487,56 @@
         ]
       ]
     },
-    "Save Dossier to Google Doc": {
-      "main": [
+    "Brainstorm Model": {
+      "ai_languageModel": [
         [
           {
-            "node": "Form Response",
-            "type": "main",
+            "node": "Brainstorm",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick the Best Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Pick the Best",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complete Story Dossier Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Complete Story Dossier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dossier Critique Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dossier Critique",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dossier Rewrite Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dossier Rewrite",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -490,9 +553,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "f1415d90-7c86-402b-b80f-d48d9bd62320",
-  "activeVersionId": null,
-  "triggerCount": 0,
+  "versionId": "333ca173-5724-4aac-a891-91920bc34312",
+  "activeVersionId": "406b1ffd-8982-4897-b31a-ba0569f6d5d8",
+  "triggerCount": 1,
   "shared": [
     {
       "updatedAt": "2026-02-26T04:54:09.969Z",
@@ -502,6 +565,559 @@
       "projectId": "eaD0haLSQbgJ93Hf"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-02-27T02:44:25.000Z",
+    "createdAt": "2026-02-27T02:44:15.148Z",
+    "versionId": "406b1ffd-8982-4897-b31a-ba0569f6d5d8",
+    "workflowId": "bV3hJCL0bd-H1QEslHuUc",
+    "nodes": [
+      {
+        "parameters": {
+          "formTitle": "Make It Black. Make It Modern. — New Book",
+          "formDescription": "Tell the AI which fairy tale you want to retell. Everything else — characters, world, cast, tone — the AI builds from the series templates.",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Which fairy tale is this retelling?",
+                "placeholder": "e.g. Cinderella, Little Red Riding Hood, Rumpelstiltskin",
+                "requiredField": true
+              },
+              {
+                "fieldLabel": "City preference (optional — leave blank and the AI will choose)",
+                "placeholder": "e.g. Atlanta, Chicago, New Orleans, Houston"
+              },
+              {
+                "fieldLabel": "Anything specific you want in this book (optional)",
+                "fieldType": "textarea",
+                "placeholder": "A vibe, a trope you love, a setting detail, anything. Or leave blank."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.2,
+        "position": [
+          528,
+          896
+        ],
+        "id": "dc9e2f57-54c5-4edd-a02d-e59c86727b79",
+        "name": "Book Brain Dump Form",
+        "webhookId": "ecae803d-ca28-4d67-a237-df053ec52cde"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "name": "TROPE_TEMPLATE_DOC_ID",
+                "value": "168KxD6S5j1e3DgOaaFdSfq_-r2man-x8Ll8rEnenPUU",
+                "type": "string"
+              },
+              {
+                "name": "PLOT_TEMPLATE_DOC_ID",
+                "value": "1dqn0dBx2X5rcn5xGhp41hJ9aTpYleKhiXlmzSmy02W4",
+                "type": "string"
+              },
+              {
+                "name": "CHARACTER_TEMPLATE_DOC_ID",
+                "value": "1AD358QVe8-4dQI75qI0EhhkEX4gbC8l4e-Sb1d_R9y0",
+                "type": "string"
+              },
+              {
+                "name": "WORLDBUILDING_TEMPLATE_DOC_ID",
+                "value": "1XnPC9wzz96SLTzW8mNu3bi--729CbtLTH36nQWhvMoQ",
+                "type": "string"
+              },
+              {
+                "name": "DOSSIER_OUTPUT_DOC_ID",
+                "value": "1yKk3nMpA5sTNp78Pr0sMw_tJn0q9PgcJBQn1quj5KVw",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          784,
+          896
+        ],
+        "id": "d32cc626-e76b-4d9c-88a7-91c72c01cfda",
+        "name": "📄 DOC IDs — UPDATE HERE"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.TROPE_TEMPLATE_DOC_ID }}"
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          1040,
+          688
+        ],
+        "id": "d37ee4f8-567c-4310-97cf-d2aa08958625",
+        "name": "Fetch Trope Template",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.PLOT_TEMPLATE_DOC_ID }}"
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          1040,
+          832
+        ],
+        "id": "3fef713c-32d2-43ad-a192-bb7f6ab50be9",
+        "name": "Fetch Plot Template",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.CHARACTER_TEMPLATE_DOC_ID }}"
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          1040,
+          976
+        ],
+        "id": "78c07be0-d100-4506-b1bb-c1df47a759b8",
+        "name": "Fetch Character Template",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.WORLDBUILDING_TEMPLATE_DOC_ID }}"
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          1040,
+          1120
+        ],
+        "id": "7690148e-31fc-4e9a-9db5-fee0b80eb337",
+        "name": "Fetch Worldbuilding Template",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.DOSSIER_OUTPUT_DOC_ID }}",
+          "actionsUi": {
+            "actionFields": [
+              {
+                "action": "insert",
+                "text": "=================================================================\nSTORY DOSSIER — {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} RETELLING\nGenerated: {{ $now.toFormat('MMMM d, yyyy') }}\n=================================================================\n\n--- SECTION 1: BRAINSTORM OPTIONS ---\n\n{{ $('Brainstorm').item.json.output }}\n\n\n--- SECTION 2: SELECTED CONCEPT ---\n\n{{ $('Pick the Best').item.json.output }}\n\n\n--- SECTION 3: FULL DOSSIER (FIRST DRAFT) ---\n\n{{ $('Complete Story Dossier').item.json.output }}\n\n\n--- SECTION 4: EDITORIAL CRITIQUE ---\n\n{{ $('Dossier Critique').item.json.output }}\n\n\n--- SECTION 5: FINAL DOSSIER (USE THIS FOR OUTLINING) ---\n\n{{ $('Dossier Rewrite').item.json.output }}\n\n"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          2848,
+          816
+        ],
+        "id": "21c1bc22-3fc2-4dfc-883f-b289508a9b42",
+        "name": "Save Dossier to Google Doc",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=You are a creative story developer specializing in adult contemporary magical realism for Black women readers.\n\nYou are developing a new book for the series \"Make It Black. Make It Modern.\" — fairy tale retellings with Black women protagonists in modern American cities.\n\nSERIES TEMPLATES:\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nAUTHOR INPUT:\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference — choose the best city' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n\n---\n\nUsing the fairy tale and the series templates, brainstorm 3 distinct story directions for this book. Each direction should feel genuinely different — different city, different industry, different protagonist wound, different way the fairy tale maps to modern life.\n\nFor each direction provide:\n- CONCEPT TITLE (working title)\n- CITY & INDUSTRY (the specific world she lives in)\n- PROTAGONIST SNAPSHOT (who she is, her wound, her gift — no name yet)\n- THE FAIRY TALE HOOK (how the source tale maps to this modern world)\n- THE MAGIC (what form it takes in this version)\n- THE ROMANCE TROPE (primary trope)\n- WHY THIS WORKS (why this direction is commercially strong for Black BookTok)\n\nMake each option bold and specific. No generic pitches.",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          1392,
+          896
+        ],
+        "id": "a7623214-70fc-494d-8ff2-997e2928b21c",
+        "name": "Brainstorm"
+      },
+      {
+        "parameters": {
+          "model": "anthropic/claude-sonnet-4.6",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          1392,
+          1072
+        ],
+        "id": "8be7166b-575c-4c9a-8648-45a7e0c5b6da",
+        "name": "Brainstorm Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=You are a senior acquisitions editor who specializes in commercial fiction for Black women readers.\n\nYou have been given 3 story directions for a new book in the \"Make It Black. Make It Modern.\" fairy tale retelling series.\n\nHere are the 3 options:\n{{ $json.output }}\n\nEvaluate each option against these criteria:\n1. Commercial hook — would this immediately grab a Black BookTok reader?\n2. Fairy tale fidelity — are the bones clear and well-transformed?\n3. Protagonist strength — is there a genuinely compelling woman at the center?\n4. Series fit — does it add something unique the other books in the series won't have?\n5. Magic balance — is the magical element culturally grounded and appropriately subtle?\n\nThen SELECT THE SINGLE STRONGEST OPTION. Explain exactly why it wins over the others.\n\nAfter your selection, EXPAND the winning concept into a fuller premise paragraph (200-300 words) that captures the emotional core, the conflict engine, the romance setup, and the fairy tale transformation. This expanded premise is what the next agent will build the full dossier from.",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          1648,
+          896
+        ],
+        "id": "c46109c1-5b12-42cc-976b-8f47e2fc1249",
+        "name": "Pick the Best"
+      },
+      {
+        "parameters": {
+          "model": "anthropic/claude-sonnet-4.6",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          1648,
+          1072
+        ],
+        "id": "1c07fa64-101a-46cb-a0c8-c082d585261f",
+        "name": "Pick the Best Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have a selected and expanded story concept. Your job is to build it into a complete Story Dossier.\n\nSERIES TEMPLATES (use these as your structural guide):\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nSELECTED CONCEPT:\n{{ $json.output }}\n\n---\n\nBuild a complete STORY DOSSIER with all ten sections. Make bold, specific creative decisions — invent character names, specific neighborhoods, specific cultural details. Do not be vague.\n\n## 1. SERIES PLACEMENT\nHow this book fits the series and what unique territory it covers.\n\n## 2. CORE PREMISE\n- One-sentence logline\n- One-paragraph expanded premise\n\n## 3. THEMATIC SPINE\n- Primary theme\n- 2-3 supporting themes\n- How the fairy tale source illuminates these in a modern Black American context\n\n## 4. THE WORLD — MUNDANE LAYER\nSpecific city, neighborhoods, locations, cultural texture details (food, music, institutions)\n\n## 5. THE WORLD — MAGICAL LAYER\nSpecific form of magic, who carries it, the rules, what it costs, arc across the story\n\n## 6. THE STAKES\n- External stakes\n- Internal stakes\n- Relational stakes\n\n## 7. CAST OVERVIEW\nFull details for: Protagonist, Love Interest, Villain, Elder/Mentor, Best Friend — with invented names and specific character details per the Character Template requirements\n\n## 8. FAIRY TALE MAPPING\nComplete table mapping each fairy tale element to its modern equivalent\n\n## 9. TONE AND STYLE NOTES\nEmotional texture, romance tropes, heat level, narrative voice, 2-3 comparable titles\n\n## 10. OPEN QUESTIONS FOR THE AUTHOR\n3-5 genuine story questions that still need a human creative decision",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          1904,
+          896
+        ],
+        "id": "b7ed8641-ef33-4558-b6cb-e5ca95b01ee0",
+        "name": "Complete Story Dossier"
+      },
+      {
+        "parameters": {
+          "model": "anthropic/claude-sonnet-4.6",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          1904,
+          1072
+        ],
+        "id": "defe66ef-587c-49cc-beed-f5fe22c54113",
+        "name": "Complete Story Dossier Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=You are a senior developmental editor with deep expertise in adult commercial fiction for Black women readers and in the fairy tale retelling genre.\n\nYou have received a Story Dossier for a new book in the \"Make It Black. Make It Modern.\" series.\n\nHere is the dossier:\n{{ $json.output }}\n\nEvaluate it rigorously on eight dimensions. For each give a rating (Strong / Solid / Needs Work / Weak) and specific, actionable feedback:\n\n1. HOOK STRENGTH — Does the premise grab immediately? Would a Black woman reader want this story?\n2. FAIRY TALE FIDELITY — Are the bones clear and well-transformed? At least 4 key beats mapped?\n3. CULTURAL AUTHENTICITY — Grounded in Black women's contemporary experience? Is the city specific?\n4. PROTAGONIST FULLNESS — Active, flawed, gifted, specific? Or underdeveloped?\n5. MAGIC BALANCE — Culturally grounded, subtle, properly constrained? Complicates rather than solves?\n6. COMMERCIAL VIABILITY — BookTok potential? Right tropes? Romance heat? HEA/HFN set up?\n7. SERIES FIT — Adds something unique? Honors the series promise without repeating other titles?\n8. WHAT'S MISSING — What's underdeveloped, contradictory, or absent?\n\nEnd with:\n- 3 specific STRENGTHS to preserve in the rewrite\n- 3 specific PROBLEMS that must be fixed\n- 1 BIG QUESTION the dossier hasn't answered that could make or break the book",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          2160,
+          896
+        ],
+        "id": "803ea9fa-33f3-4abb-952c-54dd86d8bdfe",
+        "name": "Dossier Critique"
+      },
+      {
+        "parameters": {
+          "model": "anthropic/claude-sonnet-4.6",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          2160,
+          1072
+        ],
+        "id": "5df53060-f59f-42df-852b-b2c1f97d293f",
+        "name": "Dossier Critique Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have two documents:\n\n1. The Story Dossier:\n{{ $('Complete Story Dossier').item.json.output }}\n\n2. The editorial critique:\n{{ $json.output }}\n\nRewrite the Story Dossier implementing the critique's recommendations:\n- Fix every problem identified\n- Answer the big question if possible, or flag it clearly for the author\n- Strengthen every weak section\n- Preserve the three strengths called out\n- Keep everything specific — do NOT make it generic\n\nProduce the complete rewritten dossier with all ten sections. This is the final version that will be saved and used for outlining.",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          2448,
+          896
+        ],
+        "id": "09306b1a-f5ff-4e1b-9b08-f7445a5aa520",
+        "name": "Dossier Rewrite"
+      },
+      {
+        "parameters": {
+          "model": "anthropic/claude-sonnet-4.6",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          2416,
+          1072
+        ],
+        "id": "d4e06935-2fdc-40e9-9c99-acce0e6ee15e",
+        "name": "Dossier Rewrite Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Book Brain Dump Form": {
+        "main": [
+          [
+            {
+              "node": "📄 DOC IDs — UPDATE HERE",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📄 DOC IDs — UPDATE HERE": {
+        "main": [
+          [
+            {
+              "node": "Fetch Trope Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Trope Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Plot Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Plot Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Character Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Dossier to Google Doc": {
+        "main": [
+          []
+        ]
+      },
+      "Fetch Character Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Worldbuilding Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Worldbuilding Template": {
+        "main": [
+          [
+            {
+              "node": "Brainstorm",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Brainstorm": {
+        "main": [
+          [
+            {
+              "node": "Pick the Best",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pick the Best": {
+        "main": [
+          [
+            {
+              "node": "Complete Story Dossier",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Complete Story Dossier": {
+        "main": [
+          [
+            {
+              "node": "Dossier Critique",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dossier Critique": {
+        "main": [
+          [
+            {
+              "node": "Dossier Rewrite",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dossier Rewrite": {
+        "main": [
+          [
+            {
+              "node": "Save Dossier to Google Doc",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Brainstorm Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Brainstorm",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pick the Best Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Pick the Best",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Complete Story Dossier Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Complete Story Dossier",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dossier Critique Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Dossier Critique",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dossier Rewrite Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Dossier Rewrite",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version 406b1ffd",
+    "description": "",
+    "autosaved": true
+  },
   "tags": []
 }
