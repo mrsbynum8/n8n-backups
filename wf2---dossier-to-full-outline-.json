@@ -1,0 +1,1052 @@
+{
+  "updatedAt": "2026-02-27T04:57:24.430Z",
+  "createdAt": "2026-02-27T03:27:17.227Z",
+  "id": "HalYLq_tpPq5mHdUWDNpm",
+  "name": "WF2 - Dossier to Full Outline",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Make It Black. Make It Modern. — Story Outline",
+        "formDescription": "Generate characters, worldbuilding, and a chapter outline from your story dossier.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Book Title",
+              "placeholder": "e.g. Cinderblock",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Generate Characters & Worldbuilding?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes — Generate new character and worldbuilding docs"
+                  },
+                  {
+                    "option": "No — Docs already exist, go straight to outlining"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Chapters to Outline",
+              "placeholder": "e.g. Just Chapter 1, or Chapters 1-5, or All 30 chapters",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Author Notes",
+              "fieldType": "textarea",
+              "placeholder": "Anything you want to flag or emphasize before the AI builds. Optional."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -592,
+        400
+      ],
+      "id": "0fcfd245-b938-473f-b7be-22ad2b84dd9c",
+      "name": "Story Outline Form",
+      "webhookId": "fb383b76-7388-46ef-93c4-4133abb31093"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "TROPE_TEMPLATE_DOC_ID",
+              "value": "168KxD6S5j1e3DgOaaFdSfq_-r2man-x8Ll8rEnenPUU",
+              "type": "string"
+            },
+            {
+              "name": "PLOT_TEMPLATE_DOC_ID",
+              "value": "1dqn0dBx2X5rcn5xGhp41hJ9aTpYleKhiXlmzSmy02W4",
+              "type": "string"
+            },
+            {
+              "name": "CHARACTER_TEMPLATE_DOC_ID",
+              "value": "1AD358QVe8-4dQI75qI0EhhkEX4gbC8l4e-Sb1d_R9y0",
+              "type": "string"
+            },
+            {
+              "name": "WORLDBUILDING_TEMPLATE_DOC_ID",
+              "value": "1XnPC9wzz96SLTzW8mNu3bi--729CbtLTH36nQWhvMoQ",
+              "type": "string"
+            },
+            {
+              "name": "DOSSIER_DOC_ID",
+              "value": "1yKk3nMpA5sTNp78Pr0sMw_tJn0q9PgcJBQn1quj5KVw",
+              "type": "string"
+            },
+            {
+              "name": "CHARACTER_OUTPUT_DOC_ID",
+              "value": "1ZfzCqByRvXQ735QiWE43L3-b1fONT8XD6_HFzaAFwX0",
+              "type": "string"
+            },
+            {
+              "name": "WORLDBUILDING_OUTPUT_DOC_ID",
+              "value": "1u1SBEwpgs_rVhdoMm01CF2bV8Lp5qIv1Aymg4dbojis",
+              "type": "string"
+            },
+            {
+              "name": "OUTLINE_OUTPUT_DOC_ID",
+              "value": "1y1qaarFohib6EgBZPvdJ_iz8c9t3P3qdQCJSKLGO7u0",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        400
+      ],
+      "id": "4ba0e965-41f1-45a0-bf78-ba93f9c73a40",
+      "name": "📄 DOC IDs — UPDATE HERE"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.TROPE_TEMPLATE_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        0
+      ],
+      "id": "b795266d-b2a1-481b-9477-487d45d4d6ef",
+      "name": "Fetch Trope Template",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.PLOT_TEMPLATE_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        160
+      ],
+      "id": "d7d75f01-f98b-4ba0-a16e-5b9f4cc34981",
+      "name": "Fetch Plot Template",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.CHARACTER_TEMPLATE_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        320
+      ],
+      "id": "8a6d0b2e-ef61-4145-8543-f4fb472af6db",
+      "name": "Fetch Character Template",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.WORLDBUILDING_TEMPLATE_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        480
+      ],
+      "id": "279b48c5-a29d-4c1d-a013-8b81df18ea3d",
+      "name": "Fetch Worldbuilding Template",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.DOSSIER_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        640
+      ],
+      "id": "803f89ab-14ba-4437-a993-ef232787a9c6",
+      "name": "Fetch Dossier",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.CHARACTER_OUTPUT_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        800
+      ],
+      "id": "d3a050bb-34f0-4cd7-a710-c6f2f214b2f3",
+      "name": "Fetch Character Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.WORLDBUILDING_OUTPUT_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        960
+      ],
+      "id": "557c23fb-87e3-489a-9d39-d53c812e3b8d",
+      "name": "Fetch Worldbuilding Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.OUTLINE_OUTPUT_DOC_ID }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        1120
+      ],
+      "id": "791be814-3d57-47b3-856a-8effb95d761c",
+      "name": "Fetch Outline Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "fc20f67a-ccf2-4233-a9ce-e49fb66a4acf",
+              "leftValue": "={{ $('Story Outline Form').item.json['Generate Characters & Worldbuilding?'] }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "contains",
+                "name": "filter.operator.contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        640
+      ],
+      "id": "360eefb2-8c24-41a6-acac-8f5c450d03ad",
+      "name": "Generate Characters & Worldbuilding?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a developmental editor and character architect specializing in adult commercial fiction for Black women readers.\n\nYou are building the character roster for a new book in the \"Make It Black. Make It Modern.\" series — fairy tale retellings with Black women protagonists in modern American cities.\n\n<genre_tropes>\n{{ $('Fetch Trope Template').item.json.body }}\n</genre_tropes>\n\n<character_template>\n{{ $('Fetch Character Template').item.json.body }}\n</character_template>\n\n<dossier>\n{{ $('Fetch Dossier').item.json.body }}\n</dossier>\n\n<author_notes>\n{{ $('Story Outline Form').item.json['Author Notes'] || 'None' }}\n</author_notes>\n\n<instructions>\nGiven the above dossier and character template, create a complete character roster for this book. The character template is your structural guide — follow all seven parts for every major character. Do not substitute a shorter format.\n\nLAZY SHORTHAND TEST — before writing any character detail, ask: is this specific to THIS person, or could it appear in any book about a Black woman? Reject any detail that reads as \"a strong Black woman\" in general. Every physical description, mannerism, wound, and speech pattern must be earned by THIS story.\n\nFor each MAJOR character, complete all of the following. Do not skip sections.\n\n**PART 1 — THE EXTERIOR**\n- Physical Description: Specific and sensory. What does someone notice first? What does she do with her hands? Written in the register of the prose, not a casting call.\n- How She Moves Through the World: How does she present herself publicly? What does she let people see?\n- What Others Think of Her: What is her reputation in her community? Is it accurate?\n\n**PART 2 — THE INTERIOR**\n- What She Wants (Conscious): What does she think she's after?\n- What She Needs (Unconscious): What does she actually need that she hasn't named yet?\n- What She's Afraid Of: Specific — not \"failure\" but which failure, with which consequence, in whose eyes.\n- What She Believes About the World: Her working theory of how things work — probably partly wrong.\n- What She Believes About Herself: Her self-narrative — probably partly wrong in ways that will be tested.\n\n**PART 3 — CULTURAL SPECIFICITY**\n- Family Structure and Dynamics: Who raised her? What is her role in the family? What goes unspoken at family dinners?\n- Community and Belonging: Where does she belong? Where does she feel like an outsider even in spaces she's supposed to be at home in?\n- Relationship to Her Own History: What does she know about where she comes from? What was kept from her?\n- Texture of Daily Life: Not a schedule — a feel. What does her apartment smell like? What does she eat when no one is watching? What does she do when she's happy vs. anxious? Her daily life should reflect the full range of contemporary Black experience — she contains multitudes that don't need to be reconciled.\n- Her Relationship to Visibility: Does she make herself small? Take up space? What happens when she's seen in a way she didn't choose?\n\n**PART 4 — THE CONSTRAINT LAYER**\n- External Constraints: What specific systemic or institutional forces limit her options? Name the mechanism, the context, and who operates it — not just the category.\n- Internal Constraints: What has she internalized that limits her — even if it once served her as a survival mechanism?\n- The Expectation Load: What does her community, family, and world expect of her? What happens if she wants something different?\n\n**PART 5 — RELATIONSHIPS**\nComplete the Primary Relationship section in full (with whom, surface appearance, what it's actually about, what each person gets, what each person withholds, how it changes across the story).\nThen complete Secondary Relationship entries for 2-4 supporting characters, including the GRRM check: does this person have their own agenda at least partially at odds with the protagonist's?\n\n**PART 6 — ARC**\n- Where she begins (internal and external starting condition)\n- The First Crack (first moment something she believes is challenged)\n- The Turn (the moment she cannot go back — not because of plot, but because of what she now knows)\n- Where she ends (what has she gained, what has she lost, what is unresolved)\n- GRRM check: Is her arc genuinely costly? Does she arrive having lost something real?\n- Tia Williams check: Is the emotional truth rendered in the body, the senses, the relationships — not just in plot events?\n\n**PART 7 — PERSONALITY MARKERS**\n- Myers-Briggs, Enneagram, Clifton Strengths\n- Voice & Speech Patterns: The actual rhythm and vocabulary — what does she reach for under pressure?\n- Quirk: One thing about her that doesn't serve the plot but makes her real.\n- Dialogue Samples (four states — relaxed, stressed, thoughtful, excited. These don't need to be from the book. Just prove you know how she sounds.)\n\nFor ANTAGONIST and OPPOSING FORCE characters, also complete Part 7 of the character template:\n- Their goal (stated without judgment)\n- Why their position is comprehensible from inside their own history and desires\n- What they're afraid of\n- What they've lost or given up\n- The moment their humanity is most visible\nGRRM rule: the reader should be able to understand, even if not sympathize with, this character's choices.\n\n---\n\nFor MINOR characters: 2-3 sentences covering background, core desire, and specific plot function. Include ALL minor characters present in the dossier — do not omit anyone who appears in more than one scene.\n\n---\n\nFormat using Markdown:\n\n## {{ $('Story Outline Form').item.json['Book Title'] }}\n\n### [Major Character Name] — [Role]\n\n**PART 1 — THE EXTERIOR**\n* Physical Description:\n* How She Moves Through the World:\n* What Others Think of Her:\n\n**PART 2 — THE INTERIOR**\n* What She Wants (Conscious):\n* What She Needs (Unconscious):\n* What She's Afraid Of:\n* What She Believes About the World:\n* What She Believes About Herself:\n\n**PART 3 — CULTURAL SPECIFICITY**\n* Family Structure and Dynamics:\n* Community and Belonging:\n* Relationship to Her Own History:\n* Texture of Daily Life:\n* Relationship to Visibility:\n\n**PART 4 — THE CONSTRAINT LAYER**\n* External Constraints:\n* Internal Constraints:\n* The Expectation Load:\n\n**PART 5 — RELATIONSHIPS**\n* Primary Relationship:\n* Secondary Relationships:\n\n**PART 6 — ARC**\n* Where She Begins:\n* The First Crack:\n* The Turn:\n* Where She Ends:\n\n**PART 7 — PERSONALITY MARKERS**\n* Myers-Briggs / Enneagram / Clifton Strengths:\n* Voice & Speech Patterns:\n* Quirk:\n* Dialogue Samples:\n  * Relaxed:\n  * Stressed:\n  * Thoughtful:\n  * Excited:\n\n[continue for all major characters]\n\n### Minor Characters:\n* [NAME]: [2-3 sentences]\n[continue for all minor characters in the dossier]\n\nOnly include the asked-for character details. Do not add any preamble, commentary, or anything other than what I've asked for above.\n</instructions>",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        496,
+        112
+      ],
+      "id": "5081205f-4c40-46cb-8cdb-38886f45ed81",
+      "name": "Characters"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        496,
+        304
+      ],
+      "id": "567228d1-b8b9-4042-911b-5a0782555049",
+      "name": "Characters Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior developmental editor with expertise in commercial fiction for Black women readers.\n\nYou have received a character roster for a new book in the \"Make It Black. Make It Modern.\" series.\n\nHere is the character roster:\n{{ $json.output }}\n\nCritique this roster against the following criteria:\n\n1. LAZY SHORTHAND TEST: Which details could appear in any book about a Black woman, vs. which are specific to THIS story and THIS character? Flag every generic detail by name.\n\n2. WOUND SPECIFICITY: Is each character's wound a specific event or pattern, or just a category? \"Abandonment\" is a category. \"Her mother left the night after her twelfth birthday show and never explained why\" is specific. Flag every wound that stays at the category level.\n\n3. ARC INTEGRITY: Does each character have a genuine transformation, or just a position change? Does the protagonist's arc answer the question: what does she have to lose in order to win?\n\n4. VOICE DIFFERENTIATION: Could you tell these characters apart from their dialogue samples alone? Flag any who sound like the same person.\n\n5. STORY SERVICE: Does each supporting character exist to create specific friction for the protagonist, or are they filling a role without pressure?\n\nBe specific. Name the exact line or detail that fails. Explain what it should do instead.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        800,
+        112
+      ],
+      "id": "9c766776-f244-41d0-af7c-ce1041f5185b",
+      "name": "Critique Characters"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        800,
+        304
+      ],
+      "id": "59975ad5-16ab-475a-b59d-9e375851f101",
+      "name": "Critique Characters Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a developmental editor specializing in adult commercial fiction for Black women readers.\n\nYou have two documents:\n\n1. The character roster (first draft):\n{{ $('Characters').item.json.output }}\n\n2. The editorial critique:\n{{ $json.output }}\n\nRewrite the complete character roster, implementing every critique note. Do not just patch — where the critique identifies a generic detail, replace it with something earned by this specific story. Where wounds are categories, make them events. Where voices sound alike, differentiate them.\n\nMaintain the same Markdown format as the original.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1104,
+        112
+      ],
+      "id": "607539ce-7304-4671-a757-1c9a8ecec0b2",
+      "name": "Rewrite Characters"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        304
+      ],
+      "id": "a7893090-140a-46d8-95ec-f63092827d6a",
+      "name": "Rewrite Characters Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.CHARACTER_OUTPUT_DOC_ID }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{$('Rewrite Characters').item.json.output}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        112
+      ],
+      "id": "d838ade5-b1ef-4002-8c21-34661faff6c9",
+      "name": "Write to Character Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a developmental editor and world architect specializing in adult commercial fiction for Black women readers.\n\nYou are building the world document for a new book in the \"Make It Black. Make It Modern.\" series.\n\n<genre_tropes>\n{{ $('Fetch Trope Template').item.json.body }}\n</genre_tropes>\n\n<worldbuilding_template>\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n</worldbuilding_template>\n\n<dossier>\n{{ $('Fetch Dossier').item.json.body }}\n</dossier>\n\n<characters>\n{{ $('Rewrite Characters').item.json.output }}\n</characters>\n\n<author_notes>\n{{ $('Story Outline Form').item.json['Author Notes'] || 'None' }}\n</author_notes>\n\n<instructions>\nGiven the above materials, build a complete worldbuilding document for this book using all seven parts of the worldbuilding template as your structural guide. Do not skip sections. Do not collapse parts together.\n\nThese are contemporary stories set in real American cities. \"Worldbuilding\" here means the specific texture of the world these characters inhabit — the industry, the neighborhood, the unwritten rules, the way race and gender and class operate in this particular ecosystem.\n\nLAZY SHORTHAND TEST: Every element must be specific to THIS story's world. \"A music industry that exploits Black artists\" is a category. What are the specific mechanics? What is the specific geography? What does power look like in this particular room?\n\n---\n\n**PART 1 — THE SETTING**\n- World Type: contemporary with magical elements, historical, or other\n- Time and Place: specific city, neighborhood, decade, season — not \"a Southern city\"\n- The Feel of This World: 3-5 sensory details that capture the specific texture. What does it smell like at night? What sounds does it make?\n- What Is Ordinary Here: the mundane daily rhythms — weekday mornings, Friday nights, Sunday afternoons\n- What Is Extraordinary Here: where the magical or extraordinary lives, and how ordinary people relate to it\n\n**PART 2 — THE MAGIC SYSTEM**\n- The Source: where does the magic come from? Ancestral, earned, inherited, contested?\n- Cultural Roots: what specific tradition, practice, or knowledge system does this magic grow from? Note: hoodoo and West African traditions are valid but often the first place the imagination goes — is this the right choice for this specific world? Magic can live in food, music, memory, commerce, architecture, storytelling. What is true to THIS story?\n- How It Works: the actual mechanics — what can it do, what can't it do\n- What It Costs: who pays, how, and does the cost compound?\n- Who Has Access: who is excluded and why — natural, institutional, or enforced?\n- What Happens When It's Misused: consequences should be real and not easily reversed\n- Lazy Shorthand Check: is this magic system doing something only this story could do, or could it be transplanted into any other fantasy story without losing anything?\n\n**PART 3 — POWER AND ACCESS**\n- The Formal Power Structure: who holds official power — political, social, economic, magical — and what is the specific mechanism?\n- The Informal Power Structure: who actually holds influence that doesn't show up in the official structure? Where does real leverage live?\n- Who the System Was Built For: whose interests does the current structure protect?\n- Who the System Excludes and How: specific mechanisms — laws, customs, economics, magic access, information control — not abstractions\n- What It Would Cost the System If the Protagonist Succeeds: what actually has to change for her to win, and what forces have an interest in that not happening?\n- Does the System Change by the End: partially / fully / not at all — and what does that say about the story's argument?\nGRRM rule: institutions protect themselves. The system will not conveniently collapse because one person is heroic enough.\n\n**PART 4 — COMMUNITY AND SOCIAL TEXTURE**\n- The Community at the Center: defined by place, kinship, culture, or shared condition\n- How the Community Functions: how decisions get made, how conflict is resolved, the unspoken rules\n- What the Community Values: specific behaviors, traits, or achievements that are honored\n- Where the Community Has Contradictions: internal fault lines, hierarchy, exclusion — even loving communities have them. Who is on the outside of the inside?\n- What the Community Needs From the Protagonist: what is she carrying on behalf of her community? Is that fair? Does she have a choice?\n- Where the Community Fails Her: where does it misread her, let her down, or ask more than it has a right to?\n\n**PART 5 — SENSORY WORLDBUILDING**\nThis section is the Tia Williams requirement. The world must be rendered in the body — not described architecturally but felt.\n\n- Food: what people eat on ordinary days, when they're sad, at celebrations. What food is complicated by memory or money or who made it? Black characters eat the full range of American and global food — avoid making every food moment a cultural statement.\n- Music: what is actually playing in the background of scenes? What music has emotional significance to specific characters and why?\n- Hair and Body: what is the relationship to hair in this world — neutral, loaded, magical, contested?\n- Clothing and Aesthetics: what does it look like to be dressed well? What does poverty look like? What do clothes communicate that people can't say directly?\n- Architecture and Space: what do the physical spaces feel like? Where does the protagonist feel safe, and what does that safety feel like in the body?\n- Seasonal and Weather Texture: what season is this story set in? What does the weather feel like, smell like, sound like, and how does it change across the story?\n\n**PART 6 — HISTORY AND MEMORY**\n- What Happened Before the Story Starts: the history the current world is built on — who built what, who was displaced, what was lost\n- What the Community Remembers: the shared memory that shapes how this community sees itself\n- What Was Erased or Hidden: what history has been suppressed or deliberately obscured, and who controls the suppression?\n- What the Protagonist Doesn't Know: what piece of history is she missing that, when she finds it, changes how she understands her situation?\n\n**PART 7 — THE FAIRY TALE LAYER**\n- How the Source Tale Lives in This World: not just in plot — how are the echoes embedded in the world itself? Is the story a known myth? A family legend? A pattern that repeats without people knowing why?\n- Complete the mapping table for ALL classic fairy tale elements:\n\n| Classic Element | This World's Version |\n|---|---|\n| The enchanted forest / liminal space | |\n| The magical object | |\n| The royal court / the gatekept world | |\n| The curse-giver | |\n| The threshold / transformation space | |\n\n- The World's Relationship to Magic: do people in this world know magic exists? Is it normalized, hidden, feared, regulated, commodified?\n\n---\n\nFormat using Markdown:\n\n## {{ $('Story Outline Form').item.json['Book Title'] }}\n\n### PART 1 — THE SETTING\n[content]\n\n### PART 2 — THE MAGIC SYSTEM\n[content]\n\n### PART 3 — POWER AND ACCESS\n[content]\n\n### PART 4 — COMMUNITY AND SOCIAL TEXTURE\n[content]\n\n### PART 5 — SENSORY WORLDBUILDING\n[content]\n\n### PART 6 — HISTORY AND MEMORY\n[content]\n\n### PART 7 — THE FAIRY TALE LAYER\n[content]\n\nOnly include the asked-for worldbuilding details. Do not add preamble, commentary, or anything other than what is specified above.\n</instructions>",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1696,
+        112
+      ],
+      "id": "d74551d1-d257-45c3-b95e-2bf2b4797a12",
+      "name": "Worldbuilding"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        304
+      ],
+      "id": "7e3d5a04-0c01-4498-84ab-f01f78381611",
+      "name": "Worldbuilding Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior developmental editor with expertise in commercial fiction for Black women readers.\n\nYou have received a worldbuilding document for a new book in the \"Make It Black. Make It Modern.\" series.\n\nHere is the worldbuilding document:\n{{ $json.output }}\n\nCritique it against the following criteria:\n\n1. LAZY SHORTHAND TEST: Which elements are specific to THIS world vs. which could appear in any story set in this industry or city? Flag every generic entry by name.\n\n2. MAGIC INTEGRATION: Is the magic system connected to the protagonist's emotional wound and arc, or is it applied as an overlay? The magic should be thematically inseparable from what she's fighting for or afraid of.\n\n3. TEXTURE VS. ATMOSPHERE: Does each setting feel real and lived-in, or is it described in terms of mood and feeling? Flag entries that tell us how the place feels instead of what is physically there.\n\n4. CHARACTER COHERENCE: Does this world specifically produce the characters we've already built? Would these exact characters emerge from this exact world?\n\n5. STORY FUNCTIONALITY: Does each worldbuilding element create a specific plot constraint or opportunity, or is it decorative?\n\nBe specific. Name the exact entry that fails. Explain what it should do instead.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2000,
+        112
+      ],
+      "id": "4c904477-8718-4fc6-a0d7-c12a17b57145",
+      "name": "Critique Worldbuilding"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        304
+      ],
+      "id": "4db9a0ce-3124-4808-89db-c0d87cc5fd6e",
+      "name": "Critique Worldbuilding Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a developmental editor specializing in adult commercial fiction for Black women readers.\n\nYou have two documents:\n\n1. The worldbuilding document (first draft):\n{{ $('Worldbuilding').item.json.output }}\n\n2. The editorial critique:\n{{ $json.output }}\n\nRewrite the complete worldbuilding document, implementing every critique note. Where entries are generic, replace them with elements specific to this story's world. Where magic floats disconnected from character wound, anchor it. Where settings are atmospheric, make them physical and specific.\n\nMaintain the same Markdown format as the original.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2304,
+        112
+      ],
+      "id": "645e7821-8060-4313-806f-5488ce855dfd",
+      "name": "Rewrite Worldbuilding"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        304
+      ],
+      "id": "0c903595-83fd-440c-993d-e7dee6d5aa42",
+      "name": "Rewrite Worldbuilding Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.WORLDBUILDING_OUTPUT_DOC_ID }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{$('Rewrite Worldbuilding').item.json.output}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2608,
+        112
+      ],
+      "id": "4ad91f5f-f7f6-4de6-8336-39027ceb1d18",
+      "name": "Write to Worldbuilding Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a fully fleshed-out chapter outline for the chapters specified \nin <chapters_to_outline>.\n\nIf <story_so_far> contains existing outline content, continue directly \nfrom where it ends. Maintain consistency with all established events, \ncharacter decisions, and world details.\n\nEach chapter entry must be specific enough that a ghostwriter could \ndraft the chapter without asking questions. That means covering — \nwithin the paragraph itself, not as separate bullets — what happens, \nwhat the protagonist wants and what blocks her, what emotional beat \nlands, what has changed by the end, and the closing hook stated \nconcretely. No vague motion: never write \"tension rises\" or \"she \nrealizes something important\" without immediately specifying what.\n\nThe worldbuilding and magic system must function as specific plot \nmechanics, not atmospheric backdrop.\n\nFormat using Markdown:\n\n### Chapter [N]: [Chapter Title]\n[200-250 word description in 1-3 paragraphs, written as though \nhanding it to a ghostwriter. All criteria above must be addressed \nwithin the prose of the paragraph — do not use sub-bullets or \nsub-headers inside the chapter entry.]\n\n[continue for all chapters specified]",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2896,
+        112
+      ],
+      "id": "e3b1cb92-4820-4bd5-9f15-3b909610cb32",
+      "name": "Outline (Full Run)"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        304
+      ],
+      "id": "2d3aa819-9476-41a0-9670-0e07891ae003",
+      "name": "Outline Model (Full Run)",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.OUTLINE_OUTPUT_DOC_ID }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{$('Outline (Full Run)').item.json.output}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        3200,
+        112
+      ],
+      "id": "24d0a99f-89bd-4b01-84f3-c232e97ff5e3",
+      "name": "Write to Outline Doc (Full Run)",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a fully fleshed-out chapter outline for the chapters specified \nin <chapters_to_outline>.\n\nIf <story_so_far> contains existing outline content, continue directly \nfrom where it ends. Maintain consistency with all established events, \ncharacter decisions, and world details.\n\nEach chapter entry must be specific enough that a ghostwriter could \ndraft the chapter without asking questions. That means covering — \nwithin the paragraph itself, not as separate bullets — what happens, \nwhat the protagonist wants and what blocks her, what emotional beat \nlands, what has changed by the end, and the closing hook stated \nconcretely. No vague motion: never write \"tension rises\" or \"she \nrealizes something important\" without immediately specifying what.\n\nThe worldbuilding and magic system must function as specific plot \nmechanics, not atmospheric backdrop.\n\nFormat using Markdown:\n\n### Chapter [N]: [Chapter Title]\n[200-250 word description in 1-3 paragraphs, written as though \nhanding it to a ghostwriter. All criteria above must be addressed \nwithin the prose of the paragraph — do not use sub-bullets or \nsub-headers inside the chapter entry.]\n\n[continue for all chapters specified]",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        496,
+        912
+      ],
+      "id": "6a45263c-8a62-43d7-b8ed-f78718e011df",
+      "name": "Outline (Skip Gen)"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        496,
+        1104
+      ],
+      "id": "f83fc5e4-36e3-4c0f-a126-9cd3d49f7c94",
+      "name": "Outline Model (Skip Gen)",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.OUTLINE_OUTPUT_DOC_ID }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=$('Outline (Skip Gen)').item.json.output"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        800,
+        912
+      ],
+      "id": "bad469c2-405b-4a5c-b739-d83133ed2b61",
+      "name": "Write to Outline Doc (Skip Gen)",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Story Outline Form": {
+      "main": [
+        [
+          {
+            "node": "📄 DOC IDs — UPDATE HERE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📄 DOC IDs — UPDATE HERE": {
+      "main": [
+        [
+          {
+            "node": "Fetch Trope Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Trope Template": {
+      "main": [
+        [
+          {
+            "node": "Fetch Plot Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Plot Template": {
+      "main": [
+        [
+          {
+            "node": "Fetch Character Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Character Template": {
+      "main": [
+        [
+          {
+            "node": "Fetch Worldbuilding Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Worldbuilding Template": {
+      "main": [
+        [
+          {
+            "node": "Fetch Dossier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Dossier": {
+      "main": [
+        [
+          {
+            "node": "Fetch Character Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Character Doc": {
+      "main": [
+        [
+          {
+            "node": "Fetch Worldbuilding Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Worldbuilding Doc": {
+      "main": [
+        [
+          {
+            "node": "Fetch Outline Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Outline Doc": {
+      "main": [
+        [
+          {
+            "node": "Generate Characters & Worldbuilding?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Characters & Worldbuilding?": {
+      "main": [
+        [
+          {
+            "node": "Characters",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Outline (Skip Gen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Characters": {
+      "main": [
+        [
+          {
+            "node": "Critique Characters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Characters Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Characters",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critique Characters": {
+      "main": [
+        [
+          {
+            "node": "Rewrite Characters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critique Characters Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Critique Characters",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite Characters": {
+      "main": [
+        [
+          {
+            "node": "Write to Character Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite Characters Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite Characters",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Character Doc": {
+      "main": [
+        [
+          {
+            "node": "Worldbuilding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Worldbuilding": {
+      "main": [
+        [
+          {
+            "node": "Critique Worldbuilding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Worldbuilding Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Worldbuilding",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critique Worldbuilding": {
+      "main": [
+        [
+          {
+            "node": "Rewrite Worldbuilding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critique Worldbuilding Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Critique Worldbuilding",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite Worldbuilding": {
+      "main": [
+        [
+          {
+            "node": "Write to Worldbuilding Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite Worldbuilding Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite Worldbuilding",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Worldbuilding Doc": {
+      "main": [
+        [
+          {
+            "node": "Outline (Full Run)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline (Full Run)": {
+      "main": [
+        [
+          {
+            "node": "Write to Outline Doc (Full Run)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline Model (Full Run)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outline (Full Run)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline (Skip Gen)": {
+      "main": [
+        [
+          {
+            "node": "Write to Outline Doc (Skip Gen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline Model (Skip Gen)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outline (Skip Gen)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "7ca428c3-69d9-49ee-b488-51d7d92ba862",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-27T03:27:17.232Z",
+      "createdAt": "2026-02-27T03:27:17.232Z",
+      "role": "workflow:owner",
+      "workflowId": "HalYLq_tpPq5mHdUWDNpm",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
