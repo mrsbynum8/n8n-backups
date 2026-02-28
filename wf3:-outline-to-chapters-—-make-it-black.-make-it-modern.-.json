@@ -1,0 +1,757 @@
+{
+  "updatedAt": "2026-02-28T04:43:04.243Z",
+  "createdAt": "2026-02-27T19:22:43.819Z",
+  "id": "SfkJCX-mTC21obZdNgoKu",
+  "name": "WF3: Outline to Chapters — Make It Black. Make It Modern.",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "8e0108aa-2872-4c2b-8b47-4e4a4f81be8a",
+        "formTitle": "WF3: Write Chapters",
+        "formDescription": "Generate chapter drafts from the outline.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Book Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Author Notes",
+              "fieldType": "textarea",
+              "placeholder": "Any special instructions for this run?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e85021c-37e7-4ffe-b34c-2f8a8318fb44",
+      "name": "On Form Submission",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2,
+      "position": [
+        512,
+        -672
+      ],
+      "webhookId": "8e0108aa-2872-4c2b-8b47-4e4a4f81be8a"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.PROSE_STYLE_DOC_ID }}"
+      },
+      "id": "144851d0-aebe-43d0-8741-49e4ccec87ad",
+      "name": "Get Prose Style",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        976,
+        -672
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.FORBIDDEN_WORDS_DOC_ID }}"
+      },
+      "id": "9649c8ac-6754-49ba-8354-ae49099f5ccc",
+      "name": "Forbidden Words1",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -672
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.CHARACTER_SHEET_DOC_ID }}"
+      },
+      "id": "1e9e6018-2d1d-429f-8c4f-fb7fe7061db0",
+      "name": "Get Character Sheet",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        -672
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.WORLDBUILDING_DOC_ID }}"
+      },
+      "id": "3f558bff-d84e-4cdf-97b7-cac67d8523ed",
+      "name": "Get Worldbuilding",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        -672
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.OUTLINE_DOC_ID }}"
+      },
+      "id": "f9656378-765c-41bc-abd9-c66b07280170",
+      "name": "Get Outline",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        -672
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.FIRST_DRAFT_DOC_ID }}"
+      },
+      "id": "1f636356-4f4e-420c-b059-8f88ba3bdac0",
+      "name": "Get BLANK First Draft Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        -672
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<outline_document>\n{{ $('Get Outline').item.json.content }}\n</outline_document>\n<instructions>\nYou are a parser. Given the above book outline text, return a JSON array named \"chapters\" containing the formatted chapter name for each chapter — one element per chapter.\n\nChapters in the outline follow this format:\n### Chapter 1 — Opening Image / Ordinary World: *What the Roux Knows*\n\nExtract only the chapter number and the title found between the asterisks. Format each element like this:\nChapter 1: What the Roux Knows\n\nInclude chapters with non-numeric labels like 'Prologue' or 'Epilogue' if present, using the same rule — number or label, then the title from between the asterisks.\n\nDo not include the outlining template label (the part between the dash and the colon). Do not include any additional keys. Only output valid JSON.\n\nIn this specific instance, only return Chapters 11 through 12.\n</instructions>",
+        "options": {
+          "systemMessage": "You are a parser. Output only valid JSON. No commentary, no markdown code fences, no additional text of any kind."
+        }
+      },
+      "id": "0048371c-1a1b-4323-9ab1-b0e1766fa26d",
+      "name": "Find Chapter Names (in JSON)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        528,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-haiku-4.5",
+        "options": {}
+      },
+      "id": "d0c26a0b-a3cd-4c1c-91ff-427a4863a0a5",
+      "name": "OpenRouter Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        528,
+        -240
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText = $input.first().json.output;\n// Strip markdown code fences if present\nconst cleaned = rawText.replace(/```json\\n?/g, '').replace(/```/g, '').trim();\nconst parsed = JSON.parse(cleaned);\n// Return one item per chapter\nreturn parsed.chapters.map(chapter => ({ json: { chapter } }));"
+      },
+      "id": "97b61549-6220-441b-9ac6-3f51da7b89ea",
+      "name": "Parse Chapter Names",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ab65dc66-779b-47a2-8218-fca603b8e5de",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1184,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.FIRST_DRAFT_DOC_ID }}"
+      },
+      "id": "14d1eee8-a3bb-4e37-a8ce-00fda31243cf",
+      "name": "Get Last 2000 Words 1",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        -448
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = $input.first().json.content || '';\nconst words = content.split(/\\s+/).filter(w => w.length > 0);\nconst last2000 = words.slice(-2000).join(' ');\nreturn [{ json: { last_2k_words: last2000 } }];"
+      },
+      "id": "b866c9ff-f884-4db3-9da7-34f8f6dd07dc",
+      "name": "Get Last 2000 Words 2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<outline>\n{{ $('Get Outline').item.json.content }}\n</outline>\n\n<characters>\n{{ $('Get Character Sheet').item.json.content }}\n</characters>\n\n<worldbuilding>\n{{ $('Get Worldbuilding').item.json.content }}\n</worldbuilding>\n\n<previous_chapter_text>\n{{ $('Get Last 2000 Words 2').item.json.last_2k_words }}\n</previous_chapter_text>\n\n<instructions>\nGiven the above outline and characters/worldbuilding information, your task is to flesh out a scene brief for {{ $('Loop Over Items').item.json.chapter }}.\n\nMake sure the chapter is clearly labelled with the words \"{{ $('Loop Over Items').item.json.chapter }}\". Do not name the chapter anything besides this.\n\nThe scene brief should include the following:\n\nPOV: Third person limited from Celeste Ardoin's perspective. The reader experiences everything through Celeste's senses and interiority only — no omniscient narration, no access to other characters' inner states. Justify the POV choice based on what this chapter requires emotionally.\n\nGenre: Contemporary fairy tale retelling / women's fiction set in New Orleans.\n\nPlot (Verbatim + Beats): Extract the full \"{{ $('Loop Over Items').item.json.chapter }}\" plot summary from the outline and reproduce it verbatim in the scene brief (make sure you have correctly selected {{ $('Loop Over Items').item.json.chapter }}). Then draft 20-25 scene beats to make sure you establish all of the important details of the scene. Make sure the beats focus exclusively on the plot, on what happens. Don't worry about establishing sensory details in this section. For each of these beats, establish blocking — describe how the characters/objects/etc. are positioned in space, how they move, and what physical actions they're performing in relation to each other and their surroundings. Make sure to label both the scene beat and the blocking for each bullet point.\n\nScene Function: Define the narrative function of this scene (e.g., Inciting Incident, Character Introduction, World Establishment, Foreshadowing Device).\n\nPrevious Chapter: Make sure the plot for this scene picks up appropriately after the end of the previous chapter text. (Disregard if this is the first chapter and there is no data for the previous chapter text).\n\nCharacters: List all characters appearing in this chapter. For each, provide:\n- Name & Role (protagonist, antagonist, mentor, etc.)\n- Physical Appearance: Focused on this scene — clothing, posture, visible wear, etc.\n- Emotional State & Goals: What they feel and want in this moment; how this affects dialogue, reactions, or inner thought.\n- Behavioural Notes: Describe gestures, speech patterns, or tics shaped by mood or stakes.\n\nSetting: Describe the environment using sensory-rich language. Include time of day, sounds, smells, lighting, and other details relevant to the tone. New Orleans setting details should be specific — name actual neighborhoods, businesses, and streets where relevant.\n\nMain Source of Conflict: Explain the central dramatic tension in this chapter. Is it internal, interpersonal, societal, or environmental? Show how it escalates or shifts.\n\nTone & Style Notes: Guide the writing voice with specific cues:\n- Use concrete, clear prose — never ornate or metaphor-heavy.\n- Sensory grounding: sound and smell before visual description where possible.\n- Dialogue carries subtext — what's not said is as important as what is.\n- Ensure dialogue reflects character intention and advances the scene.\n- Present the tone and cadence of dialogue interactions within the scene.\n- The fairy tale layer is present but never announced — note which fairy tale elements appear in this chapter and how they should surface organically.\n\nSymbolism or Thematic Layer: Identify any symbols or archetypal moments that should emerge or be subtly introduced. Note which fairy tale beat this chapter corresponds to.\n\nContinuity Considerations: Note any links to events from past chapters or foreshadowing for future chapters. Mention items, emotional threads, or worldbuilding that must remain consistent. Pay specific attention to: the wrist injury and its current state, the animals (Roux the cat, the two ducks, the mockingbird), and the roux as recurring action.\n\nOther Notes: Include worldbuilding mechanics, scene transitions, or structural devices, if any.\n</instructions>",
+        "options": {}
+      },
+      "id": "da47efc3-546c-4a26-a323-4931bcc09523",
+      "name": "Scene Brief",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        528,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "id": "494e5a5c-6c42-411a-b4dc-44f5c47d1e70",
+      "name": "OpenRouter Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        528,
+        112
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<style_sheet>\n{{ $('Get Prose Style').item.json.content }}\n</style_sheet>\n\n<prohibited_words>\n{{ $('Forbidden Words1').item.json.content }}\n</prohibited_words>\n\n<full_context>\n<outline>\n{{ $('Get Outline').item.json.content }}\n</outline>\n<characters>\n{{ $('Get Character Sheet').item.json.content }}\n</characters>\n<worldbuilding>\n{{ $('Get Worldbuilding').item.json.content }}\n</worldbuilding>\n</full_context>\n\n<previous_chapter_text>\n{{ $('Get Last 2000 Words 2').item.json.last_2k_words }}\n</previous_chapter_text>\n\n<scene_brief>\n{{ $('Scene Brief').item.json.output }}\n</scene_brief>\n\n<instructions>\nYour task is to write the entire \"{{ $('Loop Over Items').item.json.chapter }}\" based on the scene brief. Cover it thoroughly, from deep point of view, writing the scene as if written by a bestselling novelist. Do not rush. The reader should feel fully immersed in the scene, seeing events through Celeste's perspective — not simply told what happened.\n\nAlways keep the following rules in mind:\n\nSTYLE\n- Follow the <style_sheet> closely. The prose should be blunt-leaning (approximately 70% plain and direct, 30% lyrical). Reserve lyrical passages for emotionally earned moments only. Do not run at a high lyrical register throughout.\n- Do NOT use metaphors. The style is concrete and direct.\n- Do NOT use em-dashes. Use commas or ellipses instead.\n- Do not use any of the words in the <prohibited_words> list.\n- Emotion must be rendered physically — in the body, in behavior, in what a character can't bring themselves to do. Never name an emotion you can render physically.\n- Dialogue must carry action. Every line should reveal want, evasion, or conflict. No mushy dialogue that exists only to make someone feel understood.\n\nSENTENCE AND PARAGRAPH CRAFT\n- Avoid long sentences that chain together multiple clauses with commas. If a sentence is getting long and comma-heavy, break it into shorter ones instead.\n- Short sentences next to each other are acceptable. Clusters of short sentences are fine when they serve the pacing or land a point.\n- Vary paragraph length. Mix short and long paragraphs deliberately.\n- Avoid starting multiple consecutive sentences or paragraphs with the same word, including pronouns like she/he/it.\n- Do not let \"she\" become the dominant subject across a passage. If more than two out of every five sentences in a paragraph block are constructed as \"She [verb],\" restructure to lead with the action, object, or physical detail instead. The pronoun should not be visible as a pattern when a reader scans the page.\n\nPOV AND CHARACTER\n- Third person limited, deep POV from Celeste's perspective only. Never access another character's thoughts. No aerial or omniscient observations.\n- At all times, Celeste should have a clear, practical want in the scene — something she is trying to get or avoid — and something in the way of getting it. Keep the reader grounded in that tension.\n- The prose style blends GRRM's consequence-weight with Rowling's warmth and dry wit. Do not sustain a single serious register throughout. Find one or two moments where a grounded, character-rooted comic beat can emerge naturally from Celeste's internal logic — not from wordplay or narrator commentary. The humor should never dissolve the scene's tension; it should complicate it.\n\nCULTURAL AND WORLD SPECIFICITY\n- Food, cooking, and the kitchen must be rendered with technical specificity. The roux has a sound, a smell, a color progression — name these precisely, not generically.\n- The fairy tale elements (animals, sounds, recurring objects) should appear naturally, never announced or explained.\n\nSTRUCTURE\n- Word count: approximately 3000 words.\n- Pick up naturally from the end of the <previous_chapter_text> with no repetition of moments already covered. (Disregard if this is the first chapter.)\n- Follow the scene brief's beat instructions closely. NEVER conclude the scene on your own. NEVER end with foreshadowing. NEVER write beyond what the brief instructs. Do not imagine possible endings or deviate from the instructions.\n\nFormat the output using Markdown as needed.\n</instructions>",
+        "options": {}
+      },
+      "id": "4c413c22-220e-4776-b2e4-137857272e17",
+      "name": "First Draft",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        864,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "id": "b867eea6-8045-4693-92e7-cee5eb6faece",
+      "name": "OpenRouter Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        864,
+        112
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<previous_chapter_text>\n{{ $('Get Last 2000 Words 2').item.json.last_2k_words }}\n</previous_chapter_text>\n\n<chapter>\n{{ $('First Draft').item.json.output }}\n</chapter>\n\n<scene_brief>\n{{ $('Scene Brief').item.json.output }}\n</scene_brief>\n\n<prose_style_guide>\n{{ $('Get Prose Style').item.json.content }}\n</prose_style_guide>\n\n<prohibited_words>\n{{ $('Forbidden Words1').item.json.content }}\n</prohibited_words>\n\n<instructions>\nGiven the above chapter, I want you to critique the chapter on a line-by-line basis and find ways to improve the chapter. Give specific examples. Here are a few things to look out for:\n\n-Show vs Tell: Highlight areas that are telling instead of showing, or not demonstrating good deep point of view for the character. Highlight exposition blocks for sensory or active-scene rewrites.\n\n-Over-Explained Reactions: Flag moments where the narration tells the reader how to interpret or feel about something that the prose has already shown. This is a subset of Show vs Tell but specific to emotional aftermath — if Celeste does something that already communicates her internal state, and then the narration explains that internal state directly, flag the explanation for removal. The experience should land; the narration should not then explain that it landed.\n\n-Cliches: Highlight common cliches and other signs of bad writing on the sentence level.\n\n-Metaphors: Identify any metaphors and instruct them to be removed. The prose style guide prohibits metaphors; concrete and direct language is always preferred.\n\n-Adverbs: Identify any over-reliance on adverbs.\n\n-Dialogue Tags: Identify dialogue tags that are not \"said\" or \"asked\". Make suggestions for which ones should be changed to \"said\" or \"asked\".\n\n-Passive Voice: Flag instances of passive voice.\n\n-Zero Fluff: Highlight overly wordy sentences and paragraphs/areas where you could reduce fluff, as well as instances of mushy dialogue or descriptions.\n\n-Prose Style: The <prose_style_guide> above is a detailed style guide with embedded micro-examples, not a sample of actual prose. Use it to evaluate the chapter. Give specific instructions on where the chapter drifts from the guide's rules — particularly regarding deep POV, physical emotion rendering, sensory specificity, and the prohibition on metaphors and emotional labels.\n\n-Voice Check: Compare each major/recurring character's dialogue and behavior against their established profile; flag off-character moments.\n\n-Dialogue Cliches: Flag any lines or patterns of dialogue that appear cliche or overused, especially patterns common in AI-generated writing.\n\n-Motivation Alignment: Ensure each action drives plot or character growth.\n\n-Minor Characters: Verify new or returning minor characters match previously defined traits or enrich them without contradiction.\n\n-Open Questions: Note any unclear motives, logic gaps, or plot holes.\n\n-Ending: Did the text end where the scene brief said it should? If not, specify where the chapter should end.\n\n-Beginning: Did the text begin in a way that feels like a natural continuation from the previous_chapter_text? If not, specify how it should begin.\n\n-Reader Experience: Provide a 'Takeaway' — does the chapter leave readers eager for the next installment?\n\n-Repeat First Words: Are there multiple sentences in a row (or multiple paragraphs in a row) that all start with the same word? This is especially common with pronouns like he/she/it. Flag these and suggest fixes.\n\n-Pronoun Density: Scan each section for passages where \"she\" appears as the subject of more than roughly 40% of sentences in a concentrated block — even if those sentences are not consecutive. Flag these passages and recommend restructuring specific sentences to lead with the action, object, or physical detail rather than the pronoun. Give exact examples of sentences to restructure and how. For example: \"She set the pan down\" → \"The pan went down.\" \"She did not answer\" → \"No answer.\" \"She measured the fat\" → \"The fat measured by sound.\"\n\n-Word and Phrase Repetition: Flag instances where a distinctive word, verb, or short phrase appears more than once within the same paragraph or within three lines of each other. This does not apply to intentional motif repetitions — recurring phrases used structurally across the chapter as a deliberate device — only to accidental clustering that reads as a draft artifact. Suggest substitutions or restructuring to eliminate the redundancy.\n\n-Sentence Length: Flag long sentences that use multiple commas and approach run-on territory — these should be broken up. Short sentences next to each other are acceptable and do not need to be combined unless there is a specific reason to do so. The primary concern is comma-heavy, over-extended sentences that become hard to follow.\n\n-Lyricism Check: The prose style guide calls for a blunt-leaning register (approximately 70% blunt, 30% lyrical), with lyricism reserved for emotionally earned moments. Flag passages where the prose is running too lyrical or ornate for the scene's stakes. Suggest simpler, more direct alternatives.\n\n-Humor and Warmth: The target style blends GRRM's consequence-weight with Rowling's warmth and wit. Flag scenes or passages where the prose is running at a single serious register without any dry, character-rooted humor. Identify one or two specific moments where a grounded comic beat — emerging naturally from a character's internal logic, not from wordplay or narrator commentary — could be added without undercutting the scene's emotional reality.\n\n-Character Want: At any given point in the chapter, the reader should be able to identify what Celeste wants, practically, in this scene, and what stands in the way of her getting it. Flag any passages where her immediate want goes unclear or unstated for too long. Suggest ways to anchor the scene in a concrete, practical desire.\n\n-POV Integrity: Flag any moments where the narration slips out of Celeste's deep third-person limited POV — omniscient observations, access to other characters' thoughts, aerial descriptions.\n\n-Cultural Specificity: Flag any moments where the New Orleans or Black Southern cultural register slips into genericism. Specific brand names, neighborhood names, and food terminology should be maintained.\n\n-Fairy Tale Layer: Are the fairy tale elements (animals, sounds, recurring motifs) present and organic? Flag if they are absent, over-explained, or feel forced.\n\nOverall, your most important task is to identify these problem areas, as well as any instances where the text sounds like it was AI-written or used any of the words in the <prohibited_words> list. The goal is to identify ways to make the text sound more human and natural. Once you've identified ways to do this, make a plan to improve the text. Give specific examples and recommendations.\n</instructions>",
+        "options": {}
+      },
+      "id": "eb6130e9-8911-43c6-8f0c-fbe6d249449e",
+      "name": "Improvement Plan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1200,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "id": "4bce4d4a-7a5a-472a-808b-df9dc8509066",
+      "name": "OpenRouter Chat Model3",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        112
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<original_chapter>\n{{ $('First Draft').item.json.output }}\n</original_chapter>\n\n<improvement_plan>\n{{ $('Improvement Plan').item.json.output }}\n</improvement_plan>\n\n<style_constraints>\nThe following rules are non-negotiable and must be preserved or corrected throughout the rewrite:\n\n- Do NOT use em-dashes. Use commas or ellipses instead.\n- Do NOT use metaphors. Concrete and direct language only.\n- Do NOT name emotions you can render physically. No \"she felt sad,\" \"she was devastated,\" etc.\n- Do NOT use adverbs on dialogue tags. \"Said\" and \"asked\" only for tags.\n- Do NOT use passive voice.\n- Do NOT start multiple consecutive sentences with the same word, especially pronouns like She/He/It. This is a hard rule — vary the sentence openings.\n- Do NOT start multiple consecutive paragraphs with the same word. Especially watch for paragraph after paragraph beginning with \"She.\"\n- Do NOT let \"she\" become the dominant subject across a passage. If more than two out of every five sentences in a paragraph block are constructed as \"She [verb],\" restructure to lead with the action, object, or physical detail instead.\n- Do NOT use any word from the prohibited words list (already flagged in the improvement plan if present).\n- Emotion must be shown through the body, behavior, and action — never labeled.\n- Dialogue must carry want, evasion, or conflict. No mushy dialogue.\n- Avoid comma-heavy run-on sentences. Break them into shorter ones.\n- Keep POV strictly in Celeste's head. No omniscient observations.\n- Lyricism should be reserved for emotionally earned moments only. Default register is blunt and direct.\n</style_constraints>\n\n<instructions>\nUsing the text of the <original_chapter> and the <improvement_plan>, implement the suggestions in the improvement plan. Only implement the suggested changes, and do not change anything else about the original_chapter. Reproduce the entire chapter with the suggested changes made.\n\nAfter implementing all suggestions, perform two mandatory final passes before outputting:\n\nFINAL PASS 1 — PRONOUN CLUSTERING CHECK:\nRead through the entire chapter and locate every paragraph opening. If two or more consecutive paragraphs begin with the same word — especially \"She,\" \"He,\" or \"It\" — rewrite those paragraph openings to vary them. You may restructure the sentence, begin with a clause, begin with a time/location anchor, begin with an object or action, or invert the syntax. The goal is that no reader should be able to scan the left margin and see the same word repeating down the page.\n\nFINAL PASS 2 — PRONOUN DENSITY CHECK:\nAfter the paragraph opener pass, scan each section for passages where \"she\" is the subject of more than roughly 40% of sentences in close proximity — even if those sentences are not consecutive. For flagged sentences, restructure to lead with the action or object rather than the pronoun. Examples: \"She set the pan down\" → \"The pan went down.\" \"She did not answer\" → \"No answer.\" \"She measured the fat\" → \"The fat measured by sound.\" \"She dropped her bag by the door. She did not shower. She did not eat.\" → \"The bag went by the door. No shower. No food.\"\n\nBoth passes must happen AFTER all other edits, because fixing other issues can accidentally introduce new clustering.\n\nThe chapter should begin with the chapter header written in Markdown as an H2 heading like this: \"## {{ $('Loop Over Items').item.json.chapter }}\"\n</instructions>",
+        "options": {}
+      },
+      "id": "d4e8777b-8b33-43dd-b29a-114f47d02ce4",
+      "name": "Rewrite",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1520,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {}
+      },
+      "id": "f5f0d8f0-8189-4078-8f25-3b0337cb5c19",
+      "name": "OpenRouter Chat Model4",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        112
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.FIRST_DRAFT_DOC_ID }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Rewrite').item.json.output }}\n\n"
+            }
+          ]
+        }
+      },
+      "id": "db1d5deb-45af-43ad-a005-ac3cd7d62529",
+      "name": "Add Chapter to Document",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        -96
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "PROSE_STYLE_DOC_ID",
+              "value": "1iJLdj_HatqBs1fVSbtqx_glnxyQ49MXV_8P4gvcKZio",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "FORBIDDEN_WORDS_DOC_ID",
+              "value": "1DKn8r9TSzrwLt6SVAYc_cOQlsZHMtp4852V8t3I3_gA",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "CHARACTER_SHEET_DOC_ID",
+              "value": "1ZfzCqByRvXQ735QiWE43L3-b1fONT8XD6_HFzaAFwX0",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "WORLDBUILDING_DOC_ID",
+              "value": "1u1SBEwpgs_rVhdoMm01CF2bV8Lp5qIv1Aymg4dbojis",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "OUTLINE_DOC_ID",
+              "value": "1y1qaarFohib6EgBZPvdJ_iz8c9t3P3qdQCJSKLGO7u0",
+              "type": "string"
+            },
+            {
+              "id": "a6",
+              "name": "FIRST_DRAFT_DOC_ID",
+              "value": "1yu9h4-maeLDhnq6AZLsfsTkrHuwlkJzN418kSPnVMhw",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8de634da-c4f3-4588-a58d-3fc76f7d8879",
+      "name": "📄 DOC IDs — UPDATE HERE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        -672
+      ]
+    }
+  ],
+  "connections": {
+    "On Form Submission": {
+      "main": [
+        [
+          {
+            "node": "📄 DOC IDs — UPDATE HERE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Prose Style": {
+      "main": [
+        [
+          {
+            "node": "Forbidden Words1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forbidden Words1": {
+      "main": [
+        [
+          {
+            "node": "Get Character Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Character Sheet": {
+      "main": [
+        [
+          {
+            "node": "Get Worldbuilding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Worldbuilding": {
+      "main": [
+        [
+          {
+            "node": "Get Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Outline": {
+      "main": [
+        [
+          {
+            "node": "Get BLANK First Draft Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get BLANK First Draft Doc": {
+      "main": [
+        [
+          {
+            "node": "Find Chapter Names (in JSON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Chapter Names (in JSON)": {
+      "main": [
+        [
+          {
+            "node": "Parse Chapter Names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Chapter Names": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get Last 2000 Words 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Last 2000 Words 1": {
+      "main": [
+        [
+          {
+            "node": "Get Last 2000 Words 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Last 2000 Words 2": {
+      "main": [
+        [
+          {
+            "node": "Scene Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scene Brief": {
+      "main": [
+        [
+          {
+            "node": "First Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "First Draft": {
+      "main": [
+        [
+          {
+            "node": "Improvement Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Improvement Plan": {
+      "main": [
+        [
+          {
+            "node": "Rewrite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite": {
+      "main": [
+        [
+          {
+            "node": "Add Chapter to Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Chapter to Document": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Find Chapter Names (in JSON)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Scene Brief",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "First Draft",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Improvement Plan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📄 DOC IDs — UPDATE HERE": {
+      "main": [
+        [
+          {
+            "node": "Get Prose Style",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c1634f3c-f124-445c-9bce-69b14daed690",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-27T19:22:43.822Z",
+      "createdAt": "2026-02-27T19:22:43.822Z",
+      "role": "workflow:owner",
+      "workflowId": "SfkJCX-mTC21obZdNgoKu",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
