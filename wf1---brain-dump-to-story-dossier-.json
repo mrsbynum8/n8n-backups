@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-27T04:35:07.291Z",
+  "updatedAt": "2026-02-28T03:09:24.510Z",
   "createdAt": "2026-02-26T04:54:09.966Z",
   "id": "bV3hJCL0bd-H1QEslHuUc",
   "name": "WF1 - Brain Dump to Story Dossier",
@@ -91,7 +91,7 @@
       "typeVersion": 2,
       "position": [
         1040,
-        688
+        784
       ],
       "id": "d37ee4f8-567c-4310-97cf-d2aa08958625",
       "name": "Fetch Trope Template",
@@ -111,50 +111,10 @@
       "typeVersion": 2,
       "position": [
         1040,
-        832
+        1056
       ],
       "id": "3fef713c-32d2-43ad-a192-bb7f6ab50be9",
       "name": "Fetch Plot Template",
-      "credentials": {
-        "googleDocsOAuth2Api": {
-          "id": "0icadRz5XxXy9hB4",
-          "name": "Google Docs account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "get",
-        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.CHARACTER_TEMPLATE_DOC_ID }}"
-      },
-      "type": "n8n-nodes-base.googleDocs",
-      "typeVersion": 2,
-      "position": [
-        1040,
-        976
-      ],
-      "id": "78c07be0-d100-4506-b1bb-c1df47a759b8",
-      "name": "Fetch Character Template",
-      "credentials": {
-        "googleDocsOAuth2Api": {
-          "id": "0icadRz5XxXy9hB4",
-          "name": "Google Docs account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "get",
-        "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.WORLDBUILDING_TEMPLATE_DOC_ID }}"
-      },
-      "type": "n8n-nodes-base.googleDocs",
-      "typeVersion": 2,
-      "position": [
-        1040,
-        1120
-      ],
-      "id": "7690148e-31fc-4e9a-9db5-fee0b80eb337",
-      "name": "Fetch Worldbuilding Template",
       "credentials": {
         "googleDocsOAuth2Api": {
           "id": "0icadRz5XxXy9hB4",
@@ -170,7 +130,7 @@
           "actionFields": [
             {
               "action": "insert",
-              "text": "=================================================================\nSTORY DOSSIER — {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} RETELLING\nGenerated: {{ $now.toFormat('MMMM d, yyyy') }}\n=================================================================\n\n--- SECTION 1: BRAINSTORM OPTIONS ---\n\n{{ $('Brainstorm').item.json.output }}\n\n\n--- SECTION 2: SELECTED CONCEPT ---\n\n{{ $('Pick the Best').item.json.output }}\n\n\n--- SECTION 3: FULL DOSSIER (FIRST DRAFT) ---\n\n{{ $('Complete Story Dossier').item.json.output }}\n\n\n--- SECTION 4: EDITORIAL CRITIQUE ---\n\n{{ $('Dossier Critique').item.json.output }}\n\n\n--- SECTION 5: FINAL DOSSIER (USE THIS FOR OUTLINING) ---\n\n{{ $('Dossier Rewrite').item.json.output }}\n\n"
+              "text": "=================================================================\nSTORY DOSSIER — {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} RETELLING\nGenerated: {{ $now.toFormat('MMMM d, yyyy') }}\n================================================================\n\n{{ $('Dossier Rewrite').item.json.output }}"
             }
           ]
         }
@@ -178,8 +138,8 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        2848,
-        816
+        2752,
+        896
       ],
       "id": "21c1bc22-3fc2-4dfc-883f-b289508a9b42",
       "name": "Save Dossier to Google Doc",
@@ -193,13 +153,15 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a creative story developer specializing in adult contemporary magical realism for Black women readers.\n\nYou are developing a new book for the series \"Make It Black. Make It Modern.\" — fairy tale retellings with Black women protagonists in modern American cities.\n\nSERIES TEMPLATES:\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nAUTHOR INPUT:\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference — choose the best city' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n\n---\n\nUsing the fairy tale and the series templates, brainstorm 3 distinct story directions for this book. Each direction should feel genuinely different — different city, different industry, different protagonist wound, different way the fairy tale maps to modern life.\n\nFor each direction provide:\n- CONCEPT TITLE (working title)\n- CITY & INDUSTRY (the specific world she lives in)\n- PROTAGONIST SNAPSHOT (who she is, her wound, her gift — no name yet)\n- THE FAIRY TALE HOOK (how the source tale maps to this modern world)\n- THE MAGIC (what form it takes in this version)\n- THE ROMANCE TROPE (primary trope)\n- WHY THIS WORKS (why this direction is commercially strong for Black BookTok)\n\nMake each option bold and specific. No generic pitches.",
-        "options": {}
+        "text": "=<genre_tropes>\n{{ $('Fetch Trope Template').item.json.content }}\n</genre_tropes>\n\n<plot_template>\n{{ $('Fetch Plot Template').item.json.content }}\n</plot_template>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference — choose the best city for the story' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nAbove you will find genre tropes and a plot template for the \"Make It Black. Make It Modern.\" series — fairy tale retellings with Black women protagonists in contemporary American cities. You will also find the author's inputs for a new book in this series.\n\nYour task is to brainstorm 3 distinct story directions for this retelling of {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}. Each direction must feel genuinely different — different city, different industry, different protagonist wound, different way the fairy tale maps to modern life.\n\nFor each direction provide:\n- **CONCEPT TITLE** (working title)\n- **CITY & INDUSTRY** (the specific world she lives in)\n- **PROTAGONIST SNAPSHOT** (who she is, her wound, her gift — no name yet)\n- **THE FAIRY TALE HOOK** (how the source tale's specific beats map to this modern world)\n- **THE MAGIC** (what form it takes, culturally grounded, appropriately subtle)\n- **THE ROMANCE TROPE** (primary trope)\n- **WHY THIS WORKS** (why this direction is commercially strong for Black women readers)\n\nEach direction should be no more than one paragraph per field, formatted in Markdown. Make each option bold and specific. No generic pitches.",
+        "options": {
+          "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        1392,
+        1312,
         896
       ],
       "id": "a7623214-70fc-494d-8ff2-997e2928b21c",
@@ -228,13 +190,15 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a senior acquisitions editor who specializes in commercial fiction for Black women readers.\n\nYou have been given 3 story directions for a new book in the \"Make It Black. Make It Modern.\" fairy tale retelling series.\n\nHere are the 3 options:\n{{ $json.output }}\n\nEvaluate each option against these criteria:\n1. Commercial hook — would this immediately grab a Black BookTok reader?\n2. Fairy tale fidelity — are the bones clear and well-transformed?\n3. Protagonist strength — is there a genuinely compelling woman at the center?\n4. Series fit — does it add something unique the other books in the series won't have?\n5. Magic balance — is the magical element culturally grounded and appropriately subtle?\n\nThen SELECT THE SINGLE STRONGEST OPTION. Explain exactly why it wins over the others.\n\nAfter your selection, EXPAND the winning concept into a fuller premise paragraph (200-300 words) that captures the emotional core, the conflict engine, the romance setup, and the fairy tale transformation. This expanded premise is what the next agent will build the full dossier from.",
-        "options": {}
+        "text": "=<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\n<ideas>\n{{ $json.output }}\n</ideas>\n\nYour task is to carefully analyze the above story directions for a new novel in the \"Make It Black. Make It Modern.\" series. Analyze them based on:\n\n- How logically sound the premise is (does it make sense, even as magical realism?)\n- Which feels most original while still honoring the fairy tale source\n- Which has the most potential for emotional gut-punches\n- Which best maps the fairy tale's specific bones to the modern world\n- Which adheres best to the author's inputs listed above\n\nOnce you've made your choice, reproduce the text of that direction verbatim. ONLY output the chosen direction. Do not add any preamble or analysis. Just the chosen direction.",
+        "options": {
+          "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        1648,
+        1600,
         896
       ],
       "id": "c46109c1-5b12-42cc-976b-8f47e2fc1249",
@@ -263,13 +227,15 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have a selected and expanded story concept. Your job is to build it into a complete Story Dossier.\n\nSERIES TEMPLATES (use these as your structural guide):\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nSELECTED CONCEPT:\n{{ $json.output }}\n\n---\n\nBuild a complete STORY DOSSIER with all ten sections. Make bold, specific creative decisions — invent character names, specific neighborhoods, specific cultural details. Do not be vague.\n\n## 1. SERIES PLACEMENT\nHow this book fits the series and what unique territory it covers.\n\n## 2. CORE PREMISE\n- One-sentence logline\n- One-paragraph expanded premise\n\n## 3. THEMATIC SPINE\n- Primary theme\n- 2-3 supporting themes\n- How the fairy tale source illuminates these in a modern Black American context\n\n## 4. THE WORLD — MUNDANE LAYER\nSpecific city, neighborhoods, locations, cultural texture details (food, music, institutions)\n\n## 5. THE WORLD — MAGICAL LAYER\nSpecific form of magic, who carries it, the rules, what it costs, arc across the story\n\n## 6. THE STAKES\n- External stakes\n- Internal stakes\n- Relational stakes\n\n## 7. CAST PROFILES\n\nFor EACH of the five core characters — Protagonist, Love Interest, \nAntagonist, Elder/Mentor, Best Friend — provide a separate, equally \nweighted entry in the following fixed format. Do not give the protagonist \nmore depth than others. Every character needs all six fields.\n\n### [Character Name] — [Role]\n\n**Physical signature:** One specific detail that distinguishes them on sight \nor in motion. Not a full description — the one thing.\n\n**Core wound:** One sentence. A specific event or pattern, not a category. \n\"Abandonment\" fails. \"Her mother left without saying goodbye three days \nafter her quinceañera and never gave a reason\" passes.\n\n**Core motivation:** What they are actively reaching for during this story. \nConcrete and specific.\n\n**Their version of the story:** What do THEY think is happening, and what \ndo they want from the protagonist? (This question applies to all five \ncharacters — the best friend and mentor have their own agenda too.)\n\n**Voice marker:** One sentence that captures how they talk — rhythm, \nvocabulary, what they reach for under pressure.\n\n**Function in the plot:** One sentence on what specific pressure or resource \nthey provide to the protagonist's arc.\n\n---\n\n[Repeat for all five characters before moving to Section 8]\n\n### Minor Characters\n\nFor each minor character present in this story, provide a single entry:\n\n**[Character Name] — [Role]**\nOne sentence: who they are, what they want, and what specific function \nthey serve in the plot. Name at least 4-6 minor characters. If a \ncharacter appears in more than one scene, they need an entry here.\n\n## 8. FAIRY TALE MAPPING\nComplete table mapping each fairy tale element to its modern equivalent\n\n## 9. TONE AND STYLE NOTES\nEmotional texture, romance tropes, heat level, narrative voice, 2-3 comparable titles\n\n## 10. OPEN QUESTIONS FOR THE AUTHOR\n3-5 genuine story questions that still need a human creative decision",
-        "options": {}
+        "text": "=<premise>\n{{ $('Pick the Best').item.json.output }}\n</premise>\n\n<genre_tropes>\n{{ $('Fetch Trope Template').item.json.content }}\n</genre_tropes>\n\n<plot_template>\n{{ $('Fetch Plot Template').item.json.content }}\n</plot_template>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nYou are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings with Black women protagonists in contemporary American cities.\n\nGiven the above premise, genre tropes, plot template, and author inputs, create a complete Story Dossier. This dossier is an INPUT document — it feeds downstream workflows that will generate full character profiles and detailed worldbuilding separately. Do NOT write full character profiles here. Do NOT write detailed world descriptions. Your job is to give the next agents enough to know exactly what story they are building.\n\nFollow these section structures and word limits strictly.\n\n---\n\n## I. SYNOPSIS\nWrite one paragraph only. Cover the premise, the central conflict, and what's at stake. Do not describe how the story resolves. Do not summarize the romance arc, the magic system, or the thematic conclusion. Those belong in the outline.\n\n---\n\n## II. CHARACTER MANIFEST\n\n### Main Cast\nList every named character needed for this book. Label each with their role (protagonist, antagonist, love interest, mentor, best friend). Write 1-2 sentences per character: who they are and what their role in the story is. Do not add more detail than this.\n\n### Factions & Minor Characters\nFor any group or faction, name 3-5 individual members so the author has named characters for every scene. One sentence per person: who they are and what one thing they do that matters to the plot.\n\n---\n\n## III. WORLDBUILDING CODEX\n\n### Locations\nList every location needed. One sentence each: what it is and its narrative function.\n\n### Objects & Artifacts\nList every significant object. One sentence each: what it is and why it matters.\n\n### Magic System\n4-6 bullet points covering: what the magic is, who carries it, how it activates, what it costs, and one rule that creates narrative complication.\n\n---\n\n## IV. FAIRY TALE MAPPING\nA two-column table. Column headers: FAIRY TALE ELEMENT | MODERN EQUIVALENT.\n8-10 rows. No third column. No explanation. The comparison should be self-evident.\n\n---\n\n## V. OUTLINE PLAN & IMPLEMENTATION NOTES\n\nWrite one short paragraph per item below. Each paragraph should flag what the outline needs to figure out and raise the key questions it will need to answer — but do not answer them. Do not describe specific scenes, character realizations, or structural choices. Those belong in the outline workflow.\n\n**The Inciting Incident:** Identify the two or three events that set the story in motion and flag whether they arrive simultaneously or are staggered. Raise the question of what the protagonist already suspects versus what she is seeing clearly for the first time.\n\n**The Midpoint Shift:** Identify what changes at the midpoint — in the protagonist's goal, her relationship to the magic, and her relationship to the love interest. Flag what event or discovery forces this shift without describing the scene itself.\n\n**The Climactic Choice:** Name the two or more options available to the protagonist at the climax and flag what each one costs her. Do not resolve the choice. Note any structural factors — a governance review, a deadline, a witness — that will shape how the choice is framed.\n\n**The Irreversible Cost:** Flag what the protagonist cannot recover even if she wins. Identify which secondary character is most at risk of paying a price on her behalf and note that the outline must deliver this cost fully rather than soften it.\n\n**The Romance Arc:** Flag the sequence the outline must protect — what must be established before romantic feeling is earned — and note any structural complication in the love interest's position that the outline cannot resolve too early.\n\n**The Magic System:** Flag the two or three moments where the magic must do specific narrative work rather than atmospheric work, and note what the outline will need to decide about the cost the protagonist pays for engaging with it.\n\n---\n\nYou may add other details that complete the dossier. This is fine.",
+        "options": {
+          "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        1904,
+        1888,
         896
       ],
       "id": "b7ed8641-ef33-4558-b6cb-e5ca95b01ee0",
@@ -298,13 +264,15 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a senior developmental editor with deep expertise in adult commercial fiction for Black women readers and in the fairy tale retelling genre.\n\nYou have received a Story Dossier for a new book in the \"Make It Black. Make It Modern.\" series.\n\nHere is the dossier:\n{{ $json.output }}\n\nEvaluate it rigorously on eight dimensions. For each give a rating (Strong / Solid / Needs Work / Weak) and specific, actionable feedback:\n\n1. HOOK STRENGTH — Does the premise grab immediately? Would a Black woman reader want this story?\n2. FAIRY TALE FIDELITY — Are the bones clear and well-transformed? At least 4 key beats mapped?\n3. CULTURAL AUTHENTICITY — Grounded in Black women's contemporary experience? Is the city specific?\n4. PROTAGONIST FULLNESS — Active, flawed, gifted, specific? Or underdeveloped?\n5. MAGIC BALANCE — Culturally grounded, subtle, properly constrained? Complicates rather than solves?\n6. COMMERCIAL VIABILITY — BookTok potential? Right tropes? Romance heat? HEA/HFN set up?\n7. SERIES FIT — Adds something unique? Honors the series promise without repeating other titles?\n8. WHAT'S MISSING — What's underdeveloped, contradictory, or absent?\n\nEnd with:\n- 3 specific STRENGTHS to preserve in the rewrite\n- 3 specific PROBLEMS that must be fixed\n- 1 BIG QUESTION the dossier hasn't answered that could make or break the book",
-        "options": {}
+        "text": "=<premise>\n{{ $('Pick the Best').item.json.output }}\n</premise>\n\n<genre_tropes>\n{{ $('Fetch Trope Template').item.json.content }}\n</genre_tropes>\n\n<plot_template>\n{{ $('Fetch Plot Template').item.json.content }}\n</plot_template>\n\n<story_dossier>\n{{ $('Complete Story Dossier').item.json.output }}\n</story_dossier>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nGiven the above templates and the story dossier for the premise, critique the dossier based on:\n\n- **Logical consistency** — does the premise hold up, even as magical realism? Are there gaps or contradictions?\n- **Originality within tropes** — does it honor the fairy tale source while feeling fresh? Does it maintain the correct genre tropes from the guides?\n- **Potential emotional impact** — does this story have the gut-punch moments that make readers stay up too late?\n- **Fairy tale fidelity** — does the modern mapping honor the specific bones of the source tale, not just its surface?\n\nThen create a plan to improve the dossier. Do NOT rewrite the dossier. Only give suggestions on how to improve it, with specific examples of what you would change and why.",
+        "options": {
+          "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        2160,
+        2176,
         896
       ],
       "id": "803ea9fa-33f3-4abb-952c-54dd86d8bdfe",
@@ -312,7 +280,7 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-sonnet-4.6",
+        "model": "openai/gpt-5.2",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
@@ -333,13 +301,15 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have two documents:\n\n1. The Story Dossier:\n{{ $('Complete Story Dossier').item.json.output }}\n\n2. The editorial critique:\n{{ $json.output }}\n\nRewrite the Story Dossier implementing the critique's recommendations:\n- Fix every problem identified\n- Answer the big question if possible, or flag it clearly for the author\n- Strengthen every weak section\n- Preserve the three strengths called out\n- Keep everything specific — do NOT make it generic\n\nProduce the complete rewritten dossier with all ten sections. This is the final version that will be saved and used for outlining.",
-        "options": {}
+        "text": "=<premise>\n{{ $('Pick the Best').item.json.output }}\n</premise>\n\n<story_dossier>\n{{ $('Complete Story Dossier').item.json.output }}\n</story_dossier>\n\n<improvement_plan>\n{{ $('Dossier Critique').item.json.output }}\n</improvement_plan>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nUsing the text of the <story_dossier> and the <improvement_plan>, implement the suggestions from the improvement plan into the dossier. Only implement the suggested changes, and do not change anything else about the original dossier. Reproduce the entire dossier with the suggested changes made.",
+        "options": {
+          "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        2448,
+        2464,
         896
       ],
       "id": "09306b1a-f5ff-4e1b-9b08-f7445a5aa520",
@@ -402,27 +372,6 @@
     },
     "Fetch Plot Template": {
       "main": [
-        []
-      ]
-    },
-    "Save Dossier to Google Doc": {
-      "main": [
-        []
-      ]
-    },
-    "Fetch Character Template": {
-      "main": [
-        [
-          {
-            "node": "Fetch Worldbuilding Template",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch Worldbuilding Template": {
-      "main": [
         [
           {
             "node": "Brainstorm",
@@ -430,6 +379,11 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Save Dossier to Google Doc": {
+      "main": [
+        []
       ]
     },
     "Brainstorm": {
@@ -553,8 +507,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "333ca173-5724-4aac-a891-91920bc34312",
-  "activeVersionId": "406b1ffd-8982-4897-b31a-ba0569f6d5d8",
+  "versionId": "d707d9ff-1ea9-40ed-9ecb-815c764266b4",
+  "activeVersionId": "29533996-3914-42fe-aff6-5310abbb252f",
   "triggerCount": 1,
   "shared": [
     {
@@ -566,9 +520,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-27T02:44:25.000Z",
-    "createdAt": "2026-02-27T02:44:15.148Z",
-    "versionId": "406b1ffd-8982-4897-b31a-ba0569f6d5d8",
+    "updatedAt": "2026-02-27T16:17:05.000Z",
+    "createdAt": "2026-02-27T16:16:28.197Z",
+    "versionId": "29533996-3914-42fe-aff6-5310abbb252f",
     "workflowId": "bV3hJCL0bd-H1QEslHuUc",
     "nodes": [
       {
@@ -676,50 +630,10 @@
         "typeVersion": 2,
         "position": [
           1040,
-          832
+          1024
         ],
         "id": "3fef713c-32d2-43ad-a192-bb7f6ab50be9",
         "name": "Fetch Plot Template",
-        "credentials": {
-          "googleDocsOAuth2Api": {
-            "id": "0icadRz5XxXy9hB4",
-            "name": "Google Docs account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "get",
-          "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.CHARACTER_TEMPLATE_DOC_ID }}"
-        },
-        "type": "n8n-nodes-base.googleDocs",
-        "typeVersion": 2,
-        "position": [
-          1040,
-          976
-        ],
-        "id": "78c07be0-d100-4506-b1bb-c1df47a759b8",
-        "name": "Fetch Character Template",
-        "credentials": {
-          "googleDocsOAuth2Api": {
-            "id": "0icadRz5XxXy9hB4",
-            "name": "Google Docs account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "get",
-          "documentURL": "={{ $('📄 DOC IDs — UPDATE HERE').item.json.WORLDBUILDING_TEMPLATE_DOC_ID }}"
-        },
-        "type": "n8n-nodes-base.googleDocs",
-        "typeVersion": 2,
-        "position": [
-          1040,
-          1120
-        ],
-        "id": "7690148e-31fc-4e9a-9db5-fee0b80eb337",
-        "name": "Fetch Worldbuilding Template",
         "credentials": {
           "googleDocsOAuth2Api": {
             "id": "0icadRz5XxXy9hB4",
@@ -735,7 +649,7 @@
             "actionFields": [
               {
                 "action": "insert",
-                "text": "=================================================================\nSTORY DOSSIER — {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} RETELLING\nGenerated: {{ $now.toFormat('MMMM d, yyyy') }}\n=================================================================\n\n--- SECTION 1: BRAINSTORM OPTIONS ---\n\n{{ $('Brainstorm').item.json.output }}\n\n\n--- SECTION 2: SELECTED CONCEPT ---\n\n{{ $('Pick the Best').item.json.output }}\n\n\n--- SECTION 3: FULL DOSSIER (FIRST DRAFT) ---\n\n{{ $('Complete Story Dossier').item.json.output }}\n\n\n--- SECTION 4: EDITORIAL CRITIQUE ---\n\n{{ $('Dossier Critique').item.json.output }}\n\n\n--- SECTION 5: FINAL DOSSIER (USE THIS FOR OUTLINING) ---\n\n{{ $('Dossier Rewrite').item.json.output }}\n\n"
+                "text": "=================================================================\nSTORY DOSSIER — {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }} RETELLING\nGenerated: {{ $now.toFormat('MMMM d, yyyy') }}\n================================================================\n\n{{ $('Dossier Rewrite').item.json.output }}"
               }
             ]
           }
@@ -758,8 +672,10 @@
       {
         "parameters": {
           "promptType": "define",
-          "text": "=You are a creative story developer specializing in adult contemporary magical realism for Black women readers.\n\nYou are developing a new book for the series \"Make It Black. Make It Modern.\" — fairy tale retellings with Black women protagonists in modern American cities.\n\nSERIES TEMPLATES:\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nAUTHOR INPUT:\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference — choose the best city' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n\n---\n\nUsing the fairy tale and the series templates, brainstorm 3 distinct story directions for this book. Each direction should feel genuinely different — different city, different industry, different protagonist wound, different way the fairy tale maps to modern life.\n\nFor each direction provide:\n- CONCEPT TITLE (working title)\n- CITY & INDUSTRY (the specific world she lives in)\n- PROTAGONIST SNAPSHOT (who she is, her wound, her gift — no name yet)\n- THE FAIRY TALE HOOK (how the source tale maps to this modern world)\n- THE MAGIC (what form it takes in this version)\n- THE ROMANCE TROPE (primary trope)\n- WHY THIS WORKS (why this direction is commercially strong for Black BookTok)\n\nMake each option bold and specific. No generic pitches.",
-          "options": {}
+          "text": "=<genre_tropes>\n{{ $('Fetch Trope Template').item.json.content }}\n</genre_tropes>\n\n<plot_template>\n{{ $('Fetch Plot Template').item.json.content }}\n</plot_template>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference — choose the best city for the story' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nAbove you will find genre tropes and a plot template for the \"Make It Black. Make It Modern.\" series — fairy tale retellings with Black women protagonists in contemporary American cities. You will also find the author's inputs for a new book in this series.\n\nYour task is to brainstorm 3 distinct story directions for this retelling of {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}. Each direction must feel genuinely different — different city, different industry, different protagonist wound, different way the fairy tale maps to modern life.\n\nFor each direction provide:\n- **CONCEPT TITLE** (working title)\n- **CITY & INDUSTRY** (the specific world she lives in)\n- **PROTAGONIST SNAPSHOT** (who she is, her wound, her gift — no name yet)\n- **THE FAIRY TALE HOOK** (how the source tale's specific beats map to this modern world)\n- **THE MAGIC** (what form it takes, culturally grounded, appropriately subtle)\n- **THE ROMANCE TROPE** (primary trope)\n- **WHY THIS WORKS** (why this direction is commercially strong for Black women readers)\n\nEach direction should be no more than one paragraph per field, formatted in Markdown. Make each option bold and specific. No generic pitches.",
+          "options": {
+            "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+          }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 1.7,
@@ -793,8 +709,10 @@
       {
         "parameters": {
           "promptType": "define",
-          "text": "=You are a senior acquisitions editor who specializes in commercial fiction for Black women readers.\n\nYou have been given 3 story directions for a new book in the \"Make It Black. Make It Modern.\" fairy tale retelling series.\n\nHere are the 3 options:\n{{ $json.output }}\n\nEvaluate each option against these criteria:\n1. Commercial hook — would this immediately grab a Black BookTok reader?\n2. Fairy tale fidelity — are the bones clear and well-transformed?\n3. Protagonist strength — is there a genuinely compelling woman at the center?\n4. Series fit — does it add something unique the other books in the series won't have?\n5. Magic balance — is the magical element culturally grounded and appropriately subtle?\n\nThen SELECT THE SINGLE STRONGEST OPTION. Explain exactly why it wins over the others.\n\nAfter your selection, EXPAND the winning concept into a fuller premise paragraph (200-300 words) that captures the emotional core, the conflict engine, the romance setup, and the fairy tale transformation. This expanded premise is what the next agent will build the full dossier from.",
-          "options": {}
+          "text": "=<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\n<ideas>\n{{ $json.output }}\n</ideas>\n\nYour task is to carefully analyze the above story directions for a new novel in the \"Make It Black. Make It Modern.\" series. Analyze them based on:\n\n- How logically sound the premise is (does it make sense, even as magical realism?)\n- Which feels most original while still honoring the fairy tale source\n- Which has the most potential for emotional gut-punches\n- Which best maps the fairy tale's specific bones to the modern world\n- Which adheres best to the author's inputs listed above\n\nOnce you've made your choice, reproduce the text of that direction verbatim. ONLY output the chosen direction. Do not add any preamble or analysis. Just the chosen direction.",
+          "options": {
+            "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+          }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 1.7,
@@ -828,8 +746,10 @@
       {
         "parameters": {
           "promptType": "define",
-          "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have a selected and expanded story concept. Your job is to build it into a complete Story Dossier.\n\nSERIES TEMPLATES (use these as your structural guide):\n---\nTROPE TEMPLATE:\n{{ $('Fetch Trope Template').item.json.body }}\n\n---\nPLOT TEMPLATE:\n{{ $('Fetch Plot Template').item.json.body }}\n\n---\nCHARACTER TEMPLATE:\n{{ $('Fetch Character Template').item.json.body }}\n\n---\nWORLDBUILDING TEMPLATE:\n{{ $('Fetch Worldbuilding Template').item.json.body }}\n\n---\nSELECTED CONCEPT:\n{{ $json.output }}\n\n---\n\nBuild a complete STORY DOSSIER with all ten sections. Make bold, specific creative decisions — invent character names, specific neighborhoods, specific cultural details. Do not be vague.\n\n## 1. SERIES PLACEMENT\nHow this book fits the series and what unique territory it covers.\n\n## 2. CORE PREMISE\n- One-sentence logline\n- One-paragraph expanded premise\n\n## 3. THEMATIC SPINE\n- Primary theme\n- 2-3 supporting themes\n- How the fairy tale source illuminates these in a modern Black American context\n\n## 4. THE WORLD — MUNDANE LAYER\nSpecific city, neighborhoods, locations, cultural texture details (food, music, institutions)\n\n## 5. THE WORLD — MAGICAL LAYER\nSpecific form of magic, who carries it, the rules, what it costs, arc across the story\n\n## 6. THE STAKES\n- External stakes\n- Internal stakes\n- Relational stakes\n\n## 7. CAST OVERVIEW\nFull details for: Protagonist, Love Interest, Villain, Elder/Mentor, Best Friend — with invented names and specific character details per the Character Template requirements\n\n## 8. FAIRY TALE MAPPING\nComplete table mapping each fairy tale element to its modern equivalent\n\n## 9. TONE AND STYLE NOTES\nEmotional texture, romance tropes, heat level, narrative voice, 2-3 comparable titles\n\n## 10. OPEN QUESTIONS FOR THE AUTHOR\n3-5 genuine story questions that still need a human creative decision",
-          "options": {}
+          "text": "=<premise>\n{{ $('Pick the Best').item.json.output }}\n</premise>\n\n<genre_tropes>\n{{ $('Fetch Trope Template').item.json.content }}\n</genre_tropes>\n\n<plot_template>\n{{ $('Fetch Plot Template').item.json.content }}\n</plot_template>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nYou are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings with Black women protagonists in contemporary American cities.\n\nGiven the above premise, genre tropes, plot template, and author inputs, create a complete Story Dossier. This dossier is an INPUT document — it feeds downstream workflows that will generate full character profiles and detailed worldbuilding separately. Do NOT write full character profiles here. Do NOT write detailed world descriptions. Your job is to give the next agents enough to know exactly what story they are building.\n\nFollow these section structures and word limits strictly.\n\n---\n\n## I. SYNOPSIS\nWrite one paragraph only. Cover the premise, the central conflict, and what's at stake. Do not describe how the story resolves. Do not summarize the romance arc, the magic system, or the thematic conclusion. Those belong in the outline.\n\n---\n\n## II. CHARACTER MANIFEST\n\n### Main Cast\nList every named character needed for this book. Label each with their role (protagonist, antagonist, love interest, mentor, best friend). Write 1-2 sentences per character: who they are and what their role in the story is. Do not add more detail than this.\n\n### Factions & Minor Characters\nFor any group or faction, name 3-5 individual members so the author has named characters for every scene. One sentence per person: who they are and what one thing they do that matters to the plot.\n\n---\n\n## III. WORLDBUILDING CODEX\n\n### Locations\nList every location needed. One sentence each: what it is and its narrative function.\n\n### Objects & Artifacts\nList every significant object. One sentence each: what it is and why it matters.\n\n### Magic System\n4-6 bullet points covering: what the magic is, who carries it, how it activates, what it costs, and one rule that creates narrative complication.\n\n---\n\n## IV. FAIRY TALE MAPPING\nA two-column table. Column headers: FAIRY TALE ELEMENT | MODERN EQUIVALENT.\n8-10 rows. No third column. No explanation. The comparison should be self-evident.\n\n---\n\n## V. OUTLINE PLAN & IMPLEMENTATION NOTES\n\nWrite one short paragraph per item below. Each paragraph should flag what the outline needs to figure out and raise the key questions it will need to answer — but do not answer them. Do not describe specific scenes, character realizations, or structural choices. Those belong in the outline workflow.\n\n**The Inciting Incident:** Identify the two or three events that set the story in motion and flag whether they arrive simultaneously or are staggered. Raise the question of what the protagonist already suspects versus what she is seeing clearly for the first time.\n\n**The Midpoint Shift:** Identify what changes at the midpoint — in the protagonist's goal, her relationship to the magic, and her relationship to the love interest. Flag what event or discovery forces this shift without describing the scene itself.\n\n**The Climactic Choice:** Name the two or more options available to the protagonist at the climax and flag what each one costs her. Do not resolve the choice. Note any structural factors — a governance review, a deadline, a witness — that will shape how the choice is framed.\n\n**The Irreversible Cost:** Flag what the protagonist cannot recover even if she wins. Identify which secondary character is most at risk of paying a price on her behalf and note that the outline must deliver this cost fully rather than soften it.\n\n**The Romance Arc:** Flag the sequence the outline must protect — what must be established before romantic feeling is earned — and note any structural complication in the love interest's position that the outline cannot resolve too early.\n\n**The Magic System:** Flag the two or three moments where the magic must do specific narrative work rather than atmospheric work, and note what the outline will need to decide about the cost the protagonist pays for engaging with it.\n\n---\n\nYou may add other details that complete the dossier. This is fine.",
+          "options": {
+            "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+          }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 1.7,
@@ -863,8 +783,10 @@
       {
         "parameters": {
           "promptType": "define",
-          "text": "=You are a senior developmental editor with deep expertise in adult commercial fiction for Black women readers and in the fairy tale retelling genre.\n\nYou have received a Story Dossier for a new book in the \"Make It Black. Make It Modern.\" series.\n\nHere is the dossier:\n{{ $json.output }}\n\nEvaluate it rigorously on eight dimensions. For each give a rating (Strong / Solid / Needs Work / Weak) and specific, actionable feedback:\n\n1. HOOK STRENGTH — Does the premise grab immediately? Would a Black woman reader want this story?\n2. FAIRY TALE FIDELITY — Are the bones clear and well-transformed? At least 4 key beats mapped?\n3. CULTURAL AUTHENTICITY — Grounded in Black women's contemporary experience? Is the city specific?\n4. PROTAGONIST FULLNESS — Active, flawed, gifted, specific? Or underdeveloped?\n5. MAGIC BALANCE — Culturally grounded, subtle, properly constrained? Complicates rather than solves?\n6. COMMERCIAL VIABILITY — BookTok potential? Right tropes? Romance heat? HEA/HFN set up?\n7. SERIES FIT — Adds something unique? Honors the series promise without repeating other titles?\n8. WHAT'S MISSING — What's underdeveloped, contradictory, or absent?\n\nEnd with:\n- 3 specific STRENGTHS to preserve in the rewrite\n- 3 specific PROBLEMS that must be fixed\n- 1 BIG QUESTION the dossier hasn't answered that could make or break the book",
-          "options": {}
+          "text": "=<premise>\n{{ $('Pick the Best').item.json.output }}\n</premise>\n\n<genre_tropes>\n{{ $('Fetch Trope Template').item.json.content }}\n</genre_tropes>\n\n<plot_template>\n{{ $('Fetch Plot Template').item.json.content }}\n</plot_template>\n\n<story_dossier>\n{{ $('Complete Story Dossier').item.json.output }}\n</story_dossier>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nGiven the above templates and the story dossier for the premise, critique the dossier based on:\n\n- **Logical consistency** — does the premise hold up, even as magical realism? Are there gaps or contradictions?\n- **Originality within tropes** — does it honor the fairy tale source while feeling fresh? Does it maintain the correct genre tropes from the guides?\n- **Potential emotional impact** — does this story have the gut-punch moments that make readers stay up too late?\n- **Fairy tale fidelity** — does the modern mapping honor the specific bones of the source tale, not just its surface?\n\nThen create a plan to improve the dossier. Do NOT rewrite the dossier. Only give suggestions on how to improve it, with specific examples of what you would change and why.",
+          "options": {
+            "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+          }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 1.7,
@@ -877,7 +799,7 @@
       },
       {
         "parameters": {
-          "model": "anthropic/claude-sonnet-4.6",
+          "model": "openai/gpt-5.2",
           "options": {}
         },
         "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
@@ -898,8 +820,10 @@
       {
         "parameters": {
           "promptType": "define",
-          "text": "=You are a developmental editor and story architect specializing in adult contemporary magical realism fiction for Black women readers.\n\nYou have two documents:\n\n1. The Story Dossier:\n{{ $('Complete Story Dossier').item.json.output }}\n\n2. The editorial critique:\n{{ $json.output }}\n\nRewrite the Story Dossier implementing the critique's recommendations:\n- Fix every problem identified\n- Answer the big question if possible, or flag it clearly for the author\n- Strengthen every weak section\n- Preserve the three strengths called out\n- Keep everything specific — do NOT make it generic\n\nProduce the complete rewritten dossier with all ten sections. This is the final version that will be saved and used for outlining.",
-          "options": {}
+          "text": "=<premise>\n{{ $('Pick the Best').item.json.output }}\n</premise>\n\n<story_dossier>\n{{ $('Complete Story Dossier').item.json.output }}\n</story_dossier>\n\n<improvement_plan>\n{{ $('Dossier Critique').item.json.output }}\n</improvement_plan>\n\n<author_inputs>\nFairy Tale: {{ $('Book Brain Dump Form').item.json['Which fairy tale is this retelling?'] }}\nCity Preference: {{ $('Book Brain Dump Form').item.json['City preference (optional — leave blank and the AI will choose)'] || 'No preference' }}\nAdditional Notes: {{ $('Book Brain Dump Form').item.json['Anything specific you want in this book (optional)'] || 'None' }}\n</author_inputs>\n\nUsing the text of the <story_dossier> and the <improvement_plan>, implement the suggestions from the improvement plan into the dossier. Only implement the suggested changes, and do not change anything else about the original dossier. Reproduce the entire dossier with the suggested changes made.",
+          "options": {
+            "systemMessage": "You are a story architect for the \"Make It Black. Make It Modern.\" series — fairy tale retellings starring Black women protagonists in contemporary American cities.\n\nCULTURAL AUTHENTICITY RULES — apply these at all times, without exception:\n\nNAMES: Black Americans have the full range of American names. Do not default to stereotypically \"Black\" names. Never use: Marcus, Destiny, Unique, Latasha, DeShawn, Jamal, Keisha, Shaniqua, or similar. Give characters names that feel like real people, not casting calls. Think: Diane, Renee, Colette, Nina, Adrienne, Curtis, Warren, Gregory, James.\n\nAVOID STEREOTYPING IN: clothing descriptions, hair descriptions, food references, neighborhood choices, music references, speech patterns, and relationship dynamics. Black women in 2025 are attorneys, architects, chefs, surgeons, curators, executives. They live in brownstones, suburbs, high-rises, and farmhouses. They are not a monolith.\n\nWhen in doubt, write a specific, fully realized human being — not a representative of a demographic."
+          }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 1.7,
@@ -969,7 +893,7 @@
         "main": [
           [
             {
-              "node": "Fetch Character Template",
+              "node": "Brainstorm",
               "type": "main",
               "index": 0
             }
@@ -979,28 +903,6 @@
       "Save Dossier to Google Doc": {
         "main": [
           []
-        ]
-      },
-      "Fetch Character Template": {
-        "main": [
-          [
-            {
-              "node": "Fetch Worldbuilding Template",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Fetch Worldbuilding Template": {
-        "main": [
-          [
-            {
-              "node": "Brainstorm",
-              "type": "main",
-              "index": 0
-            }
-          ]
         ]
       },
       "Brainstorm": {
@@ -1115,8 +1017,8 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 406b1ffd",
-    "description": "",
+    "name": "Version 29533996",
+    "description": "prompt fixes",
     "autosaved": true
   },
   "tags": []
