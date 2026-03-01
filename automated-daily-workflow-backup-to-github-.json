@@ -415,7 +415,11 @@
     "callerPolicy": "workflowsFromSameOwner",
     "timeSavedPerExecution": 10
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateId": "4064",
     "templateCredsSetupCompleted": true
