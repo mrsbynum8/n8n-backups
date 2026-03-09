@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-16T20:17:42.656Z",
+  "updatedAt": "2026-03-08T20:49:53.494Z",
   "createdAt": "2026-01-26T00:27:28.921Z",
   "id": "7eTLolS3Xq87upqhzzL2C",
   "name": "005. SFS Image Generation (CONCURRENT - Sheet2 → Google Drive)",
@@ -62,7 +62,7 @@
     },
     {
       "parameters": {
-        "batchSize": 20,
+        "batchSize": 10,
         "options": {}
       },
       "id": "4e72c675-054b-44c9-bf07-981a65f6cb9d",
@@ -582,8 +582,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "40fe644f-7f52-424a-a30a-a8659ccfb47c",
-  "activeVersionId": "013ede2d-70b2-4ee3-aea3-063191a53ebb",
+  "versionId": "49b792a5-93b8-4f96-84c4-afb41f3b8b78",
+  "activeVersionId": "49b792a5-93b8-4f96-84c4-afb41f3b8b78",
   "triggerCount": 1,
   "shared": [
     {
@@ -595,9 +595,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-04T16:59:20.000Z",
-    "createdAt": "2026-02-04T16:58:49.758Z",
-    "versionId": "013ede2d-70b2-4ee3-aea3-063191a53ebb",
+    "updatedAt": "2026-03-08T20:49:59.000Z",
+    "createdAt": "2026-03-08T20:49:53.496Z",
+    "versionId": "49b792a5-93b8-4f96-84c4-afb41f3b8b78",
     "workflowId": "7eTLolS3Xq87upqhzzL2C",
     "nodes": [
       {
@@ -656,7 +656,7 @@
       },
       {
         "parameters": {
-          "batchSize": 20,
+          "batchSize": 10,
           "options": {}
         },
         "id": "4e72c675-054b-44c9-bf07-981a65f6cb9d",
@@ -1166,7 +1166,7 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 013ede2d",
+    "name": "Version 49b792a5",
     "description": "",
     "autosaved": true
   },
