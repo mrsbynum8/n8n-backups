@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-12T15:59:45.479Z",
+  "updatedAt": "2026-03-16T01:06:06.918Z",
   "createdAt": "2026-01-25T22:37:08.152Z",
   "id": "3vjhmzLK7dhnglARTF9m-",
   "name": "003. SHSFS Script to TTS Generation",
@@ -219,11 +219,12 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        0,
-        256
+        -144,
+        -128
       ],
       "id": "85e28cc9-fea9-4e7d-a0a7-d3b693069c6f",
-      "name": "Schedule Trigger"
+      "name": "Schedule Trigger",
+      "disabled": true
     },
     {
       "parameters": {
@@ -255,7 +256,7 @@
       "typeVersion": 4.7,
       "position": [
         208,
-        0
+        -32
       ],
       "id": "2ab651d8-cdde-4e63-8b06-9ac8195d332c",
       "name": "Get row(s) in sheet",
@@ -481,7 +482,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        1440,
+        1808,
         16
       ],
       "credentials": {
@@ -501,7 +502,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1712,
+        2080,
         16
       ],
       "notes": "Processes one segment at a time to avoid rate limits"
@@ -531,7 +532,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1488,
+        1856,
         256
       ],
       "retryOnFail": false,
@@ -586,7 +587,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1712,
+        2080,
         256
       ],
       "notes": "Preserves task_id and original row data for later use"
@@ -600,7 +601,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1968,
+        2336,
         256
       ],
       "webhookId": "bb814f13-2f90-4a89-a3c8-5dbed1f8a2a6",
@@ -618,7 +619,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2448,
+        2816,
         256
       ],
       "credentials": {
@@ -690,7 +691,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1472,
+        1840,
         496
       ],
       "notes": "Combines API response with stored metadata"
@@ -724,7 +725,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1712,
+        2080,
         496
       ],
       "notes": "Routes to download if complete, or back to wait if still processing"
@@ -738,7 +739,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2096,
+        2464,
         496
       ],
       "webhookId": "3c5b3f0e-4111-417f-bc21-2ea7969ac30a",
@@ -753,7 +754,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1888,
+        2256,
         512
       ],
       "notes": "Keeps metadata intact during retry loop"
@@ -774,7 +775,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1456,
+        1824,
         720
       ],
       "notes": "Downloads the generated audio file as binary"
@@ -803,7 +804,7 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1728,
+        2096,
         704
       ],
       "credentials": {
@@ -939,7 +940,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        2032,
+        2400,
         688
       ],
       "credentials": {
@@ -955,45 +956,11 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        2544,
+        2912,
         16
       ],
       "id": "83210967-a780-4824-96e3-72e48816dabd",
       "name": "Limit"
-    },
-    {
-      "parameters": {
-        "reviewTemplateID": {
-          "__rl": true,
-          "value": "0pbYLkV95OuQEddY6sbo",
-          "mode": "list",
-          "cachedResultName": "Review SHSFS TTS (0pbYLkV95OuQEddY6sbo)"
-        },
-        "fields": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "additionalFields": {}
-      },
-      "type": "@gotohuman/n8n-nodes-gotohuman.gotoHuman",
-      "typeVersion": 1,
-      "position": [
-        1136,
-        272
-      ],
-      "id": "6e7f8921-2571-4ef5-93e6-3b23644292c8",
-      "name": "Send review request and wait for response",
-      "webhookId": "55da6014-6813-405f-993a-fac8974ca563",
-      "credentials": {
-        "gotoHumanApi": {
-          "id": "k6aSUexXhKnj8VxO",
-          "name": "gotoHuman account"
-        }
-      }
     },
     {
       "parameters": {},
@@ -1005,6 +972,42 @@
       ],
       "id": "fe273c36-7dda-4fd6-aeec-bedd376f4de1",
       "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "message": "={{ $('Get row(s) in sheet').item.json.topic }} TTS ready for review!",
+        "responseType": "approval",
+        "approvalOptions": {
+          "values": {}
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.2,
+      "position": [
+        1216,
+        272
+      ],
+      "id": "0a9de933-735c-4135-8824-463eb076b189",
+      "name": "Chat",
+      "webhookId": "6b3386b8-34e5-49a3-9140-d153b48c2209"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -96,
+        208
+      ],
+      "id": "68b32ada-de41-4009-b88d-a33a8b3c8c07",
+      "name": "When chat message received",
+      "webhookId": "e59930fb-469e-4e09-9284-91a5771b8058"
     }
   ],
   "connections": {
@@ -1282,7 +1285,18 @@
         ]
       ]
     },
-    "Send review request and wait for response": {
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat": {
       "main": [
         [
           {
@@ -1293,11 +1307,11 @@
         ]
       ]
     },
-    "Limit1": {
+    "When chat message received": {
       "main": [
         [
           {
-            "node": "Send review request and wait for response",
+            "node": "Get row(s) in sheet",
             "type": "main",
             "index": 0
           }
@@ -1335,7 +1349,7 @@
       }
     ]
   },
-  "versionId": "348cfbde-be1d-4fae-b2a8-11148f690509",
+  "versionId": "8a52a1ca-ef65-4410-aec9-2cfdfb0e4b92",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
