@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-04T01:55:50.068Z",
+  "updatedAt": "2026-03-20T20:13:32.104Z",
   "createdAt": "2026-01-26T00:25:02.042Z",
   "id": "UKfhRSUncjdb7ANnyf8lQ",
   "name": "003. SFS Script to TTS Prep (Google Doc → TTS Spreadsheet)",
@@ -36,7 +36,7 @@
             {
               "id": "voice",
               "name": "voice_id",
-              "value": "AeRdCCKzvd23BpJoofzx",
+              "value": "qxTFXDYbGcR8GaHSjczg",
               "type": "string"
             },
             {
@@ -588,7 +588,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "885d2c12-9f42-479e-bf92-8c2dbbc4cc0f",
+  "versionId": "31e2c4bf-10e9-4d89-9a1d-544e14ed1a5f",
   "activeVersionId": "885d2c12-9f42-479e-bf92-8c2dbbc4cc0f",
   "triggerCount": 1,
   "shared": [
