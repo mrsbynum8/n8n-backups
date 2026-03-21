@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-13T03:33:25.959Z",
+  "updatedAt": "2026-03-20T17:45:11.954Z",
   "createdAt": "2026-01-25T21:33:42.630Z",
   "id": "iixzw2YUC7r3X07o6Dg5w",
   "name": "001. SHSFS Script Generation & Editing",
@@ -218,7 +218,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2768,
+        2592,
         32
       ],
       "credentials": {
@@ -1610,14 +1610,27 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "timezone": "America/New_York",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveExecutionProgress": true,
+    "binaryMode": "separate"
   },
-  "staticData": null,
+  "staticData": {
+    "global": {
+      "usedOpenings": [
+        "Shakuni’s dice have stopped rolling",
+        "And because one catastrophe is never enough when pride is involved, they sit down to play again",
+        "The night deepens",
+        "The palace still stands"
+      ],
+      "lastSectionContent": "The palace still stands. The dice have stopped rolling. But one image remains.\n\nDraupadi walks north with her hair unbound.\n\nIt moves against her back like a dark banner, heavy and loose, catching the late light. Dust clings to the hem of her garment. The road out of Hastinapura is dry, pale, and rutted by cart wheels. Each step lifts a little powder into the air, and the whole procession wears it before long—on ankles, on sandals, on the edge of cloth, on the skin.\n\nYou stand there long enough to watch them become travelers.\n\nNot kings now. Not a queen in a jeweled hall. Just six figures going into the forest heat, followed by a few loyal hearts who cannot bear to turn away. Yudhishthira walks first, shoulders bent under a weight no one can see. Bhima moves like a storm forced into human shape. Arjuna says very little. Nakula and Sahadeva keep close, their faces still and bright as drawn blades. And Draupadi walks among them, silent.\n\nSilent, but not emptied.\n\nThe city walls remain behind them, red in the sinking sun. On the parapets and rooftops, people still watch. Some press cloths to their mouths. Some lower their eyes. Some stare as if they can look hard enough to pull time backward. But time is stubborn. It does not reverse for grief.\n\nA wind comes over the road.\n\nIt smells of warm dust, neem leaves, distant cooking fires, and the faint wet scent of river mud somewhere far off. It touches Draupadi’s loose hair and lifts it for a moment. Then it falls again across her shoulders.\n\nThat hair matters.\n\nIt should have been perfumed and braided, jeweled and cared for by gentle hands. Instead it hangs free, carrying a vow with it. You can almost feel the force of that promise moving beside her like another companion. Not loud. Not theatrical. Just steady. The kind of vow that does not forget.\n\nAhead, the forest waits.\n\nAt this hour it looks almost kind. Long shadows under sal trees. Green darkening toward blue. Birdcalls settling for the evening. Monkeys shifting somewhere high in the branches, full of opinions no one asked for. The world beyond the road does not care about court games. It has its own business—roots drinking, insects singing, leaves turning toward whatever light remains.\n\nAnd so they go to it.\n\nThe sons of Pandu, born for thrones and chariots and white parasols, now walking into a life of bark garments, campfire smoke, and hard ground. There is something almost strange in how quickly splendor falls away. One day crystal halls. The next day forest paths and a sleeping mat. Silk one week. Rough cloth the next. Humans are very proud of their arrangements. The forest, naturally, is impressed by none of them.\n\nYou can feel the evening cool at last beginning to rise from the earth.\n\nIt touches the skin after a punishing day. It carries the sound of sandals on dirt, the rattle of a bow against a warrior’s back, the soft chime of ornaments not yet given up. A conch does not sound. No herald announces them. No servant runs ahead with lamps.\n\nOnly footsteps.\n\nBehind them, in Hastinapura, the great hall grows dim.\n\nServants move quietly now. Oil lamps are trimmed. The smell inside is sandalwood, old stone, burnt wick, and something heavier that no incense can sweeten. Regret has no fragrance of its own, but if it did, perhaps it would smell like this—rich palace air gone stale after a terrible afternoon.\n\nDhritarashtra sits where kings sit.\n\nBlind eyes. Old hands resting on carved arms worn smooth by years. Around him the hall that heard everything has fallen almost still. The dice are gathered away. The courtiers speak in lowered voices. Somewhere far down a corridor, silk rustles, then fades. Somewhere else, metal rings softly as a guard shifts his spear.\n\nAnd the old king asks what his sons have done today.\n\nHe asks it too late.\n\nHe asks it knowing.\n\nThat is the sorrow of it. Not not knowing. Knowing, and allowing the day to happen anyway. The question drifts out into the hall and hangs there with the lamp smoke. No answer can make it smaller. No answer can turn the chariot around on the northern road.\n\nOutside the palace, night comes slowly.\n\nBats flicker through the darkening air above the courtyards. The last heat leaves the stone step by step. A dog circles twice and lies down near a gatehouse. In the women’s chambers, someone weeps very quietly. In another room, someone says nothing at all. The city settles, but it does not rest.\n\nFarther out, beyond the walls, the Pandavas reach the first edge of the trees.\n\nThe forest receives them in shadow.\n\nThe light there is green and gold for a moment, then softer, then gone. Dry leaves give underfoot with a hush. The air changes. Cooler. Damper. Full of bark, earth, crushed grass, wild jasmine somewhere unseen. A thousand evening sounds begin at once—crickets, frogs, a distant owl calling from deeper in the woods.\n\nYou walk with them just a little farther.\n\nYou feel the day finally leaving your skin. You hear the city behind you disappear. You see Draupadi’s hair, still loose, still dark, still moving with each step as if the whole road remembers.\n\nThirteen years wait ahead.\n\nSo does much else.\n\nBut not tonight.\n\nTonight there is only the first camp, the first small fire, the first drink of forest water cupped in tired hands. Tonight there is the long breath after catastrophe. Tonight there are stars appearing one by one above the trees, indifferent and bright.\n\nAnd somewhere, faint now, almost gone, as if from a room very far away, comes the memory of ivory striking stone.\n\nThen even that fades.\n\nOnly the road.\nOnly the trees.\nOnly the night wind moving through unbound hair.\n\nAnd in that deepening dark, the great hall of illusion empties at last, while the forest keeps its silence and the exiles walk on.",
+      "lastSectionNumber": 9
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "be4cb54f-2565-4423-9334-62c055730b00",
+  "versionId": "0bd000b2-7dd7-4548-a837-9c7fbee06724",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
