@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-04T01:56:10.591Z",
+  "updatedAt": "2026-03-20T20:12:36.636Z",
   "createdAt": "2026-01-26T00:25:39.261Z",
   "id": "C958wKQ13rICFNT4flkF-",
   "name": "004. Scripture for Sleep - GenAIPro TTS Workflow",
@@ -90,7 +90,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"input\": {{ JSON.stringify($json.text) }},\n  \"voice_id\": \"AeRdCCKzvd23BpJoofzx\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"stability\": 0.50,\n  \"similarity\": 0.75,\n  \"style\": 0.0,\n  \"speed\": 1.00,\n  \"use_speaker_boost\": true\n}",
+        "jsonBody": "={\n  \"input\": {{ JSON.stringify($json.text) }},\n  \"voice_id\": \"qxTFXDYbGcR8GaHSjczg\",\n  \"model_id\": \"eleven_v3\",\n  \"stability\": 0.50,\n  \"similarity\": 0.75,\n  \"style\": 0.0,\n  \"speed\": 1.00,\n  \"use_speaker_boost\": true\n}",
         "options": {}
       },
       "id": "dfcbc9b4-03ae-48a6-a2ae-39dc8d89c807",
@@ -775,7 +775,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "137a8066-9ad0-487c-952d-0bff3287f524",
+  "versionId": "1db7d551-acec-4608-aecd-c2893084c68d",
   "activeVersionId": "137a8066-9ad0-487c-952d-0bff3287f524",
   "triggerCount": 1,
   "shared": [
