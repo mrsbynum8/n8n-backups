@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-21T19:51:33.069Z",
+  "updatedAt": "2026-03-20T20:15:41.613Z",
   "createdAt": "2026-01-25T23:20:43.283Z",
   "id": "ZYwVA9WqrGwDHT59WQN-F",
   "name": "002-A. Script to Image Prep (Google Doc → Chapters Sheet)",
@@ -633,7 +633,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 49 : 175;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+        "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 25 : 175;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
       },
       "id": "43f7ac8d-382e-48bb-84a5-3d2d304d75fc",
       "name": "Calculate Image Count",
@@ -1206,7 +1206,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "206ed2f7-b251-4056-8be2-bb86158222a5",
+  "versionId": "887d5900-3e1c-4a18-a432-f79684e49d78",
   "activeVersionId": "206ed2f7-b251-4056-8be2-bb86158222a5",
   "triggerCount": 1,
   "shared": [
