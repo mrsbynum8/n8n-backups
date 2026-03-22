@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-12T23:40:25.461Z",
+  "updatedAt": "2026-03-21T15:31:50.196Z",
   "createdAt": "2026-01-26T00:27:28.921Z",
   "id": "7eTLolS3Xq87upqhzzL2C",
   "name": "005. SFS Image Generation (CONCURRENT - Sheet2 → Google Drive)",
@@ -92,7 +92,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1024x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1536x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
         "options": {}
       },
       "id": "4a93cd93-2a93-4bbf-b2a1-a23abc81c57d",
@@ -582,7 +582,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "f816e881-196e-48d0-ad42-13805e782c39",
+  "versionId": "7b9d631a-c3c1-4687-8f47-305fc639f5a5",
   "activeVersionId": "49b792a5-93b8-4f96-84c4-afb41f3b8b78",
   "triggerCount": 1,
   "shared": [
