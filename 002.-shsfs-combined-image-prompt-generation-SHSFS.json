@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-16T01:23:39.458Z",
+  "updatedAt": "2026-03-22T02:25:40.271Z",
   "createdAt": "2026-01-25T22:11:27.563Z",
   "id": "u4_u2ln94yCg6M0ziIFTb",
   "name": "002. SHSFS Combined Image Prompt Generation",
@@ -224,7 +224,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"z-ai/glm-5\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate detailed image prompts for Hindu sacred story sleep videos. Each prompt MUST be 5+ sentences describing a contemplative, devotional scene inspired by classical Indian temple art.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Soft gouache painting style inspired by classical Indian temple murals and devotional art\\n- Contemplative, devotional quality with sleep-friendly tones\\n- The flat, iconic composition of temple art but with softer edges for calming effect\\n- Historical/cultural accuracy (ancient Indian settings, traditional garments, period-appropriate architecture and materials)\\n- Warm, sacred color palette: ochre, terracotta, deep indigo, sunset orange, warm earth tones, touches of gold for divine light\\n- Focus on devotional atmosphere, character expressions showing inner spiritual states, symbolic elements\\n- Gentle, reverent treatment of all figures and scenes\\n\\nREPRESENTATION (CRITICAL - MUST APPEAR IN EVERY PROMPT):\\n- Every prompt must explicitly describe the skin tone of every human character depicted\\n- Use specific, varied descriptions drawn from this range: wheatish, golden-brown, warm medium brown, rich brown, deep brown, dark brown — do NOT default to the same phrase repeatedly\\n- Assign tones that reflect the individual character: north Indian Kuru-lineage characters (Arjuna, Yudhishthira, Bhishma, Drona, Duryodhana, Kunti) lean wheatish to medium brown; characters of forest or non-human heritage (Ghatotkacha) lean deep to dark brown; Krishna is blue-black per iconographic tradition\\n- Every prompt must also specify subcontinental facial features — never Anglo or European features\\n- Include this skin tone and feature language directly in the text of every prompt, not just as a general principle\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons shown explicitly\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n- Maintain respectful, sacred treatment of all Hindu deities, sages, and sacred figures\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}, {\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.script) }}\n    }\n  ],\n  \"temperature\": 1,\n  \"max_tokens\": 28192\n}",
+        "jsonBody": "={\n  \"model\": \"openai/gpt-5.4\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate detailed image prompts for Hindu sacred story sleep videos. Each prompt MUST be 5+ sentences describing a contemplative, devotional scene inspired by classical Indian temple art.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Soft gouache painting style inspired by classical Indian temple murals and devotional art\\n- Contemplative, devotional quality with sleep-friendly tones\\n- The flat, iconic composition of temple art but with softer edges for calming effect\\n- Historical/cultural accuracy (ancient Indian settings, traditional garments, period-appropriate architecture and materials)\\n- Warm, sacred color palette: ochre, terracotta, deep indigo, sunset orange, warm earth tones, touches of gold for divine light\\n- Focus on devotional atmosphere, character expressions showing inner spiritual states, symbolic elements\\n- Gentle, reverent treatment of all figures and scenes\\n\\nREPRESENTATION (CRITICAL - MUST APPEAR IN EVERY PROMPT):\\n- Every prompt must explicitly describe the skin tone of every human character depicted\\n- Use specific, varied descriptions drawn from this range: wheatish, golden-brown, warm medium brown, rich brown, deep brown, dark brown — do NOT default to the same phrase repeatedly\\n- Assign tones that reflect the individual character: north Indian Kuru-lineage characters (Arjuna, Yudhishthira, Bhishma, Drona, Duryodhana, Kunti) lean wheatish to medium brown; characters of forest or non-human heritage (Ghatotkacha) lean deep to dark brown; Krishna is blue-black per iconographic tradition\\n- Every prompt must also specify subcontinental facial features — never Anglo or European features\\n- Include this skin tone and feature language directly in the text of every prompt, not just as a general principle\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons shown explicitly\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n- Maintain respectful, sacred treatment of all Hindu deities, sages, and sacred figures\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}, {\\\"prompt\\\": \\\"A soft gouache painting inspired by classical Indian temple art, depicting...\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.script) }}\n    }\n  ],\n  \"temperature\": 1,\n  \"max_tokens\": 28192\n}",
         "options": {}
       },
       "id": "4f3af98c-7032-448c-83df-d842fa5becdd",
@@ -480,109 +480,11 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        1680,
-        480
+        2464,
+        576
       ],
       "id": "fb00e09f-9008-4de1-a126-b0a97f83eb3f",
       "name": "Limit1"
-    },
-    {
-      "parameters": {
-        "operation": "get",
-        "documentURL": "={{ $('Extract Script Info').item.json.document_id }}"
-      },
-      "type": "n8n-nodes-base.googleDocs",
-      "typeVersion": 2,
-      "position": [
-        2480,
-        672
-      ],
-      "id": "0d9a6bbe-cbfb-4e1b-b81e-49004786274b",
-      "name": "Get Script from Google Doc",
-      "credentials": {
-        "googleDocsOAuth2Api": {
-          "id": "0icadRz5XxXy9hB4",
-          "name": "Google Docs account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://openrouter.ai/api/v1/chat/completions",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "openRouterApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ {\n  \"model\": \"anthropic/claude-sonnet-4.6\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a complete SEO package for Sacred Hindu Stories for Sleep, a YouTube channel creating 2-3 hour immersive sleep content from Hindu sacred texts (primarily the Mahabharata).\\n\\nCHANNEL VOICE:\\n- Immersive storyteller who puts you IN ancient India\\n- Warm, unhurried, sensory-rich\\n- Second-person immersion: \\\"you're standing on a beach at twilight\\\"\\n- Humor about the absurdity of situations characters face\\n- Uses authoritative Kisari Mohan Ganguli translation\\n\\nGiven this script, generate the COMPLETE SEO PACKAGE following these exact templates:\\n\\n---\\n\\n## VIDEO TITLES (Provide exactly 3 options):\\n\\nTitles do one job: get found. They must be keyword-functional. Evocative language belongs in the thumbnail text, NOT the title.\\n\\nOption 1 (Question Hook): [Who/What/Why/How Question] | Hindu Stories for Sleep\\nOption 2 (Statement Hook): [Definitive Statement] | Mahabharata Stories for Sleep\\nOption 3 (Complete Story): The Complete Story of [Subject] | Hindu Stories for Sleep\\n\\nTitle rules:\\n- \\\"Hindu Stories for Sleep\\\" or \\\"Mahabharata Stories for Sleep\\\" must appear in every title as a brand anchor\\n- The character name or event carries the search value — keep it clear and recognizable\\n- Do NOT use evocative subtitles (\\\"The Warrior Who Never Lost\\\") in the title — that's thumbnail text's job\\n- Target 65-95 characters\\n- If the topic has strong standalone search volume (Karna, Krishna, Arjuna, Bhagavad Gita), lead with the name\\n\\nHook formulas (first half of title):\\n- \\\"Who Was Really More [Adjective]?\\\" — for rivalry or comparison topics\\n- \\\"Why [Character] Couldn't [Action]\\\" — for tragedy or conflict topics\\n- \\\"How Did [Event] Happen?\\\" — for mystery or turning-point topics\\n- \\\"The Complete Story of [Subject]\\\" — for character epics\\n- \\\"Fall Asleep to [Topic]\\\" — for text or parva deep dives\\n\\nWHAT NOT TO DO:\\n❌ \\\"Karna vs Arjuna — Who Was Really More Powerful? | The Greatest Rivalry in the Mahabharata\\\" — evocative subtitle wastes keyword real estate\\n✅ \\\"Karna vs Arjuna — Who Was Really More Powerful? | Mahabharata Stories for Sleep\\\" — every word is searchable\\n\\n---\\n\\n## VIDEO DESCRIPTION (250-350 words):\\n\\nHASHTAGS go at the very bottom of the description body. YouTube reads hashtags from the description — do not put them in a separate field.\\n\\nDescription hook: The 2-3 sentence hook must reference something the casual viewer has already heard of — a widely recognized name, concept, or event they're curious about but don't fully understand. NOT an obscure detail that only makes sense after watching.\\n\\n✅ GOOD: \\\"The Bhagavad Gita is one of the most read texts in human history. Most people know the name. Almost nobody knows the conversation that started it — or why Arjuna was sitting in a chariot, refusing to fight.\\\"\\n❌ BAD: \\\"Krishna spoke to Arjuna on the battlefield and everything changed.\\\" (meaningless without context)\\n\\nUse this exact template structure:\\n\\nFall asleep to the calm, in-depth story of [Topic] from the Mahabharata. This video contains NO mid-roll ads.\\n\\n[2-3 sentence hook — reference something widely recognized that viewers are curious about but don't fully understand]\\n\\n⏱️ CHAPTERS\\n00:00 - Opening\\n[Extract chapter titles from the script sections and list them]\\n\\n📖 IN THIS VIDEO\\nIn this documentary-style exploration, we cover:\\n• [Key topic 1]\\n• [Key topic 2]\\n• [Key topic 3]\\n• [Key topic 4]\\n• [Key topic 5]\\n\\n[1-2 sentences about why this topic matters]\\n\\nPerfect for falling asleep, relaxation, study, or anyone curious about Hindu sacred texts and ancient India.\\n\\nBased on the authoritative Kisari Mohan Ganguli translation of the Mahabharata.\\n\\n🔔 Subscribe for more: @SacredHinduStoriesforSleep\\n\\n✨ VIDEOS TO WATCH NEXT ✨\\n[Link 1 — most thematically related video]\\n[Link 2 — second most related video]\\n[Link 3 — highest performing video on channel]\\n\\n[HASHTAGS — paste full hashtag block here, see Section 4]\\n\\nIMPORTANT:\\n- Extract actual chapter titles from the script's section headers\\n- Output the ENTIRE DESCRIPTION in a markdown code block (```text) so emojis copy correctly\\n- Leave the Videos to Watch Next links as placeholder text — they will be filled in manually\\n\\n---\\n\\n## VIDEO TAGS (Max 500 characters, SEPARATE FIELD):\\n\\nProvide ALL tags in a single comma-separated code block. Use all four layers below, prioritized in order. Trim from Layer 4 first if needed to fit the 500-character limit.\\n\\nLayer 1 — Topic-Specific (always first, highest search value):\\n[character] mahabharata, story of [character], [character] explained, [event] mahabharata, [character] vs [character]\\n\\nLayer 2 — Brand & Channel:\\nsacred hindu stories for sleep, hindu stories for sleep, mahabharata for sleep, fall asleep to mahabharata, hindu mythology sleep, mahabharata documentary, ancient india, relaxing stories, calm narration\\n\\nLayer 3 — Meditation App Targeting (always include — captures paid-app audience seeking free alternative):\\ninsight timer, guided meditation sleep, hindu meditation, sleep meditation stories, vedic stories for sleep, sleep with ancient wisdom\\n\\nLayer 4 — Sleep & Wellness Discovery (trim here first if needed):\\nfall asleep fast, sleep better, sleep routine, mental health, insomnia relief, deep sleep, relaxing stories, sleep meditation, sleep stories\\n\\nAlso add: mahabharata animated (people searching for animated content find audio and stay)\\n\\n---\\n\\n## HASHTAGS (20-25, placed at the bottom of the description body):\\n\\nThe first 3 hashtags appear above your video title in the YouTube UI — make those the most important.\\n\\nPosition 1-3 (always these three, always first):\\n#HinduStories #[MainTopic] #SacredHinduStoriesForSleep\\n\\nCore sleep/wellness layer (always include all of these):\\n#FallAsleepFast #SleepMeditation #InsomniaRelief #MentalHealth #DeepSleep #CalmingNarration #BedtimeStories #SleepStories\\n\\nDiscovery/category layer (always include all of these):\\n#Mahabharata #HinduMythology #AncientIndia #VedicWisdom #Dharma\\n\\nTopic-specific layer (add 2-4 based on script content):\\n#[MainCharacter] #[SecondaryCharacter] #[RelevantConcept] #[RelevantBattle or Event]\\n\\nOutput all hashtags as a single unbroken block, no line breaks between them.\\n\\n---\\n\\n## THUMBNAIL CONCEPTS (Provide 3 concepts):\\n\\nFor each concept, provide:\\n\\n**CONCEPT [N]:**\\n**Scene:** [Brief description of the pivotal moment from the script]\\n**Composition:** Medium close-up, [subject] centered, face fills 40-50% of frame, [dramatic action] visible behind/around at smaller scale\\n**Era/Clothing:** Ancient India, [specific garments — sari, dhoti, jewelry, armor]\\n\\n**Thumbnail Text (for Canva overlay):**\\n- Line 1: MAIN TOPIC IN CAPS — the widely recognized subject (e.g., \\\"KARNA\\\", \\\"THE DICE GAME\\\", \\\"THE BHAGAVAD GITA\\\"). Something the viewer has already heard of. Never an obscure detail.\\n- Line 2: EVOCATIVE HOOK — story-driven, curiosity-gap language that makes someone feel there's a narrative worth experiencing. This is where the channel's storytelling voice lives. Examples: \\\"Rejected by Gods, Cursed by Gurus\\\" / \\\"The Bet That Started a War\\\" / \\\"The Warrior Who Chose the Wrong Side\\\"\\n\\nNOTE: Line 2 does the job that evocative subtitles used to do in titles. It should stop the scroll, not describe the scene literally.\\n\\n**Full Image Prompt:**\\nFrameless digital painting, centered composition, MEDIUM CLOSE-UP SHOT,\\n[subject] from the waist up positioned in the CENTER of the frame,\\n[expression/action], face fills 40-50% of frame,\\nCLOTHING/ERA: Ancient India, [specific garments],\\nDRAMATIC CONTEXT BEHIND/AROUND AT SMALLER SCALE: [epic scene],\\n[environmental details],\\n19th-century romantic oil painting style, Raja Ravi Varma influence,\\n[subject] dominates foreground, [action] visible but secondary,\\nsymmetrical composition, no frame, no border, edge-to-edge\\n[FOREHEAD MARKINGS: Use character-specific entry from the reference below]\\n\\n---\\n\\nFOREHEAD MARKINGS REFERENCE:\\n\\nThe Mahabharata text does not prescribe specific tilak designs for most characters. The entries below blend textual logic (role/status) with established artistic conventions from iconography and popular depictions — which is what AI image models have been trained on. Use character-specific entries when the character is known; use role-based defaults otherwise.\\n\\nCHARACTER-SPECIFIC MARKINGS:\\n\\nKARNA: Small sun-disc tilak — rising half-sun shape in red-gold on the brow, evoking his divine father Surya. ALSO ESSENTIAL: large golden kundala earrings (he was born with them — canonical and non-optional). Include both in every Karna prompt.\\n\\nDRAUPADI: Large ornate starburst bindi — deep red center with gold/white rays radiating outward. Married woman + born-of-fire imagery. Also include sindoor in hair parting.\\n\\nKRISHNA: Sandalwood U-shaped tilak (urdhva pundra), simple, cream/white — understated, no red center stripe. Peacock feather in crown/mukuta is iconographically expected and helps AI render him correctly.\\n\\nARJUNA: Simple vertical sandalwood tilak, single elongated line or dot in cream/saffron. Clean and noble, not elaborate.\\n\\nYUDHISHTHIRA: Simple tilaka in sandalwood paste, wide mark in white/cream. Regal and restrained.\\n\\nBHIMA: Bold red kumkum tilaka, simple dot or short vertical mark. More vivid than his brothers.\\n\\nBHISHMA: Three pale horizontal lines in ash or simple sandalwood marks. Elder celibate warrior with ascetic undertones.\\n\\nDRONA: Three horizontal ash lines (tripundra). Brahmin-warrior; ascetic marking appropriate.\\n\\nDURYODHANA: Bold red tilak, single vertical mark in kumkum. Vivid and proud.\\n\\nKUNTI: Red bindi + sindoor in hair parting.\\n\\nGANDHARI: Simple pale/white bindi. Eyes always blindfolded.\\n\\nROLE-BASED DEFAULTS (when character not listed above):\\n- Married Women: Red or black bindi + sindoor in hair parting\\n- Unmarried Women: Bindi only (red or black dot)\\n- Kings / Warriors: Simple tilaka in sandalwood paste or kumkum\\n- Ascetics / Sages: Three horizontal ash lines (tripundra)\\n- Priests / Brahmins: U-shaped tilaka in sandalwood paste\\n\\nCRITICAL RULES:\\n- AVOID modern sectarian symbols (ornate full Vaishnava U with red stripe, elaborate Shaiva tripundra patterns). Keep markings simple and pre-sectarian.\\n- Karna's golden earrings are NON-NEGOTIABLE — always write \\\"large golden kundala earrings\\\" in his prompt.\\n- Krishna's peacock feather in crown is iconographically expected — include it.\\n- When uncertain: \\\"simple tilaka in sandalwood paste\\\"\\n\\n---\\n\\nSCRIPT TO ANALYZE:\\n\" + JSON.stringify($json.content) + \"\\n\\n---\\n\\nGenerate the complete SEO package following the exact format above. Be specific, compelling, and base everything on the actual script content.\"\n    }\n  ]\n} }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        2768,
-        672
-      ],
-      "id": "d0a6ee95-b3b6-4320-811e-76bc5bc2615c",
-      "name": "Generate SEO via OpenRouter",
-      "credentials": {
-        "openRouterApi": {
-          "id": "VNgbdBR86ZkDETr5",
-          "name": "OpenRouter account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const seoResponse = $input.item.json.choices[0].message.content;\nconst videoName = $('Extract Script Info').item.json.video_name;\n\nreturn [{\n  json: {\n    video_name: videoName,\n    seo_package: seoResponse\n  }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        3024,
-        672
-      ],
-      "id": "658fedc2-8697-4a28-aa44-8e0e49020c32",
-      "name": "Parse SEO Response",
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "authentication": "oAuth2",
-        "select": "channel",
-        "channelId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "#shsfs-video-assets"
-        },
-        "text": "={{ $json.seo_package }}",
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.4,
-      "position": [
-        3264,
-        672
-      ],
-      "id": "29021386-fee9-4938-9ab1-71c2433e6cbe",
-      "name": "Send a message",
-      "webhookId": "c21cd64c-4693-435e-aa14-9a74cb10e6f5",
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "eFTGhpy1vaGaNItw",
-          "name": "Slack account"
-        }
-      },
-      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -860,8 +762,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3472,
-        672
+        2704,
+        576
       ],
       "id": "01516487-73fe-47f7-aa35-fef5c8ae9a19",
       "name": "Mark Script Complete",
@@ -1577,40 +1479,7 @@
       "main": [
         [
           {
-            "node": "Get Script from Google Doc",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Script from Google Doc": {
-      "main": [
-        [
-          {
-            "node": "Generate SEO via OpenRouter",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Generate SEO via OpenRouter": {
-      "main": [
-        [
-          {
-            "node": "Parse SEO Response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Parse SEO Response": {
-      "main": [
-        [
-          {
-            "node": "Send a message",
+            "node": "Mark Script Complete",
             "type": "main",
             "index": 0
           }
@@ -1669,17 +1538,6 @@
         [
           {
             "node": "Read Google Doc",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a message": {
-      "main": [
-        [
-          {
-            "node": "Mark Script Complete",
             "type": "main",
             "index": 0
           }
@@ -1853,7 +1711,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "1676e8b1-59f4-46c6-8d5b-193ab2d185df",
+  "versionId": "32c7901f-e1d3-4a17-b68d-c52baedc097e",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
