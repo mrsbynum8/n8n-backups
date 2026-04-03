@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-22T15:41:01.218Z",
+  "updatedAt": "2026-04-03T01:08:13.079Z",
   "createdAt": "2026-01-25T23:20:43.283Z",
   "id": "ZYwVA9WqrGwDHT59WQN-F",
   "name": "002-A. Script to Image Prep (Google Doc → Chapters Sheet)",
@@ -560,6 +560,14 @@
             {
               "name": "Content-Type",
               "value": "application/json"
+            },
+            {
+              "name": "X-Title",
+              "value": "=SFS Prompts Ch {{ $json.chapter_number }}"
+            },
+            {
+              "name": "HTTP-Referer",
+              "value": "https://scriptureforsleep.com"
             }
           ]
         },
@@ -831,6 +839,20 @@
         -1104,
         528
       ]
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        256
+      ],
+      "id": "f9f1ecb9-3e46-40a1-8cab-7314709fed6a",
+      "name": "Wait",
+      "webhookId": "8bcd0cd4-013b-49dd-97cd-056e38381f6f"
     }
   ],
   "connections": {
@@ -951,7 +973,7 @@
       "main": [
         [
           {
-            "node": "Get row(s) in sheet",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -1052,20 +1074,32 @@
           }
         ]
       ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "timeSavedMode": "fixed",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "bf2a547a-06b4-48db-b0a3-5324d53743de",
+  "versionId": "29f83e49-95ee-4106-a8e6-444e2e597c5c",
   "activeVersionId": "206ed2f7-b251-4056-8be2-bb86158222a5",
   "triggerCount": 1,
   "shared": [
