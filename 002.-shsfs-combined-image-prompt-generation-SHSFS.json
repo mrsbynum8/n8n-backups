@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-23T19:12:41.024Z",
+  "updatedAt": "2026-04-03T02:03:38.934Z",
   "createdAt": "2026-01-25T22:11:27.563Z",
   "id": "u4_u2ln94yCg6M0ziIFTb",
   "name": "002. SHSFS Combined Image Prompt Generation",
@@ -219,6 +219,14 @@
             {
               "name": "Content-Type",
               "value": "application/json"
+            },
+            {
+              "name": "X-Title",
+              "value": "SHSFS Prompts "
+            },
+            {
+              "name": "HTTP-Referer",
+              "value": "https://sacredhindustoriesforsleep.com"
             }
           ]
         },
@@ -1704,14 +1712,15 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "5f3e80b1-1783-4e01-9aa5-37bcfaf7965b",
+  "versionId": "b9a3aa4c-a5b8-40e9-8c62-40d31f856771",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
