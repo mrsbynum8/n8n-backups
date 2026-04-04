@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-23T19:12:56.701Z",
+  "updatedAt": "2026-04-03T15:49:14.762Z",
   "createdAt": "2026-01-25T23:16:17.841Z",
   "id": "l5epofWIJ6X66dw7JsOc9",
   "name": "Backup. SHFS Prompt Generation (Sheet1 → Sheet2)",
@@ -99,6 +99,14 @@
             {
               "name": "Content-Type",
               "value": "application/json"
+            },
+            {
+              "name": "HTTP-Referer",
+              "value": "https://sacredhindustoriesforsleep.com"
+            },
+            {
+              "name": "X-Title",
+              "value": "={{ $json.video_name }} Ch {{ $json.chapter_number }}"
             }
           ]
         },
@@ -438,14 +446,15 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "aa3ff410-7e17-4edf-b50c-07a6810c62ae",
+  "versionId": "851a7d44-bc59-49c8-b7aa-140b0bcd8d1c",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
