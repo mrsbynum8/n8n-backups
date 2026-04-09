@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-20T20:36:14.483Z",
+  "updatedAt": "2026-04-08T23:19:27.937Z",
   "createdAt": "2026-01-25T23:21:31.122Z",
   "id": "1wR80dnRbmIQCArsoKBxg",
   "name": "002-B. SFS Prompt Generation (Sheet1 → Sheet2)",
@@ -505,14 +505,15 @@
     "executionOrder": "v1",
     "availableInMCP": true,
     "timeSavedMode": "fixed",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "f833307a-1d1e-4829-abe0-c5da4926648b",
+  "versionId": "140722b6-5666-407e-bd53-54a2de7bcdcf",
   "activeVersionId": "f5fdbfc1-0650-4fe2-a729-554973e817a5",
   "triggerCount": 1,
   "shared": [
