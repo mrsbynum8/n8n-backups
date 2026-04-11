@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-03T01:08:13.079Z",
+  "updatedAt": "2026-04-10T18:03:52.880Z",
   "createdAt": "2026-01-25T23:20:43.283Z",
   "id": "ZYwVA9WqrGwDHT59WQN-F",
   "name": "002-A. Script to Image Prep (Google Doc → Chapters Sheet)",
@@ -461,22 +461,6 @@
           "name": "Google Sheets account"
         }
       }
-    },
-    {
-      "parameters": {
-        "path": "b5a36cfa-11d5-4d42-b46f-f2cd2953d118",
-        "responseMode": "lastNode",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -1168,
-        208
-      ],
-      "id": "5088d06e-80d9-47fc-a2ae-845969936154",
-      "name": "Webhook",
-      "webhookId": "b5a36cfa-11d5-4d42-b46f-f2cd2953d118"
     },
     {
       "parameters": {
@@ -980,17 +964,6 @@
         ]
       ]
     },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Read Pending Chapters (Sheet1)": {
       "main": [
         [
@@ -1099,7 +1072,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "29f83e49-95ee-4106-a8e6-444e2e597c5c",
+  "versionId": "ed8ef2dd-4dd0-46eb-b4de-e1452f8909b0",
   "activeVersionId": "206ed2f7-b251-4056-8be2-bb86158222a5",
   "triggerCount": 1,
   "shared": [
