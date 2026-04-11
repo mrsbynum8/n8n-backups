@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-21T15:31:50.196Z",
+  "updatedAt": "2026-04-10T22:54:14.153Z",
   "createdAt": "2026-01-26T00:27:28.921Z",
   "id": "7eTLolS3Xq87upqhzzL2C",
   "name": "005. SFS Image Generation (CONCURRENT - Sheet2 → Google Drive)",
@@ -379,43 +379,6 @@
       ],
       "id": "daeab1a6-6c8e-4623-b869-c5385157702f",
       "name": "Limit"
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "hours",
-              "hoursInterval": 6
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -1072,
-        288
-      ],
-      "id": "2553abdd-fa97-4946-9dbc-850c9382acab",
-      "name": "Schedule Trigger",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "path": "dd65573c-7962-4b99-b2f4-14064b1d5a6c",
-        "responseMode": "lastNode",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -1088,
-        -80
-      ],
-      "id": "de1a5a5a-b22c-4ce0-bc74-660e3ada434b",
-      "name": "Webhook",
-      "webhookId": "dd65573c-7962-4b99-b2f4-14064b1d5a6c"
     }
   ],
   "connections": {
@@ -547,42 +510,21 @@
       "main": [
         []
       ]
-    },
-    "Schedule Trigger": {
-      "main": [
-        [
-          {
-            "node": "Read Pending Prompts (Sheet2)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Read Pending Prompts (Sheet2)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "timeSavedMode": "fixed",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "7b9d631a-c3c1-4687-8f47-305fc639f5a5",
+  "versionId": "0c868292-b7d0-4040-857f-bc8b10580de6",
   "activeVersionId": "49b792a5-93b8-4f96-84c4-afb41f3b8b78",
   "triggerCount": 1,
   "shared": [
