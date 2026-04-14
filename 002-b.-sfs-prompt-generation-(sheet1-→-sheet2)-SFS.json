@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-08T23:19:27.937Z",
+  "updatedAt": "2026-04-14T01:12:13.469Z",
   "createdAt": "2026-01-25T23:21:31.122Z",
   "id": "1wR80dnRbmIQCArsoKBxg",
   "name": "002-B. SFS Prompt Generation (Sheet1 → Sheet2)",
@@ -370,22 +370,6 @@
       ],
       "id": "424aac56-16f3-4b22-9be4-214f35280e2b",
       "name": "Limit"
-    },
-    {
-      "parameters": {
-        "path": "d3c6d20d-0c10-4a7b-b401-9aac6cd1f35a",
-        "responseMode": "lastNode",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -1072,
-        80
-      ],
-      "id": "b913379c-b671-443b-af8b-66f0a29569dd",
-      "name": "Webhook",
-      "webhookId": "d3c6d20d-0c10-4a7b-b401-9aac6cd1f35a"
     }
   ],
   "connections": {
@@ -488,17 +472,6 @@
       "main": [
         []
       ]
-    },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Read Pending Chapters (Sheet1)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "settings": {
@@ -513,7 +486,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "140722b6-5666-407e-bd53-54a2de7bcdcf",
+  "versionId": "bc3f78f9-8cd2-4590-95bf-f9dbae53b8f4",
   "activeVersionId": "f5fdbfc1-0650-4fe2-a729-554973e817a5",
   "triggerCount": 1,
   "shared": [
