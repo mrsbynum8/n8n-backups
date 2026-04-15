@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-13T02:10:07.843Z",
+  "updatedAt": "2026-04-14T19:18:20.952Z",
   "createdAt": "2026-04-13T02:04:36.802Z",
   "id": "4u5VbPGixGmruNfD",
   "name": "004. DSS - GenAIPro TTS Workflow",
@@ -90,7 +90,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"input\": {{ JSON.stringify($json.text) }},\n  \"voice_id\": \"UmQN7jS1Ee8B1czsUtQh\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"stability\": 0.50,\n  \"similarity\": 0.75,\n  \"style\": 0.0,\n  \"speed\": 1.00,\n  \"use_speaker_boost\": true\n}",
+        "jsonBody": "={\n  \"input\": {{ JSON.stringify($json.text) }},\n  \"voice_id\": \"qxTFXDYbGcR8GaHSjczg\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"stability\": 0.50,\n  \"similarity\": 0.75,\n  \"style\": 0.0,\n  \"speed\": 1.00,\n  \"use_speaker_boost\": true\n}",
         "options": {}
       },
       "id": "d29ba9ce-d2ce-4f35-b08a-368f6f9216b6",
@@ -718,7 +718,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "1d1b7bdf-e127-4eff-8dfd-78acec0e01b0",
+  "versionId": "28aeca1e-ed31-4751-a238-7b9319181795",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
