@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-14T02:01:11.356Z",
+  "updatedAt": "2026-04-17T00:57:14.318Z",
   "createdAt": "2026-04-14T01:59:42.048Z",
   "id": "cFIj94UmMkvz7QEx",
   "name": "005. DSS Image Generation",
@@ -517,7 +517,8 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "timezone": "America/New_York"
   },
   "staticData": null,
   "meta": {
