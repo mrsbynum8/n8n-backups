@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-04-13T02:12:43.830Z",
+  "updatedAt": "2026-04-17T00:43:33.000Z",
   "createdAt": "2026-04-10T05:21:18.926Z",
   "id": "nX6J70bhxD3A9W5D",
   "name": "003. DSS Script to TTS Prep (Google Doc → TTS Spreadsheet)",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {},
@@ -530,7 +530,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "d7541524-704b-48a8-ae42-fdeee485a1d6",
+  "versionId": "ded215e1-7094-41be-afdf-789d9e4230b6",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
