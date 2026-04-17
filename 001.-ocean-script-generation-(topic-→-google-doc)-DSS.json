@@ -1,0 +1,2004 @@
+{
+  "updatedAt": "2026-04-16T05:47:51.870Z",
+  "createdAt": "2026-04-10T02:08:14.499Z",
+  "id": "vDBsTpNpbNNIKQ82",
+  "name": "001. Ocean Script Generation (Topic → Google Doc)",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b533003c-9747-46cf-88de-db0fec102b99",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2704,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// BUILD OUTLINE REQUEST - DEEP SEA SLUMBER\n// =====================================================\n\nconst input = $input.item.json;\n\nconst systemPrompt = `You are a content architect for Deep Sea Slumber, a calm educational sleep YouTube channel. You create outlines for 2+ hour sleep videos about ocean creatures, ecosystems, and related topics — designed for curious minds of all ages, especially neurodivergent listeners.\n\nTHE CHANNEL'S CORE PROMISE:\n\"Calm, fascinating facts that help curious minds drift off to sleep — gentle enough for sensitive listeners, interesting enough that bedtime becomes something to look forward to.\"\n\nTHE FORMAT:\nThese are 2+ hour sleep environments, not short bedtime stories. The entire video is a slow, continuous gradient descent in stimulation. A listener at minute 90 should feel the content is calmer than at minute 10. This gradient is the product itself.\n\nTHE VOICE:\nA calm, contemplative narrator who finds genuine wonder in science. Not a comedian. Not a lecturer. A patient, curious person sitting beside someone in the dark, sharing remarkable things quietly. Warm without excitement. Awe without agitation.\n\n=== THE FOUR-ACT GRADIENT STRUCTURE ===\n\nACT 1 — HARD WONDER (act_type: \"hard_wonder\")\nThe most surprising material. Physical impossibilities. Records. Superlatives. Facts that sound impossible until explained.\n- Anatomical and physical extremes\n- Records: oldest, deepest, largest, fastest, strangest\n- Counterintuitive biology that reframes assumptions\n- Energy level: genuinely interesting, never exciting\n- Segment depth: shorter — move briskly between facts\n\nACT 2 — BEHAVIOR & ECOLOGY (act_type: \"behavior\")\nShift from what the subject IS to what it DOES. Stories live here.\n- Hunting strategies: patience, precision, technique\n- Social behavior: family structures, communication, bonds\n- Migration and navigation across impossible distances\n- Parent-offspring relationships\n- Ecological role: what happens when this animal does its work\n- Energy level: warm and gently engaged\n- Segment depth: longer — let scenes breathe and stories develop\n\nACT 3 — INTERIOR LIFE (act_type: \"interior\")\nThe most contemplative material. What does this subject's existence mean?\n- Intelligence and consciousness in a form unlike ours\n- Deep evolutionary history: what this animal has witnessed\n- Philosophical implications of unusual traits\n- The relationship between this subject and humans: myth, discovery, awe\n- Open-ended contemplation — ideas to drift with, not resolve\n- Energy level: slow, meditative, almost lullaby cadence\n- Segment depth: longest — some topics sustain 8-10 paragraphs\n\nDAY IN THE LIFE — DITL (act_type: \"ditl\", is_ditl: true)\nThe second-to-last section. The gear change that defines this channel.\n- Standard: switches to SECOND PERSON, PRESENT TENSE — the listener IS the animal\n- Ecosystem: ambient drift — the listener is pure awareness moving through the space, no single body\n- No new facts — only facts from earlier sections, now felt as sensory experience\n- Sentences grow progressively shorter as the day moves toward rest\n- Must end with stillness — the animal or environment at rest, the listener with it\n- Energy level: the lowest of the entire video\n\nCLOSE (act_type: \"close\")\nFinal section. The softest landing.\n- 600-800 words only\n- Crystallizes what was wonderful\n- Deepest physical relaxation cues of the entire video\n- Final line stands alone\n\n=== SCRIPT TYPES ===\n\nsingle_species:\nUse the standard 4-act gradient exactly as described. One animal. Full treatment. All sections follow the act types above.\n\necosystem:\nThe place is the subject, not one animal.\n- Hard Wonder sections: the environment itself — depth, pressure, darkness, temperature, scale, the physics of this world\n- Behavior sections: multiple inhabitants, their interactions, the food web, what happens at different times (day/night, season)\n- Interior Life sections: what this environment means — what life at these extremes says about existence itself\n- DITL: ambient drift through the ecosystem. The listener has no animal body. They are pure awareness drifting through the space, observing what the earlier sections described. The section description should begin with \"ECOSYSTEM DITL:\" so the writer knows to use ambient drift mode.\n- Close: same as always\n\ncompilation:\nMultiple animals, one unifying theme.\n- Opening: introduces the theme, not one specific animal\n- Middle sections: each section covers ONE animal with act_type \"animal_arc\" — a compressed single-species treatment (facts, a key behavior scene, wonder pivot) all within one section\n- DITL: picks the single most experientially interesting animal from the lineup for full second-person embodiment. The section description should name the chosen animal and briefly explain why it was chosen.\n- Close: same as always\n\n=== TOPICS TO AVOID IN ANY SECTION ===\n- Predation described in graphic or distressing detail\n- Extinction framed as scary or hopeless\n- Anything requiring urgent cognitive engagement\n- Content that would cause a parent to switch the video off\n\n=== OUTPUT FORMAT ===\nReturn ONLY valid JSON with no other text:\n{\n  \"title\": \"Full video title\",\n  \"hook_question\": \"The single fact about this subject that sounds most impossible when stated plainly\",\n  \"sections\": [\n    {\n      \"number\": 1,\n      \"title\": \"Section Title\",\n      \"description\": \"What this section explores and the wonder it creates\",\n      \"target_words\": 1000,\n      \"spoken_transition\": \"Calm bridge from the previous section — empty string for Opening\",\n      \"act_type\": \"opening\",\n      \"is_ditl\": false\n    }\n  ]\n}`;\n\nconst scriptTypeInstructions = {\n  single_species: `One animal. Full 4-act gradient treatment. All sections use the standard act types: opening → hard_wonder → behavior → interior → ditl → close.`,\n  ecosystem: `The place is the subject. Hard Wonder = the environment itself. Behavior = its inhabitants and interactions. Interior Life = what this environment means philosophically. DITL = ambient drift, no single animal body — begin the DITL description with \"ECOSYSTEM DITL:\". Close = standard.`,\n  compilation: `Multiple animals, one theme. Middle sections use act_type \"animal_arc\" — one animal per section, compressed treatment. DITL = pick the single best animal for embodied experience, name it in the description and explain why. Close = standard.`\n};\n\nconst sectionStructure = {\n  single_species: `- Section 1: Opening (act_type: \"opening\") — spoken_transition is empty string\n- Sections 2-5: Act 1 — Hard Wonder (act_type: \"hard_wonder\")\n- Sections 6-8: Act 2 — Behavior & Ecology (act_type: \"behavior\")\n- Sections 9-11: Act 3 — Interior Life (act_type: \"interior\")\n- SECOND-TO-LAST: DITL (act_type: \"ditl\", is_ditl: true)\n- FINAL: Close (act_type: \"close\")`,\n  ecosystem: `- Section 1: Opening (act_type: \"opening\") — spoken_transition is empty string\n- Sections 2-4: Hard Wonder — the environment itself (act_type: \"hard_wonder\")\n- Sections 5-7: Behavior & Ecology — inhabitants and interactions (act_type: \"behavior\")\n- Sections 8-9: Interior Life — what this environment means (act_type: \"interior\")\n- SECOND-TO-LAST: DITL — ambient ecosystem drift (act_type: \"ditl\", is_ditl: true) — description begins with \"ECOSYSTEM DITL:\"\n- FINAL: Close (act_type: \"close\")`,\n  compilation: `- Section 1: Opening — introduces the theme, not one animal (act_type: \"opening\") — spoken_transition is empty string\n- Middle sections: one animal per section (act_type: \"animal_arc\") — 2000-2500 words each\n- SECOND-TO-LAST: DITL — best single animal for embodiment (act_type: \"ditl\", is_ditl: true) — name the animal in the description\n- FINAL: Close (act_type: \"close\")`\n};\n\nconst wordCountGuide = {\n  single_species: `- Opening: 800-1000 words\n- Hard Wonder sections: 2000-2500 words each\n- Behavior sections: 2000-2500 words each\n- Interior Life sections: 1500-2000 words each\n- DITL: 2000-2500 words\n- Close: 600-800 words`,\n  ecosystem: `- Opening: 800-1000 words\n- Hard Wonder sections: 2000-2500 words each\n- Behavior sections: 2000-2500 words each\n- Interior Life sections: 1500-2000 words each\n- DITL: 2000-2500 words\n- Close: 600-800 words`,\n  compilation: `- Opening: 800-1000 words\n- Animal Arc sections: 2000-2500 words each\n- DITL: 2000-2500 words\n- Close: 600-800 words`\n};\n\nconst scriptType = input.script_type || 'single_species';\n\nconst userPrompt = `Create an outline for a Deep Sea Slumber video about: ${input.topic}\n\nScript type: ${scriptType}\n${scriptTypeInstructions[scriptType] || scriptTypeInstructions.single_species}\n\nTarget total word count: ${input.target_words} words\n(This produces approximately ${Math.round(input.target_words / 130)} minutes of audio at a calm speaking pace)\n\nCreate 10-14 sections with word counts totaling approximately ${input.target_words} words.\n\nSTRUCTURE RULES:\n${sectionStructure[scriptType] || sectionStructure.single_species}\n\nWORD COUNT TARGETS:\n${wordCountGuide[scriptType] || wordCountGuide.single_species}\n\nSECTION TITLE GUIDANCE:\nTitle sections by what they explore, not by act type label:\n✅ \"The Architecture of the Body\"\n✅ \"How Blue Whales Hunt in Darkness\"\n✅ \"What It Means to Live Two Hundred Years\"\n❌ \"Hard Wonder Section\"\n❌ \"Act Two: Behavior\"\n\nSPOKEN TRANSITIONS:\nCalm and flowing — never announce a section change:\n✅ \"And yet, what the body is built for matters less than what it does with it.\"\n✅ \"Three thousand feet down, the world changes completely.\"\n✅ \"But anatomy is only the beginning of this story.\"\n❌ \"Now let's turn our attention to...\"\n❌ \"In this next section, we'll explore...\"\n\nFor the DITL transition:\n✅ \"And now we stop knowing, and simply become.\"\n✅ \"Everything we've learned fades for a moment into the simplest thing of all — a single day.\"\n\nHOOK QUESTION:\nThe single fact that sounds most impossible when stated plainly. What would make someone say \"that can't be right\"?`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"openai/gpt-5.4\",\n      max_tokens: 4096,\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.7\n    }\n  }\n}];"
+      },
+      "id": "02e46e09-4ac4-49a7-9399-2b832577109f",
+      "name": "Build Outline Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1104,
+        128
+      ],
+      "notes": "Builds the JSON body for outline generation"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Title",
+              "value": "SFS Outline"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "090cc341-b12e-4c33-8caa-c891c1425d1b",
+      "name": "Generate Outline",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -880,
+        128
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates the story outline"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.item.json.choices[0].message.content;\nlet outline;\n\ntry {\n  outline = JSON.parse(response);\n} catch (e) {\n  const jsonMatch = response.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    outline = JSON.parse(jsonMatch[1]);\n  } else {\n    const jsonMatch2 = response.match(/\\{[\\s\\S]*\\}/);\n    if (jsonMatch2) {\n      outline = JSON.parse(jsonMatch2[0]);\n    } else {\n      throw new Error(\"Could not parse outline response as JSON: \" + response.substring(0, 200));\n    }\n  }\n}\n\nconst originalInput = $('Build Outline Request').first().json;\nconst topic = originalInput.topic;\nconst video_name = originalInput.video_name;\nconst voice_id = originalInput.voice_id;\nconst script_type = originalInput.script_type;\n\nreturn outline.sections.map((section, index) => ({\n  json: {\n    topic: topic,\n    video_name: video_name,\n    voice_id: voice_id,\n    script_type: script_type,\n    full_title: outline.title,\n    hook_question: outline.hook_question,\n    total_sections: outline.sections.length,\n    full_outline: outline.sections,\n    current_section: section,\n    section_index: index,\n    is_opening: section.number === 1,\n    is_final: section.number === outline.sections.length\n  }\n}));"
+      },
+      "id": "131b123e-40d9-4ac8-bc22-4c581cb4126e",
+      "name": "Parse Outline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -656,
+        128
+      ],
+      "notes": "Parses the outline JSON and prepares for section-by-section generation"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "14cf5ea1-7fed-47b3-8fee-44d22c16042e",
+      "name": "Loop Over Sections",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -448,
+        128
+      ],
+      "notes": "Processes one section at a time"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "is-opening",
+              "leftValue": "={{ $json.is_opening }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a416a45c-72d2-4ba5-a7cf-972b1e0a0ecd",
+      "name": "Is Opening Section?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        128
+      ],
+      "notes": "Routes to Opening prompt or Regular prompt"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// BUILD OPENING REQUEST - DEEP SEA SLUMBER\n// =====================================================\n\nconst input = $input.item.json;\n\nconst systemPrompt = `You are writing the OPENING SECTION for Deep Sea Slumber, a calm educational sleep YouTube channel.\n\n=== THE NARRATOR'S VOICE ===\n\nCalm. Contemplative. Genuinely wondering. Not performing wonder — having it.\n\nA patient, curious person sitting in the dark beside someone, sharing remarkable things quietly. Warm without excitement. Each sentence arrives like something true that has been thought about for a long time.\n\nThis is NOT:\n- A children's TV presenter (\"Hey everyone!\")\n- A comedian (\"Can you BELIEVE this?\")\n- A lecturer (\"Today we will cover...\")\n- A nature documentary anchor building to a dramatic reveal\n\nThis IS:\n- Someone who finds the world genuinely, quietly remarkable\n- A voice that says \"here is something astonishing\" in the same tone one might say \"the kettle is ready\"\n- The presence that makes you feel safe and curious at the same time\n\n=== WHAT THE OPENING MUST ACCOMPLISH ===\n\nThree things, in order:\n1. Establish wonder — earn the listener's attention by showing what's remarkable about this animal\n2. Establish the ritual — the listener knows what kind of journey this is\n3. Begin the physical descent — gently direct the body toward rest\n\n=== MANDATORY OPENING STRUCTURE ===\n\n**PART 1 — GREETING + JOURNEY METAPHOR:**\nAlways begins: \"Hello there and welcome to Deep Sea Slumber.\"\nSecond sentence: \"Tonight we...\" — followed by a journey metaphor into the animal's world.\n\nExample: \"Tonight we drift beneath the surface of the ocean into a world where intelligence does not always look the way we expect.\"\n\n**PART 2 — GRAND FRAMING (3-6 sentences):**\nEstablish the animal's place in the world. Not a list of facts — a sense of what this animal IS, what makes it remarkable, what it invites us to reconsider.\n\nThis framing should feel cosmic but quiet. Not exciting — awe-inducing in a way that stills rather than energizes.\n\nStrong examples:\n- \"They are bigger than dinosaurs, older than human cities, and more complex than almost anything else alive today.\"\n- \"Here in shifting light and shadow lives a creature with no bones, three hearts, and a mind that seems to reach through every part of its body. It moves like water itself, reshaping, rethinking, responding in ways that feel both familiar and strangely alien.\"\n- \"They have survived every catastrophe this planet has invented. They were here before trees. They will likely be here after us.\"\n\n**PART 3 — JOURNEY PREVIEW (1-2 sentences):**\nHint at what we'll discover — without listing facts. A sense of direction, not a table of contents.\n\n**PART 4 — SOFT CTA:**\nUse this EXACT formula every time:\n\"If you enjoy these gentle journeys, I invite you to like, subscribe, or share a thought below. It helps others find their way here, too. One sleepy soul at a time.\"\n\nThis is the channel's fingerprint. It must not change significantly between videos.\n\n**PART 5 — PHYSICAL RELAXATION CUES (2-4 sentences):**\nGently direct the listener's body toward rest. Reference:\n- Shoulders softening\n- Breathing slowing\n- A movement metaphor that matches the animal's world (\"as we sink,\" \"as we drift,\" \"as we travel back\")\n\nKeep it brief and woven into the journey. Not a yoga instruction. Not clinical.\n\n**PART 6 — \"Let's begin.\"**\nAlways. These two words, alone, end the opening.\n\n=== CRITICAL: \"LET'S BEGIN.\" IS THE HARD STOP ===\n\n\"Let's begin.\" ends the section. Completely. Nothing follows it.\n\nDo NOT continue writing after \"Let's begin.\" The opening is finished the moment those two words appear. All contemplation, all facts, all wonder about the animal belongs in the sections that follow. The opening is only the six parts above — nothing more.\n\nThis is the most important structural rule of the opening. The opening does not begin discussing the animal in depth. It introduces the journey and then stops. Act 1 does the rest.\n\n=== THE OPENING IS THE HIGHEST POINT ===\n\nThe opening is the highest-stimulation point of the entire video — but even here, there is no excitement. Just a quiet invitation to look at something remarkable. Every section after this will be calmer. This opening establishes the ceiling.\n\n=== WHAT TO AVOID ===\n\n❌ \"Hey guys!\" or any casual presenter greeting\n❌ Incredulity (\"Can you believe this?\")\n❌ Listing facts (facts belong in Act 1)\n❌ \"Tonight we'll be covering X, Y, and Z...\"\n❌ Urgency or excitement of any kind\n❌ Clinical sleep instructions (\"scan your body,\" \"focus on your breathing\")\n❌ Humor\n❌ Continuing past \"Let's begin.\" under any circumstances\n\n=== PACING RULES ===\n- Maximum 4 sentences per paragraph\n- After a long sentence, a short one follows\n- No sentence longer than 25 words\n- Generous paragraph breaks — this is designed to be heard, not read\n\n=== PHRASE BLACKLIST ===\n\"Here's the thing\" / \"If you think about it\" / \"Did you know\" / \"Believe it or not\" / \"Get ready to\" / \"You won't believe\" / \"Incredible\" / \"Amazing\" as empty modifiers\n\nIMPORTANT: Write ONLY the section content. No headers, no labels. End at \"Let's begin.\" and stop.`;\n\nconst outlineText = input.full_outline.map(s =>\n  `Section ${s.number} [${s.act_type}]: ${s.title} (${s.target_words} words) — ${s.description}`\n).join('\\n');\n\nconst hookContext = input.hook_question\n  ? `\\n\\nThe most wonder-inducing fact about this topic: \"${input.hook_question}\"\\n\\nThis can inform the grand framing — but don't state it as a fact yet. Build toward it.`\n  : '';\n\nconst userPrompt = `Write the OPENING SECTION for a Deep Sea Slumber video about: ${input.topic}\n${hookContext}\n\nFull video outline for context:\n${outlineText}\n\nYou are writing Section 1: ${input.current_section.title}\nDescription: ${input.current_section.description}\nTarget word count: ${input.current_section.target_words} words\n\nMANDATORY STRUCTURE:\n1. \"Hello there and welcome to Deep Sea Slumber. Tonight we...\" [journey metaphor into this animal's world]\n2. Grand framing — 3-6 sentences on the animal's remarkable nature\n3. Journey preview — hint at what we'll discover without listing facts\n4. Exact CTA: \"If you enjoy these gentle journeys, I invite you to like, subscribe, or share a thought below. It helps others find their way here, too. One sleepy soul at a time.\"\n5. Physical relaxation cues — shoulders, breath, movement metaphor appropriate to this animal\n6. \"Let's begin.\" — and then STOP. Nothing follows.\n\nMATCH TARGET WORD COUNT within 5%: ${input.current_section.target_words} words`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"anthropic/claude-sonnet-4.6\",\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.75\n    }\n  }\n}];"
+      },
+      "id": "1d846a2e-632b-4b41-8440-4da9e5d899ea",
+      "name": "Build Opening Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "Builds JSON for Opening section API call"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Title",
+              "value": "SFS Opening"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "2d8e9f5a-771c-41ec-ace8-c82a4f0c9393",
+      "name": "Generate Opening Section",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates Opening section"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// BUILD REGULAR REQUEST - DEEP SEA SLUMBER\n// =====================================================\n\nconst input = $input.item.json;\nconst staticData = $getWorkflowStaticData('global');\nconst previousSectionText = staticData.lastSectionContent || null;\nconst usedOpenings = staticData.usedOpenings || [];\n\n// Detect section type\nconst actType = input.current_section.act_type || 'hard_wonder';\nconst isDITL = input.current_section.is_ditl === true || actType === 'ditl';\nconst isEcosystemDITL = isDITL && input.current_section.description &&\n  input.current_section.description.toUpperCase().startsWith('ECOSYSTEM DITL');\n\n// =====================================================\n// ACT-SPECIFIC INSTRUCTIONS\n// =====================================================\n\nlet actInstructions = '';\n\nif (isDITL && isEcosystemDITL) {\n  actInstructions = `\n=== THIS IS THE DITL — ECOSYSTEM DRIFT ===\n\nThe listener has no animal body. They are pure awareness drifting through this environment.\n\nMODE:\nSecond person, present tense — but the \"you\" has no physical form. You are presence. You are attention. You are moving through the space.\n\nOPENING:\nEstablish immediately that this is not embodied in one creature:\n\"You have no weight here.\"\n\"You are simply present in the dark.\"\n\"There is no body to speak of. Only the water, and you moving through it.\"\n\nTHE EXPERIENCE:\nDrift through the space observationally. The inhabitants discovered in earlier sections are going about their lives. Notice them. Feel the environment's physical properties — temperature, pressure, darkness, the way water moves differently at this depth.\n\nWeave in facts from earlier sections as felt presence, not delivered information.\n\nTHE PROGRESSIVE SLOWING:\nActivity in the ecosystem decreases as the drift continues. Creatures settle. The water grows quieter. End in stillness — the ecosystem at rest, the listener drifting with it.\n\nMANDATORY ENDING:\nEverything has grown still. The world continues in the dark, patient and ancient, as it always has. The listener rests with it.`;\n\n} else if (isDITL) {\n  actInstructions = `\n=== THIS IS THE DITL — DAY IN THE LIFE ===\n\nEverything changes here. This is the gear change that defines this channel.\n\nMODE SWITCH:\n- Leave third-person narration entirely\n- Switch to SECOND PERSON, PRESENT TENSE\n- The listener IS the animal\n- This is not description or analysis — it is pure embodied sensory experience\n\nTHE CORE RULE:\nNo new facts. Only facts already established in earlier sections, now felt as sensory experience rather than known as information.\n\nNOT: \"Blue whales have hearts that slow to two beats per minute when diving.\"\nYES: \"As you descend, something inside you slows. A vast, deep rhythm. Your heart finds its deep-water pace — patient, unhurried, almost geological.\"\n\nNOT: \"Octopuses can taste through their suckers.\"\nYES: \"The rock arrives through your arm before you can see it clearly. Cold. Smooth in one patch, rough with something living in another. You already know what is worth turning over.\"\n\nHOW TO BEGIN:\nStart at a natural threshold. Dawn. Waking. Emergence from shelter. The first movement of the day. Ease in — do not drop the listener in mid-action.\n\nTHE SENSORY HIERARCHY:\nLead with this animal's dominant senses. What does it feel? What does the world taste or smell like here? Vision may be secondary or absent depending on the animal. Let the sensory world match the animal's actual experience, not a human's projection of it.\n\nTHE PROGRESSIVE SLOWING:\nAs the DITL moves toward rest, the writing must slow:\n- Sentences get shorter\n- Paragraphs grow more spacious\n- Activity decreases\n- The world around you grows quieter\n- End: the animal is still. Safe. At rest. Hold that stillness for a full paragraph before the section ends.\n\nMANDATORY ENDING:\nThe animal must be at rest by the final paragraph. The day has ended. Everything is still.`;\n\n} else if (actType === 'hard_wonder') {\n  actInstructions = `\n=== ACT TYPE: HARD WONDER ===\n\nYour job: earn and hold attention with the most surprising material — but never with excitement. Surprise and calm can coexist.\n\nTHE MICRO-STRUCTURE (apply to every significant fact):\n\n1. HOOK SENTENCE — one sentence that sounds impossible\n   \"Octopuses have three hearts, and two stop beating when they swim.\"\n   \"Sharks have existed for longer than trees.\"\n   \"A sperm whale's brain can weigh more than twenty pounds.\"\n   The hook should make the listener think: \"That can't be right.\"\n\n2. EXPANSION — 3-5 sentences on mechanism and context\n   How does this work? Why does it work this way? What does it mean for the animal's daily life?\n   Never dumbed down. Never over-explained.\n\n3. WONDER PIVOT — 1-3 sentences on what this fact MEANS\n   Not just what it is — what it says about life, evolution, the strangeness of being alive.\n   This is the soul of every section. Examples:\n   \"Even at the level of blood, they remind us that life does not follow one plan. It keeps finding new answers to the same old problem of staying alive.\"\n   \"The absence of a skeleton sounds like a weakness until you see how much freedom that softness creates.\"\n   \"Losing the shell may have helped drive octopus intelligence. Without heavy armor, survival would have depended less on sitting safely and more on making fast, flexible decisions.\"\n\n4. NATURAL BRIDGE — flow into the next fact without announcing it\n   Let the content lead. Never: \"Now let's talk about...\"\n\nPACING:\nMove briskly between facts. 4-6 facts per section. Vary depth — some facts get 3 paragraphs, others get one. Not everything needs equal weight.\n\nTONE:\nGenuinely interested, never excited. The voice of someone who has known about this for a long time and finds it just as remarkable as the first time.`;\n\n} else if (actType === 'behavior') {\n  actInstructions = `\n=== ACT TYPE: BEHAVIOR & ECOLOGY ===\n\nThe shift from what this animal IS to what it DOES. The shift from anatomy to story.\n\nWRITE SCENES, NOT DESCRIPTIONS:\nDo not say \"humpbacks use bubble nets to hunt.\" Say what it looks like when it happens. The spiral dive. The rising column of air. The school of fish compressing upward. The sudden breach. The chaos, then silence.\n\nDo not say \"orcas teach their calves.\" Say what that looks like. The calf watching from a distance. The mother demonstrating. The first attempt. The patience involved on both sides.\n\nTOPICS THAT BELONG HERE:\n- Hunting strategies: tactics, patience, coordination, precision\n- Social behavior: how individuals relate, hierarchies, long-term bonds\n- Family structures: mothers and calves, pods, multi-generational relationships\n- Communication: how signals work, what they accomplish, what is still unknown\n- Navigation: how the animal finds its way across impossible distances\n- Ecological role: what changes in the system when this animal does its work\n\nTHE WARMING TONE:\nThis act is warmer than Act 1. The animal is no longer just astonishing — it is becoming familiar. The listener is beginning to care about it, not just marvel at it. Let that warmth enter the writing without sentimentality.\n\nPACING:\nSlower than Act 1. 2-4 topics per section, each given 4-7 paragraphs. Sentences may begin lengthening slightly. You are moving toward the meditative cadence of Act 3, but not there yet.\n\nSTYLE RESTRICTION:\nDo not use fragmented sentence structures, isolated short lines, or staccato single-sentence paragraphs in behavior sections. That style — where a sentence stands entirely alone for rhythmic effect — belongs exclusively to the DITL. Behavior sections use full flowing prose throughout. If you feel the urge to write a line like \"The miles pass beneath you.\" as its own isolated paragraph, save it for the DITL.`;\n\n} else if (actType === 'interior') {\n  actInstructions = `\n=== ACT TYPE: INTERIOR LIFE ===\n\nThe most contemplative act. Facts become philosophy here.\n\nTHE SHIFT:\nWe have learned what the animal does. Now we ask what its existence means. What is it like to be this creature? What has it witnessed? What does its presence on Earth say about life itself?\n\nTOPICS THAT BELONG HERE:\n- Intelligence and consciousness: what these concepts mean for an animal so different from us\n- Deep evolutionary history: what this lineage has survived, what has changed around it while it persisted\n- The philosophical implications of unusual traits\n- The relationship between this animal and humans: myth, discovery, awe, the history of misunderstanding\n- Comparative wonder: how this animal forces us to rethink categories we assumed were fixed\n- Open-ended contemplation — ideas that trail off rather than resolve\n\nTHE TONE:\nSlow. Long sentences dominate. Meditative. The brain should be at the edge of sleep — give it beautiful things to sit with that do not demand resolution.\n\nRIGHT REGISTER:\n\"The octopus becomes more than an intriguing animal. It becomes a challenge to our definitions, asking whether we are brave enough to think bigger about minds.\"\n\"Sharks have watched, in a sense, as life conquered the land, as continents shifted, as ice ages came and went — all while continuing their quiet dominance of the ocean.\"\n\"When we ask what intelligence is, we often picture animals that resemble us. These animals challenge that habit entirely.\"\n\nOPEN-ENDED IS CORRECT HERE:\nDo not resolve the questions this act raises. Leave them open. The listener drifts with the question, not toward an answer. Questions that make you feel larger rather than anxious are perfect sleep content.\n\nDO NOT:\n- Force moral lessons (\"this teaches us to persevere\")\n- Offer tidy resolution (\"and so we see that nature is always perfect\")\n- Introduce anxious open questions (\"but will they survive climate change?\")\n\nRHYTHM:\nLongest sentences, most generous paragraph spacing, slowest pace of any section before the DITL.`;\n\n} else if (actType === 'animal_arc') {\n  actInstructions = `\n=== ACT TYPE: ANIMAL ARC (COMPILATION) ===\n\nA compressed single-species treatment within a compilation video. One section. One animal. Complete arc.\n\nSTRUCTURE WITHIN THIS SECTION:\n1. FACTS — 2-3 of the most surprising physical or biological facts about this animal, each with a full wonder pivot. Do not rush past these. The wonder pivot is still essential even in compressed form.\n\n2. BEHAVIOR SCENE — one key behavior rendered as a scene with enough texture to feel real. A hunt. A migration moment. A social interaction. Something that makes the listener feel they witnessed something.\n\n3. WONDER PIVOT — what does this animal's existence mean? What does it add to the compilation's overall theme? This is the section's emotional close — the reason this animal was included.\n\n4. NATURAL BRIDGE — a sentence that feels complete, then a gentle transition toward whatever animal comes next or toward the DITL.\n\nTONE:\nSame calm contemplative narrator. Same wonder pivot technique. Same wave rhythm. Just compressed. Think of it as a deep dive distilled to its most remarkable essence — not rushed, but selective.\n\nAVOID:\n- Listing facts without wonder pivots\n- Skipping the behavior scene to save words\n- An abrupt ending that feels cut off\n- Trying to cover too many facts — depth over breadth, even here`;\n\n} else if (actType === 'close') {\n  actInstructions = `\n=== THIS IS THE CLOSE SECTION ===\n\nThe softest landing of the entire video.\n\nLENGTH: 600-800 words maximum. Brevity is a feature here.\n\nSTRUCTURE:\n1. Acknowledge the journey is ending — pull back gently from wherever the DITL left us\n2. One or two sentences crystallizing what was remarkable (not a summary of facts — a sense of what they mean)\n3. The deepest physical relaxation cues of the entire video\n4. Final line: alone, short, complete\n\nRELAXATION CUES GO FURTHER HERE:\nOpening used: shoulders, breath\nClose uses: jaw unclenched, hands open, body heavy, eyes heavy, nowhere to be, nothing required\n\nTHE FINAL LINE:\nAlways stands alone. Always short. Always final.\nStandard: \"Sleep well, and good night.\"\nOr simply: \"Good night.\"\nSounds like a door closing quietly.\n\nWHAT TO AVOID:\n- Summarizing facts (the listener is almost asleep)\n- Any new information\n- Excitement or energy of any kind\n- \"Thanks for watching\" or any platform language\n- Rushing`;\n}\n\n// =====================================================\n// SYSTEM PROMPT\n// =====================================================\n\nconst systemPrompt = `You are a writer for Deep Sea Slumber, a calm educational sleep YouTube channel. You write sections of 2+ hour sleep videos about ocean creatures, ecosystems, and related topics — for curious minds of all ages, especially neurodivergent listeners.\n\n=== THE NARRATOR'S VOICE ===\n\nCalm. Contemplative. Genuinely wondering. Not performing wonder — having it.\n\nA patient, curious person sitting in the dark with someone, sharing remarkable things quietly. Warm without excitement. Each sentence arrives like something true that has been thought about for a long time.\n\nThis voice never rises. It never tries to hold attention through excitement. It holds attention through the quality of what it notices and the depth of how it notices it.\n\n=== THE WONDER PIVOT — THE CORE TECHNIQUE ===\n\nEvery fact segment moves: WHAT something is → HOW it works → WHAT IT MEANS.\n\nThe wonder pivot is what separates this from a Wikipedia reading. It's the moment where a fact stops being information and becomes contemplation. It's what the listener drifts off thinking about.\n\nExamples:\n\"Even at the level of blood, they remind us that life does not follow one plan. It keeps finding new answers to the same old problem of staying alive.\"\n\"Weakness may have pushed innovation. Exposure may have rewarded problem-solving. The octopus becomes an example of how danger itself can shape brilliance, turning softness into a reason to become uncannily clever.\"\n\"Intelligence here is not behind the eyes. It is everywhere. The mind is distributed in a way that makes the very concept of a command center seem like a very human assumption.\"\n\n=== SENTENCE AND PARAGRAPH RHYTHM ===\n\nWrite in waves: short punch → medium build → long flowing sentence → short landing.\n\n\"Swimming is effective in a crisis, though it is costly. That is why many species prefer to crawl over rock, sand, and coral instead of racing through open water. Even though circulation hints at a life shaped by tradeoffs where speed is expensive and efficiency matters, it is a strange design — but it works beautifully in the cold, dim, pressurized world where these animals hunt, hide, and survive. It works.\"\n\nRules:\n- Maximum 5 sentences per paragraph\n- No sentence longer than 30 words\n- After a long sentence, a short one follows\n- Paragraph breaks are generous — this is designed to be heard, not read\n\n=== WORD PALETTE ===\n\nUse deliberately:\ndrift, glide, settle, ancient, quiet, strange, patient, familiar, distant, beneath, slow, still, dark, vast, hidden, soft\n\nEffective sentence openers:\n\"That is why...\" (cause-effect, satisfying)\n\"Yet...\" (pivot from expected to surprising)\n\"What makes this...\" (invitation to lean in)\n\"In other words...\" (clarification that deepens)\n\"And yet...\" (the beautiful contradiction)\n\"Imagine...\" (visualization — maximum ONCE per section)\n\n=== THE GRADIENT ===\n\nEvery section is calmer than the one before it. Hard Wonder sections are the highest energy after the Opening. Interior Life sections are meditative. The DITL is the softest content before the Close. Never turn the dial back up.\n\n=== WHAT TO NEVER DO ===\n\nBLACKLISTED WORDS/PHRASES:\n\"Incredibly\" / \"amazingly\" / \"unbelievably\" as empty modifiers\n\"Did you know\" / \"Here's a fun fact\"\n\"Here's the thing\" / \"If you think about it\" / \"The reality is\" / \"Truth be told\"\n\"This teaches us that...\" (forced lesson)\n\"You might be surprised to learn\"\n\"Believe it or not\"\nExclamation points anywhere in narration\n\nBLACKLISTED PATTERNS:\n- Ending a section on a high note (every section ends calmer than it began)\n- Tidy moral resolution in Act 3\n- Direct sleep instructions outside the Close (\"breathe deeply,\" \"close your eyes\")\n- Announcing transitions (\"Now let's explore...\" / \"Moving on to...\")\n- Re-explaining anything already covered in a previous section\n\n${actInstructions}\n\nIMPORTANT: Write ONLY the section content. No headers, no act type labels.`;\n\n// =====================================================\n// USER PROMPT\n// =====================================================\n\nconst outlineText = input.full_outline.map(s =>\n  `Section ${s.number} [${s.act_type}]: ${s.title} (${s.target_words} words) — ${s.description}`\n).join('\\n');\n\nconst spokenTransition = input.current_section.spoken_transition\n  ? `\\n\\nSuggested transition into this section: \"${input.current_section.spoken_transition}\"\\nUse this or something with equivalent calm flow. Never announce the section change.`\n  : '';\n\nlet userPrompt = `Write Section ${input.current_section.number} of a Deep Sea Slumber video about: ${input.topic}\n\nFull video outline for context:\n${outlineText}\n\nWriting Section ${input.current_section.number}: ${input.current_section.title}\nAct type: ${actType}\nDescription: ${input.current_section.description}\nTarget word count: ${input.current_section.target_words} words\n${spokenTransition}\n\nSection ${input.current_section.number} of ${input.total_sections} total.`;\n\n// Continuity from previous section\nif (previousSectionText) {\n  const words = previousSectionText.split(/\\s+/);\n  const lastWords = words.slice(-400).join(' ');\n\n  userPrompt += `\n\nEND OF PREVIOUS SECTION (for continuity):\n\"\"\"\n...${lastWords}\n\"\"\"\n\nContinue naturally. Match tone and cadence — but continue the gradient descent. This section should feel slightly calmer than where that excerpt ended.`;\n}\n\n// For DITL: provide the fact inventory\nif (isDITL) {\n  const factSections = input.full_outline\n    .filter(s => s.act_type === 'hard_wonder' || s.act_type === 'behavior' || s.act_type === 'animal_arc')\n    .map(s => `${s.title}: ${s.description}`)\n    .join('\\n');\n\n  userPrompt += `\n\nFACT INVENTORY FOR THE DITL:\nThese are the facts and behaviors already covered in earlier sections. Use them as felt sensory experience — never as new information being delivered.\n${factSections}\n\nCRITICAL: No new facts. Only what the listener already knows, now felt rather than known.`;\n}\n\n// What the listener has already experienced\nconst previousSections = input.full_outline\n  .slice(0, input.section_index)\n  .map(s => `Section ${s.number} [${s.act_type}]: ${s.title}`)\n  .join('\\n');\n\nif (previousSections) {\n  userPrompt += `\n\nWHAT THE LISTENER HAS ALREADY EXPERIENCED:\n${previousSections}\n\nDo not re-explain anything already covered. Build on it.`;\n}\n\nuserPrompt += `\n\nWORD COUNT TARGET: ${input.current_section.target_words} words (within 5%)\n\nFINAL REMINDERS:\n- The gradient continues: this section is calmer than the last\n- Wonder pivot on every significant fact (what does this MEAN?)\n- Wave rhythm: punch → build → flow → landing\n- End this section calmer than you began it`;\n\n// Opening variety\nif (usedOpenings.length > 0) {\n  userPrompt += `\n\nOPENING VARIETY — These patterns were used in earlier sections:\n${usedOpenings.map(o => `- \"${o}\"`).join('\\n')}\n\nOpen this section differently:\n- Time passage: \"Three hours later, the light has shifted.\"\n- New sensory entry: \"The water is colder here.\"\n- Quiet cause-and-effect: \"This is why they move in spirals.\"\n- Simple continuation: \"But the body has more surprises yet.\"\n- A single fact that contains a world: \"The word for this has no equivalent in English.\"`;\n}\n\n// Final section\nif (input.is_final) {\n  userPrompt += `\n\nTHIS IS THE FINAL SECTION:\n- No \"good night,\" no CTA, no \"thanks for watching\" — the close section handles all of this\n- Reduce all energy to its minimum\n- End on legacy, endurance, or quiet continuation\n- Let it fade rather than stop`;\n}\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"anthropic/claude-sonnet-4.6\",\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.8\n    }\n  }\n}];"
+      },
+      "id": "f14b9ef0-9a21-4e24-8ffa-37c89e443747",
+      "name": "Build Regular Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        176
+      ],
+      "notes": "Builds JSON for regular section API call"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Title",
+              "value": "=SFS Section {{ $('Is Opening Section?').item.json.current_section.number }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {}
+      },
+      "id": "1330e7f2-dd3e-404a-9a74-3985626778d5",
+      "name": "Generate Regular Section",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        192
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "VNgbdBR86ZkDETr5",
+          "name": "OpenRouter account"
+        }
+      },
+      "notes": "Generates regular section"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sectionContent = $input.item.json.choices[0].message.content;\nconst loopData = $('Loop Over Sections').item.json;\n\nconst staticData = $getWorkflowStaticData('global');\n\n// Extract the first sentence/opening phrase (first 50 chars or until first period)\nconst openingPhrase = sectionContent.substring(0, 100).split('.')[0];\n\n// Initialize or append to used openings list\nif (!staticData.usedOpenings) {\n  staticData.usedOpenings = [];\n}\nstaticData.usedOpenings.push(openingPhrase);\n\n// Save content for next iteration\nstaticData.lastSectionContent = sectionContent;\nstaticData.lastSectionNumber = loopData.current_section.number;\n\n// Format the section with header\nconst formattedSection = `# **Section ${loopData.current_section.number}: ${loopData.current_section.title}**\\n\\n${sectionContent}`;\n\nreturn [{\n  json: {\n    topic: loopData.topic,\n    video_name: loopData.video_name,\n    voice_id: loopData.voice_id,\n    full_title: loopData.full_title,\n    total_sections: loopData.total_sections,\n    section_number: loopData.current_section.number,\n    section_title: loopData.current_section.title,\n    section_content: formattedSection,\n    raw_content: sectionContent,\n    word_count: sectionContent.split(/\\s+/).length\n  }\n}];"
+      },
+      "id": "6f1b4192-5b97-4cff-b2b2-34456fa34797",
+      "name": "Format Section",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        128
+      ],
+      "notes": "Adds section header and formats content"
+    },
+    {
+      "parameters": {},
+      "id": "29b8bc85-db74-48cc-b7e9-7f26037ee5e2",
+      "name": "Rate Limit Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        128
+      ],
+      "webhookId": "ee63de72-3815-4d62-9488-531c6ddedb6f",
+      "notes": "5 second pause between sections"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "all_sections",
+        "options": {}
+      },
+      "id": "bafffa87-f828-4ee1-9fae-bf5295f4d388",
+      "name": "Aggregate All Sections",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        368
+      ],
+      "notes": "Collects all generated sections"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sections = $input.item.json.all_sections;\n\n// Sort by section number to ensure correct order\nsections.sort((a, b) => a.section_number - b.section_number);\n\n// Combine all sections with separator\nconst fullScript = sections.map(s => s.section_content).join('\\n\\n---\\n\\n');\n\n// Calculate total word count\nconst totalWords = sections.reduce((sum, s) => sum + s.word_count, 0);\n\n// Get metadata from first section\nconst metadata = sections[0];\n\nreturn [{\n  json: {\n    topic: metadata.topic,\n    video_name: metadata.video_name,\n    voice_id: metadata.voice_id,\n    full_title: metadata.full_title,\n    total_sections: metadata.total_sections,\n    total_words: totalWords,\n    full_script: fullScript,\n    sections: sections\n  }\n}];"
+      },
+      "id": "5b6d51ad-6972-4de4-88ab-1177e6d1cb72",
+      "name": "Combine Full Script",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        368
+      ],
+      "notes": "Combines all sections into the complete script"
+    },
+    {
+      "parameters": {
+        "folderId": "=1yHL9tjn8YTnaPTb5laXwEX2ihvD6tO1F",
+        "title": "=DSS - {{ $('Build Outline Request').item.json.topic }} - {{ $now.setZone('America/New_York').toFormat('yyyy.MM.dd') }}"
+      },
+      "id": "82e58238-dd9c-46a3-a8f4-abbf4c1b54b4",
+      "name": "Create Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        0,
+        368
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "Creates the final Google Doc"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "output-doc-id",
+              "name": "document_id",
+              "value": "={{ $json.documentId }}",
+              "type": "string"
+            },
+            {
+              "id": "output-doc-url",
+              "name": "document_url",
+              "value": "=https://docs.google.com/document/d/{{ $json.documentId }}/edit",
+              "type": "string"
+            },
+            {
+              "id": "output-video-name",
+              "name": "video_name",
+              "value": "={{ $('Combine Full Script').item.json.video_name }}",
+              "type": "string"
+            },
+            {
+              "id": "output-voice-id",
+              "name": "voice_id",
+              "value": "={{ $('Combine Full Script').item.json.voice_id }}",
+              "type": "string"
+            },
+            {
+              "id": "output-total-words",
+              "name": "total_words",
+              "value": "={{ $('Combine Full Script').item.json.total_words }}",
+              "type": "number"
+            },
+            {
+              "id": "output-total-sections",
+              "name": "total_sections",
+              "value": "={{ $('Combine Full Script').item.json.total_sections }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "12a50685-0c65-4b06-ae25-96a7647e9c79",
+      "name": "Output Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        368
+      ],
+      "notes": "Final output with document URL and metadata"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create Google Doc').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "locationChoice": "location",
+              "text": "=={{ $('Combine Full Script').item.json.full_script }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        272,
+        368
+      ],
+      "id": "0c02a6e6-fc42-42c3-b8b3-8a56d80d1beb",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clear staticData from any previous workflow runs\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastSectionContent = null;\nstaticData.lastSectionNumber = null;\nstaticData.usedOpenings = [];\n\n// Pass through all input data unchanged\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1696,
+        144
+      ],
+      "id": "4b5b73a7-58b6-42ee-9117-5d3440fe5f68",
+      "name": "Clear Previous Run Data"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+          "mode": "list",
+          "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "doc_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2368,
+        192
+      ],
+      "id": "5636df5e-8719-46e7-a3fb-561761f806b9",
+      "name": "Read Topics Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9210a589-8e5b-4c72-af00-61b0478d399b",
+              "leftValue": "={{ $json.row_number }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2016,
+        192
+      ],
+      "id": "0918818a-fc5b-4cbc-956e-044b943a812c",
+      "name": "Any Topics to Process?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1680,
+        448
+      ],
+      "id": "78e6a29d-d884-4a18-81a5-25ae73cb4ec5",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.item.json;\n\nreturn [{\n  json: {\n    topic: row.topic,\n    video_name: row.video_name,\n    target_words: parseInt(row.target_words),\n    voice_id: row.voice_id || 'AeRdCCKzvd23BpJoofzx', // default if empty\n    script_type: row.script_type || 'deep_dive',\n    // Preserve original row data for later update\n    _original_row: row\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1408,
+        144
+      ],
+      "id": "aee4e4d3-c5b9-41b1-a8ed-229652e753e8",
+      "name": "Map Sheet Data to Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+          "mode": "list",
+          "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Map Sheet Data to Workflow').item.json._original_row.row_number }}",
+            "doc_id": "={{ $json.document_id }}",
+            "doc_link": "={{ $json.document_url }}",
+            "date_completed": "={{ $now.setZone('America/New_York').format('yyyy-MM-dd HH:mm:ss') }}",
+            "edit_status": "ready",
+            "image_status": "ready",
+            "tts_status": "ready"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "edit_status",
+              "displayName": "edit_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        368
+      ],
+      "id": "45a9c546-1c7b-451d-899c-c93ff0929501",
+      "name": "Update Sheet with Results",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2640,
+        448
+      ],
+      "id": "a8fe406d-ac9e-47fb-94fa-1ee254897372",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Topics Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Outline Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Outline": {
+      "main": [
+        [
+          {
+            "node": "Parse Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Outline": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Sections": {
+      "main": [
+        [
+          {
+            "node": "Aggregate All Sections",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Opening Section?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Opening Section?": {
+      "main": [
+        [
+          {
+            "node": "Build Opening Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Regular Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Opening Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Opening Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Opening Section": {
+      "main": [
+        [
+          {
+            "node": "Format Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Regular Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Regular Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Regular Section": {
+      "main": [
+        [
+          {
+            "node": "Format Section",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Section": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Delay": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Sections": {
+      "main": [
+        [
+          {
+            "node": "Combine Full Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Full Script": {
+      "main": [
+        [
+          {
+            "node": "Create Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Summary": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet with Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Output Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Previous Run Data": {
+      "main": [
+        [
+          {
+            "node": "Map Sheet Data to Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Topics Sheet": {
+      "main": [
+        [
+          {
+            "node": "Any Topics to Process?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Topics to Process?": {
+      "main": [
+        [
+          {
+            "node": "Clear Previous Run Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Sheet Data to Workflow": {
+      "main": [
+        [
+          {
+            "node": "Build Outline Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet with Results": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Topics Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveExecutionProgress": true,
+    "binaryMode": "separate",
+    "timezone": "America/New_York",
+    "timeSavedPerExecution": 30
+  },
+  "staticData": {
+    "global": {
+      "usedOpenings": [
+        "Hello there and welcome to Deep Sea Slumber",
+        "The reef can look at first like solid ground beneath the water, and yet almost everything about it b",
+        "And once you know what a reef is made of, another surprise appears: this abundance can exist only in",
+        "The water must be just right, and if it is, the reef begins to do something even stranger still: it ",
+        "Stone and sunlight make the stage, but the reef becomes fully itself only when its residents begin t",
+        "And within all that motion, some of the reef's most important work happens not through force, but th",
+        "Even cooperation has its own hours, and on a reef, time itself divides the world into different kind",
+        "By now the reef feels less like a collection of species and more like a way of living together",
+        "And once a reef begins to feel like a community, it is hard not to wonder how long such communities ",
+        "And now we stop knowing, and simply become",
+        "And after all that color, motion, and time, what remains is something very simple and very quiet"
+      ],
+      "lastSectionContent": "And after all that color, motion, and time, what remains is something very simple and very quiet.\n\nThe reef is still there. It was there before this evening began, before any of these words, before the first light touched the water today. It will be there when the light returns tomorrow. That continuity is not a small thing. It is, in its way, the whole point.\n\nTiny animals built this. Animals without eyes, without plans, without any awareness of what they were making together. They took what the water offered — the calcium, the warmth, the light — and they added to what was already there, one small act at a time. And over centuries, over millennia, the accumulation of all those small acts became something that can be seen from space. Something that shelters thousands of species. Something that has outlasted ice ages and rising seas and the slow drift of continents.\n\nThat is what patience looks like, at its longest scale. That is what belonging to a world can mean.\n\nYou have drifted through that world tonight. You have moved through the warm water, past the branching coral and the sleeping fish and the slow hunters and the polyps extending their quiet arms into the dark. You have been in a place where life has found every available surface, every crevice, every shaft of light — and made something of it. Not because it was trying to. Because that is simply what life does, given time and the right conditions.\n\nThere is something restful in that.\n\nLet your jaw unclench now, if it has not already. Let your hands open, soft and still against whatever is beneath them. Your body is heavy in the way that bodies become heavy when they have finally stopped asking anything of themselves. There is nowhere to be. There is nothing required. The reef continues in the dark, far away, doing its slow and ancient work — and you are here, still, in the warm and quiet dark of wherever you are.\n\nThe reef does not need to be understood to be beautiful. It does not need to be visited to matter. It exists, patient and intricate, in the same world you inhabit — the same ocean, the same planet, the same long story of life finding ways to persist and shelter and grow alongside other life. You are part of that story too, even here, even now, even in rest.\n\nEspecially in rest.\n\nYour eyes are heavy. Let them be heavy. The weight of them is easy. The weight of the whole body is easy. You are held, the way the water holds everything that drifts through it — without effort, without condition, without asking anything in return.\n\nThe reef breathes in its way. You breathe in yours. The dark is full of living things, all of them continuing, all of them enough, all of them exactly where they are.\n\nSleep well, and good night.",
+      "lastSectionNumber": 11
+    },
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        0
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a0189a08-ba73-4093-a4ac-d4a0fb91dfdc",
+  "activeVersionId": "a0189a08-ba73-4093-a4ac-d4a0fb91dfdc",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-10T02:08:14.506Z",
+      "createdAt": "2026-04-10T02:08:14.506Z",
+      "role": "workflow:owner",
+      "workflowId": "vDBsTpNpbNNIKQ82",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-16T23:04:12.000Z",
+    "createdAt": "2026-04-16T05:47:51.871Z",
+    "versionId": "a0189a08-ba73-4093-a4ac-d4a0fb91dfdc",
+    "workflowId": "vDBsTpNpbNNIKQ82",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "b533003c-9747-46cf-88de-db0fec102b99",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -2704,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// =====================================================\n// BUILD OUTLINE REQUEST - DEEP SEA SLUMBER\n// =====================================================\n\nconst input = $input.item.json;\n\nconst systemPrompt = `You are a content architect for Deep Sea Slumber, a calm educational sleep YouTube channel. You create outlines for 2+ hour sleep videos about ocean creatures, ecosystems, and related topics — designed for curious minds of all ages, especially neurodivergent listeners.\n\nTHE CHANNEL'S CORE PROMISE:\n\"Calm, fascinating facts that help curious minds drift off to sleep — gentle enough for sensitive listeners, interesting enough that bedtime becomes something to look forward to.\"\n\nTHE FORMAT:\nThese are 2+ hour sleep environments, not short bedtime stories. The entire video is a slow, continuous gradient descent in stimulation. A listener at minute 90 should feel the content is calmer than at minute 10. This gradient is the product itself.\n\nTHE VOICE:\nA calm, contemplative narrator who finds genuine wonder in science. Not a comedian. Not a lecturer. A patient, curious person sitting beside someone in the dark, sharing remarkable things quietly. Warm without excitement. Awe without agitation.\n\n=== THE FOUR-ACT GRADIENT STRUCTURE ===\n\nACT 1 — HARD WONDER (act_type: \"hard_wonder\")\nThe most surprising material. Physical impossibilities. Records. Superlatives. Facts that sound impossible until explained.\n- Anatomical and physical extremes\n- Records: oldest, deepest, largest, fastest, strangest\n- Counterintuitive biology that reframes assumptions\n- Energy level: genuinely interesting, never exciting\n- Segment depth: shorter — move briskly between facts\n\nACT 2 — BEHAVIOR & ECOLOGY (act_type: \"behavior\")\nShift from what the subject IS to what it DOES. Stories live here.\n- Hunting strategies: patience, precision, technique\n- Social behavior: family structures, communication, bonds\n- Migration and navigation across impossible distances\n- Parent-offspring relationships\n- Ecological role: what happens when this animal does its work\n- Energy level: warm and gently engaged\n- Segment depth: longer — let scenes breathe and stories develop\n\nACT 3 — INTERIOR LIFE (act_type: \"interior\")\nThe most contemplative material. What does this subject's existence mean?\n- Intelligence and consciousness in a form unlike ours\n- Deep evolutionary history: what this animal has witnessed\n- Philosophical implications of unusual traits\n- The relationship between this subject and humans: myth, discovery, awe\n- Open-ended contemplation — ideas to drift with, not resolve\n- Energy level: slow, meditative, almost lullaby cadence\n- Segment depth: longest — some topics sustain 8-10 paragraphs\n\nDAY IN THE LIFE — DITL (act_type: \"ditl\", is_ditl: true)\nThe second-to-last section. The gear change that defines this channel.\n- Standard: switches to SECOND PERSON, PRESENT TENSE — the listener IS the animal\n- Ecosystem: ambient drift — the listener is pure awareness moving through the space, no single body\n- No new facts — only facts from earlier sections, now felt as sensory experience\n- Sentences grow progressively shorter as the day moves toward rest\n- Must end with stillness — the animal or environment at rest, the listener with it\n- Energy level: the lowest of the entire video\n\nCLOSE (act_type: \"close\")\nFinal section. The softest landing.\n- 600-800 words only\n- Crystallizes what was wonderful\n- Deepest physical relaxation cues of the entire video\n- Final line stands alone\n\n=== SCRIPT TYPES ===\n\nsingle_species:\nUse the standard 4-act gradient exactly as described. One animal. Full treatment. All sections follow the act types above.\n\necosystem:\nThe place is the subject, not one animal.\n- Hard Wonder sections: the environment itself — depth, pressure, darkness, temperature, scale, the physics of this world\n- Behavior sections: multiple inhabitants, their interactions, the food web, what happens at different times (day/night, season)\n- Interior Life sections: what this environment means — what life at these extremes says about existence itself\n- DITL: ambient drift through the ecosystem. The listener has no animal body. They are pure awareness drifting through the space, observing what the earlier sections described. The section description should begin with \"ECOSYSTEM DITL:\" so the writer knows to use ambient drift mode.\n- Close: same as always\n\ncompilation:\nMultiple animals, one unifying theme.\n- Opening: introduces the theme, not one specific animal\n- Middle sections: each section covers ONE animal with act_type \"animal_arc\" — a compressed single-species treatment (facts, a key behavior scene, wonder pivot) all within one section\n- DITL: picks the single most experientially interesting animal from the lineup for full second-person embodiment. The section description should name the chosen animal and briefly explain why it was chosen.\n- Close: same as always\n\n=== TOPICS TO AVOID IN ANY SECTION ===\n- Predation described in graphic or distressing detail\n- Extinction framed as scary or hopeless\n- Anything requiring urgent cognitive engagement\n- Content that would cause a parent to switch the video off\n\n=== OUTPUT FORMAT ===\nReturn ONLY valid JSON with no other text:\n{\n  \"title\": \"Full video title\",\n  \"hook_question\": \"The single fact about this subject that sounds most impossible when stated plainly\",\n  \"sections\": [\n    {\n      \"number\": 1,\n      \"title\": \"Section Title\",\n      \"description\": \"What this section explores and the wonder it creates\",\n      \"target_words\": 1000,\n      \"spoken_transition\": \"Calm bridge from the previous section — empty string for Opening\",\n      \"act_type\": \"opening\",\n      \"is_ditl\": false\n    }\n  ]\n}`;\n\nconst scriptTypeInstructions = {\n  single_species: `One animal. Full 4-act gradient treatment. All sections use the standard act types: opening → hard_wonder → behavior → interior → ditl → close.`,\n  ecosystem: `The place is the subject. Hard Wonder = the environment itself. Behavior = its inhabitants and interactions. Interior Life = what this environment means philosophically. DITL = ambient drift, no single animal body — begin the DITL description with \"ECOSYSTEM DITL:\". Close = standard.`,\n  compilation: `Multiple animals, one theme. Middle sections use act_type \"animal_arc\" — one animal per section, compressed treatment. DITL = pick the single best animal for embodied experience, name it in the description and explain why. Close = standard.`\n};\n\nconst sectionStructure = {\n  single_species: `- Section 1: Opening (act_type: \"opening\") — spoken_transition is empty string\n- Sections 2-5: Act 1 — Hard Wonder (act_type: \"hard_wonder\")\n- Sections 6-8: Act 2 — Behavior & Ecology (act_type: \"behavior\")\n- Sections 9-11: Act 3 — Interior Life (act_type: \"interior\")\n- SECOND-TO-LAST: DITL (act_type: \"ditl\", is_ditl: true)\n- FINAL: Close (act_type: \"close\")`,\n  ecosystem: `- Section 1: Opening (act_type: \"opening\") — spoken_transition is empty string\n- Sections 2-4: Hard Wonder — the environment itself (act_type: \"hard_wonder\")\n- Sections 5-7: Behavior & Ecology — inhabitants and interactions (act_type: \"behavior\")\n- Sections 8-9: Interior Life — what this environment means (act_type: \"interior\")\n- SECOND-TO-LAST: DITL — ambient ecosystem drift (act_type: \"ditl\", is_ditl: true) — description begins with \"ECOSYSTEM DITL:\"\n- FINAL: Close (act_type: \"close\")`,\n  compilation: `- Section 1: Opening — introduces the theme, not one animal (act_type: \"opening\") — spoken_transition is empty string\n- Middle sections: one animal per section (act_type: \"animal_arc\") — 2000-2500 words each\n- SECOND-TO-LAST: DITL — best single animal for embodiment (act_type: \"ditl\", is_ditl: true) — name the animal in the description\n- FINAL: Close (act_type: \"close\")`\n};\n\nconst wordCountGuide = {\n  single_species: `- Opening: 800-1000 words\n- Hard Wonder sections: 2000-2500 words each\n- Behavior sections: 2000-2500 words each\n- Interior Life sections: 1500-2000 words each\n- DITL: 2000-2500 words\n- Close: 600-800 words`,\n  ecosystem: `- Opening: 800-1000 words\n- Hard Wonder sections: 2000-2500 words each\n- Behavior sections: 2000-2500 words each\n- Interior Life sections: 1500-2000 words each\n- DITL: 2000-2500 words\n- Close: 600-800 words`,\n  compilation: `- Opening: 800-1000 words\n- Animal Arc sections: 2000-2500 words each\n- DITL: 2000-2500 words\n- Close: 600-800 words`\n};\n\nconst scriptType = input.script_type || 'single_species';\n\nconst userPrompt = `Create an outline for a Deep Sea Slumber video about: ${input.topic}\n\nScript type: ${scriptType}\n${scriptTypeInstructions[scriptType] || scriptTypeInstructions.single_species}\n\nTarget total word count: ${input.target_words} words\n(This produces approximately ${Math.round(input.target_words / 130)} minutes of audio at a calm speaking pace)\n\nCreate 10-14 sections with word counts totaling approximately ${input.target_words} words.\n\nSTRUCTURE RULES:\n${sectionStructure[scriptType] || sectionStructure.single_species}\n\nWORD COUNT TARGETS:\n${wordCountGuide[scriptType] || wordCountGuide.single_species}\n\nSECTION TITLE GUIDANCE:\nTitle sections by what they explore, not by act type label:\n✅ \"The Architecture of the Body\"\n✅ \"How Blue Whales Hunt in Darkness\"\n✅ \"What It Means to Live Two Hundred Years\"\n❌ \"Hard Wonder Section\"\n❌ \"Act Two: Behavior\"\n\nSPOKEN TRANSITIONS:\nCalm and flowing — never announce a section change:\n✅ \"And yet, what the body is built for matters less than what it does with it.\"\n✅ \"Three thousand feet down, the world changes completely.\"\n✅ \"But anatomy is only the beginning of this story.\"\n❌ \"Now let's turn our attention to...\"\n❌ \"In this next section, we'll explore...\"\n\nFor the DITL transition:\n✅ \"And now we stop knowing, and simply become.\"\n✅ \"Everything we've learned fades for a moment into the simplest thing of all — a single day.\"\n\nHOOK QUESTION:\nThe single fact that sounds most impossible when stated plainly. What would make someone say \"that can't be right\"?`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"openai/gpt-5.4\",\n      max_tokens: 4096,\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.7\n    }\n  }\n}];"
+        },
+        "id": "02e46e09-4ac4-49a7-9399-2b832577109f",
+        "name": "Build Outline Request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1104,
+          128
+        ],
+        "notes": "Builds the JSON body for outline generation"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openRouterApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Title",
+                "value": "SFS Outline"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+          "options": {}
+        },
+        "id": "090cc341-b12e-4c33-8caa-c891c1425d1b",
+        "name": "Generate Outline",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -880,
+          128
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        },
+        "notes": "Generates the story outline"
+      },
+      {
+        "parameters": {
+          "jsCode": "const response = $input.item.json.choices[0].message.content;\nlet outline;\n\ntry {\n  outline = JSON.parse(response);\n} catch (e) {\n  const jsonMatch = response.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    outline = JSON.parse(jsonMatch[1]);\n  } else {\n    const jsonMatch2 = response.match(/\\{[\\s\\S]*\\}/);\n    if (jsonMatch2) {\n      outline = JSON.parse(jsonMatch2[0]);\n    } else {\n      throw new Error(\"Could not parse outline response as JSON: \" + response.substring(0, 200));\n    }\n  }\n}\n\nconst originalInput = $('Build Outline Request').first().json;\nconst topic = originalInput.topic;\nconst video_name = originalInput.video_name;\nconst voice_id = originalInput.voice_id;\nconst script_type = originalInput.script_type;\n\nreturn outline.sections.map((section, index) => ({\n  json: {\n    topic: topic,\n    video_name: video_name,\n    voice_id: voice_id,\n    script_type: script_type,\n    full_title: outline.title,\n    hook_question: outline.hook_question,\n    total_sections: outline.sections.length,\n    full_outline: outline.sections,\n    current_section: section,\n    section_index: index,\n    is_opening: section.number === 1,\n    is_final: section.number === outline.sections.length\n  }\n}));"
+        },
+        "id": "131b123e-40d9-4ac8-bc22-4c581cb4126e",
+        "name": "Parse Outline",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -656,
+          128
+        ],
+        "notes": "Parses the outline JSON and prepares for section-by-section generation"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "14cf5ea1-7fed-47b3-8fee-44d22c16042e",
+        "name": "Loop Over Sections",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -448,
+          128
+        ],
+        "notes": "Processes one section at a time"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "is-opening",
+                "leftValue": "={{ $json.is_opening }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "a416a45c-72d2-4ba5-a7cf-972b1e0a0ecd",
+        "name": "Is Opening Section?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -224,
+          128
+        ],
+        "notes": "Routes to Opening prompt or Regular prompt"
+      },
+      {
+        "parameters": {
+          "jsCode": "// =====================================================\n// BUILD OPENING REQUEST - DEEP SEA SLUMBER\n// =====================================================\n\nconst input = $input.item.json;\n\nconst systemPrompt = `You are writing the OPENING SECTION for Deep Sea Slumber, a calm educational sleep YouTube channel.\n\n=== THE NARRATOR'S VOICE ===\n\nCalm. Contemplative. Genuinely wondering. Not performing wonder — having it.\n\nA patient, curious person sitting in the dark beside someone, sharing remarkable things quietly. Warm without excitement. Each sentence arrives like something true that has been thought about for a long time.\n\nThis is NOT:\n- A children's TV presenter (\"Hey everyone!\")\n- A comedian (\"Can you BELIEVE this?\")\n- A lecturer (\"Today we will cover...\")\n- A nature documentary anchor building to a dramatic reveal\n\nThis IS:\n- Someone who finds the world genuinely, quietly remarkable\n- A voice that says \"here is something astonishing\" in the same tone one might say \"the kettle is ready\"\n- The presence that makes you feel safe and curious at the same time\n\n=== WHAT THE OPENING MUST ACCOMPLISH ===\n\nThree things, in order:\n1. Establish wonder — earn the listener's attention by showing what's remarkable about this animal\n2. Establish the ritual — the listener knows what kind of journey this is\n3. Begin the physical descent — gently direct the body toward rest\n\n=== MANDATORY OPENING STRUCTURE ===\n\n**PART 1 — GREETING + JOURNEY METAPHOR:**\nAlways begins: \"Hello there and welcome to Deep Sea Slumber.\"\nSecond sentence: \"Tonight we...\" — followed by a journey metaphor into the animal's world.\n\nExample: \"Tonight we drift beneath the surface of the ocean into a world where intelligence does not always look the way we expect.\"\n\n**PART 2 — GRAND FRAMING (3-6 sentences):**\nEstablish the animal's place in the world. Not a list of facts — a sense of what this animal IS, what makes it remarkable, what it invites us to reconsider.\n\nThis framing should feel cosmic but quiet. Not exciting — awe-inducing in a way that stills rather than energizes.\n\nStrong examples:\n- \"They are bigger than dinosaurs, older than human cities, and more complex than almost anything else alive today.\"\n- \"Here in shifting light and shadow lives a creature with no bones, three hearts, and a mind that seems to reach through every part of its body. It moves like water itself, reshaping, rethinking, responding in ways that feel both familiar and strangely alien.\"\n- \"They have survived every catastrophe this planet has invented. They were here before trees. They will likely be here after us.\"\n\n**PART 3 — JOURNEY PREVIEW (1-2 sentences):**\nHint at what we'll discover — without listing facts. A sense of direction, not a table of contents.\n\n**PART 4 — SOFT CTA:**\nUse this EXACT formula every time:\n\"If you enjoy these gentle journeys, I invite you to like, subscribe, or share a thought below. It helps others find their way here, too. One sleepy soul at a time.\"\n\nThis is the channel's fingerprint. It must not change significantly between videos.\n\n**PART 5 — PHYSICAL RELAXATION CUES (2-4 sentences):**\nGently direct the listener's body toward rest. Reference:\n- Shoulders softening\n- Breathing slowing\n- A movement metaphor that matches the animal's world (\"as we sink,\" \"as we drift,\" \"as we travel back\")\n\nKeep it brief and woven into the journey. Not a yoga instruction. Not clinical.\n\n**PART 6 — \"Let's begin.\"**\nAlways. These two words, alone, end the opening.\n\n=== CRITICAL: \"LET'S BEGIN.\" IS THE HARD STOP ===\n\n\"Let's begin.\" ends the section. Completely. Nothing follows it.\n\nDo NOT continue writing after \"Let's begin.\" The opening is finished the moment those two words appear. All contemplation, all facts, all wonder about the animal belongs in the sections that follow. The opening is only the six parts above — nothing more.\n\nThis is the most important structural rule of the opening. The opening does not begin discussing the animal in depth. It introduces the journey and then stops. Act 1 does the rest.\n\n=== THE OPENING IS THE HIGHEST POINT ===\n\nThe opening is the highest-stimulation point of the entire video — but even here, there is no excitement. Just a quiet invitation to look at something remarkable. Every section after this will be calmer. This opening establishes the ceiling.\n\n=== WHAT TO AVOID ===\n\n❌ \"Hey guys!\" or any casual presenter greeting\n❌ Incredulity (\"Can you believe this?\")\n❌ Listing facts (facts belong in Act 1)\n❌ \"Tonight we'll be covering X, Y, and Z...\"\n❌ Urgency or excitement of any kind\n❌ Clinical sleep instructions (\"scan your body,\" \"focus on your breathing\")\n❌ Humor\n❌ Continuing past \"Let's begin.\" under any circumstances\n\n=== PACING RULES ===\n- Maximum 4 sentences per paragraph\n- After a long sentence, a short one follows\n- No sentence longer than 25 words\n- Generous paragraph breaks — this is designed to be heard, not read\n\n=== PHRASE BLACKLIST ===\n\"Here's the thing\" / \"If you think about it\" / \"Did you know\" / \"Believe it or not\" / \"Get ready to\" / \"You won't believe\" / \"Incredible\" / \"Amazing\" as empty modifiers\n\nIMPORTANT: Write ONLY the section content. No headers, no labels. End at \"Let's begin.\" and stop.`;\n\nconst outlineText = input.full_outline.map(s =>\n  `Section ${s.number} [${s.act_type}]: ${s.title} (${s.target_words} words) — ${s.description}`\n).join('\\n');\n\nconst hookContext = input.hook_question\n  ? `\\n\\nThe most wonder-inducing fact about this topic: \"${input.hook_question}\"\\n\\nThis can inform the grand framing — but don't state it as a fact yet. Build toward it.`\n  : '';\n\nconst userPrompt = `Write the OPENING SECTION for a Deep Sea Slumber video about: ${input.topic}\n${hookContext}\n\nFull video outline for context:\n${outlineText}\n\nYou are writing Section 1: ${input.current_section.title}\nDescription: ${input.current_section.description}\nTarget word count: ${input.current_section.target_words} words\n\nMANDATORY STRUCTURE:\n1. \"Hello there and welcome to Deep Sea Slumber. Tonight we...\" [journey metaphor into this animal's world]\n2. Grand framing — 3-6 sentences on the animal's remarkable nature\n3. Journey preview — hint at what we'll discover without listing facts\n4. Exact CTA: \"If you enjoy these gentle journeys, I invite you to like, subscribe, or share a thought below. It helps others find their way here, too. One sleepy soul at a time.\"\n5. Physical relaxation cues — shoulders, breath, movement metaphor appropriate to this animal\n6. \"Let's begin.\" — and then STOP. Nothing follows.\n\nMATCH TARGET WORD COUNT within 5%: ${input.current_section.target_words} words`;\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"anthropic/claude-sonnet-4.6\",\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.75\n    }\n  }\n}];"
+        },
+        "id": "1d846a2e-632b-4b41-8440-4da9e5d899ea",
+        "name": "Build Opening Request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "notes": "Builds JSON for Opening section API call"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openRouterApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Title",
+                "value": "SFS Opening"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+          "options": {}
+        },
+        "id": "2d8e9f5a-771c-41ec-ace8-c82a4f0c9393",
+        "name": "Generate Opening Section",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          224,
+          0
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        },
+        "notes": "Generates Opening section"
+      },
+      {
+        "parameters": {
+          "jsCode": "// =====================================================\n// BUILD REGULAR REQUEST - DEEP SEA SLUMBER\n// =====================================================\n\nconst input = $input.item.json;\nconst staticData = $getWorkflowStaticData('global');\nconst previousSectionText = staticData.lastSectionContent || null;\nconst usedOpenings = staticData.usedOpenings || [];\n\n// Detect section type\nconst actType = input.current_section.act_type || 'hard_wonder';\nconst isDITL = input.current_section.is_ditl === true || actType === 'ditl';\nconst isEcosystemDITL = isDITL && input.current_section.description &&\n  input.current_section.description.toUpperCase().startsWith('ECOSYSTEM DITL');\n\n// =====================================================\n// ACT-SPECIFIC INSTRUCTIONS\n// =====================================================\n\nlet actInstructions = '';\n\nif (isDITL && isEcosystemDITL) {\n  actInstructions = `\n=== THIS IS THE DITL — ECOSYSTEM DRIFT ===\n\nThe listener has no animal body. They are pure awareness drifting through this environment.\n\nMODE:\nSecond person, present tense — but the \"you\" has no physical form. You are presence. You are attention. You are moving through the space.\n\nOPENING:\nEstablish immediately that this is not embodied in one creature:\n\"You have no weight here.\"\n\"You are simply present in the dark.\"\n\"There is no body to speak of. Only the water, and you moving through it.\"\n\nTHE EXPERIENCE:\nDrift through the space observationally. The inhabitants discovered in earlier sections are going about their lives. Notice them. Feel the environment's physical properties — temperature, pressure, darkness, the way water moves differently at this depth.\n\nWeave in facts from earlier sections as felt presence, not delivered information.\n\nTHE PROGRESSIVE SLOWING:\nActivity in the ecosystem decreases as the drift continues. Creatures settle. The water grows quieter. End in stillness — the ecosystem at rest, the listener drifting with it.\n\nMANDATORY ENDING:\nEverything has grown still. The world continues in the dark, patient and ancient, as it always has. The listener rests with it.`;\n\n} else if (isDITL) {\n  actInstructions = `\n=== THIS IS THE DITL — DAY IN THE LIFE ===\n\nEverything changes here. This is the gear change that defines this channel.\n\nMODE SWITCH:\n- Leave third-person narration entirely\n- Switch to SECOND PERSON, PRESENT TENSE\n- The listener IS the animal\n- This is not description or analysis — it is pure embodied sensory experience\n\nTHE CORE RULE:\nNo new facts. Only facts already established in earlier sections, now felt as sensory experience rather than known as information.\n\nNOT: \"Blue whales have hearts that slow to two beats per minute when diving.\"\nYES: \"As you descend, something inside you slows. A vast, deep rhythm. Your heart finds its deep-water pace — patient, unhurried, almost geological.\"\n\nNOT: \"Octopuses can taste through their suckers.\"\nYES: \"The rock arrives through your arm before you can see it clearly. Cold. Smooth in one patch, rough with something living in another. You already know what is worth turning over.\"\n\nHOW TO BEGIN:\nStart at a natural threshold. Dawn. Waking. Emergence from shelter. The first movement of the day. Ease in — do not drop the listener in mid-action.\n\nTHE SENSORY HIERARCHY:\nLead with this animal's dominant senses. What does it feel? What does the world taste or smell like here? Vision may be secondary or absent depending on the animal. Let the sensory world match the animal's actual experience, not a human's projection of it.\n\nTHE PROGRESSIVE SLOWING:\nAs the DITL moves toward rest, the writing must slow:\n- Sentences get shorter\n- Paragraphs grow more spacious\n- Activity decreases\n- The world around you grows quieter\n- End: the animal is still. Safe. At rest. Hold that stillness for a full paragraph before the section ends.\n\nMANDATORY ENDING:\nThe animal must be at rest by the final paragraph. The day has ended. Everything is still.`;\n\n} else if (actType === 'hard_wonder') {\n  actInstructions = `\n=== ACT TYPE: HARD WONDER ===\n\nYour job: earn and hold attention with the most surprising material — but never with excitement. Surprise and calm can coexist.\n\nTHE MICRO-STRUCTURE (apply to every significant fact):\n\n1. HOOK SENTENCE — one sentence that sounds impossible\n   \"Octopuses have three hearts, and two stop beating when they swim.\"\n   \"Sharks have existed for longer than trees.\"\n   \"A sperm whale's brain can weigh more than twenty pounds.\"\n   The hook should make the listener think: \"That can't be right.\"\n\n2. EXPANSION — 3-5 sentences on mechanism and context\n   How does this work? Why does it work this way? What does it mean for the animal's daily life?\n   Never dumbed down. Never over-explained.\n\n3. WONDER PIVOT — 1-3 sentences on what this fact MEANS\n   Not just what it is — what it says about life, evolution, the strangeness of being alive.\n   This is the soul of every section. Examples:\n   \"Even at the level of blood, they remind us that life does not follow one plan. It keeps finding new answers to the same old problem of staying alive.\"\n   \"The absence of a skeleton sounds like a weakness until you see how much freedom that softness creates.\"\n   \"Losing the shell may have helped drive octopus intelligence. Without heavy armor, survival would have depended less on sitting safely and more on making fast, flexible decisions.\"\n\n4. NATURAL BRIDGE — flow into the next fact without announcing it\n   Let the content lead. Never: \"Now let's talk about...\"\n\nPACING:\nMove briskly between facts. 4-6 facts per section. Vary depth — some facts get 3 paragraphs, others get one. Not everything needs equal weight.\n\nTONE:\nGenuinely interested, never excited. The voice of someone who has known about this for a long time and finds it just as remarkable as the first time.`;\n\n} else if (actType === 'behavior') {\n  actInstructions = `\n=== ACT TYPE: BEHAVIOR & ECOLOGY ===\n\nThe shift from what this animal IS to what it DOES. The shift from anatomy to story.\n\nWRITE SCENES, NOT DESCRIPTIONS:\nDo not say \"humpbacks use bubble nets to hunt.\" Say what it looks like when it happens. The spiral dive. The rising column of air. The school of fish compressing upward. The sudden breach. The chaos, then silence.\n\nDo not say \"orcas teach their calves.\" Say what that looks like. The calf watching from a distance. The mother demonstrating. The first attempt. The patience involved on both sides.\n\nTOPICS THAT BELONG HERE:\n- Hunting strategies: tactics, patience, coordination, precision\n- Social behavior: how individuals relate, hierarchies, long-term bonds\n- Family structures: mothers and calves, pods, multi-generational relationships\n- Communication: how signals work, what they accomplish, what is still unknown\n- Navigation: how the animal finds its way across impossible distances\n- Ecological role: what changes in the system when this animal does its work\n\nTHE WARMING TONE:\nThis act is warmer than Act 1. The animal is no longer just astonishing — it is becoming familiar. The listener is beginning to care about it, not just marvel at it. Let that warmth enter the writing without sentimentality.\n\nPACING:\nSlower than Act 1. 2-4 topics per section, each given 4-7 paragraphs. Sentences may begin lengthening slightly. You are moving toward the meditative cadence of Act 3, but not there yet.\n\nSTYLE RESTRICTION:\nDo not use fragmented sentence structures, isolated short lines, or staccato single-sentence paragraphs in behavior sections. That style — where a sentence stands entirely alone for rhythmic effect — belongs exclusively to the DITL. Behavior sections use full flowing prose throughout. If you feel the urge to write a line like \"The miles pass beneath you.\" as its own isolated paragraph, save it for the DITL.`;\n\n} else if (actType === 'interior') {\n  actInstructions = `\n=== ACT TYPE: INTERIOR LIFE ===\n\nThe most contemplative act. Facts become philosophy here.\n\nTHE SHIFT:\nWe have learned what the animal does. Now we ask what its existence means. What is it like to be this creature? What has it witnessed? What does its presence on Earth say about life itself?\n\nTOPICS THAT BELONG HERE:\n- Intelligence and consciousness: what these concepts mean for an animal so different from us\n- Deep evolutionary history: what this lineage has survived, what has changed around it while it persisted\n- The philosophical implications of unusual traits\n- The relationship between this animal and humans: myth, discovery, awe, the history of misunderstanding\n- Comparative wonder: how this animal forces us to rethink categories we assumed were fixed\n- Open-ended contemplation — ideas that trail off rather than resolve\n\nTHE TONE:\nSlow. Long sentences dominate. Meditative. The brain should be at the edge of sleep — give it beautiful things to sit with that do not demand resolution.\n\nRIGHT REGISTER:\n\"The octopus becomes more than an intriguing animal. It becomes a challenge to our definitions, asking whether we are brave enough to think bigger about minds.\"\n\"Sharks have watched, in a sense, as life conquered the land, as continents shifted, as ice ages came and went — all while continuing their quiet dominance of the ocean.\"\n\"When we ask what intelligence is, we often picture animals that resemble us. These animals challenge that habit entirely.\"\n\nOPEN-ENDED IS CORRECT HERE:\nDo not resolve the questions this act raises. Leave them open. The listener drifts with the question, not toward an answer. Questions that make you feel larger rather than anxious are perfect sleep content.\n\nDO NOT:\n- Force moral lessons (\"this teaches us to persevere\")\n- Offer tidy resolution (\"and so we see that nature is always perfect\")\n- Introduce anxious open questions (\"but will they survive climate change?\")\n\nRHYTHM:\nLongest sentences, most generous paragraph spacing, slowest pace of any section before the DITL.`;\n\n} else if (actType === 'animal_arc') {\n  actInstructions = `\n=== ACT TYPE: ANIMAL ARC (COMPILATION) ===\n\nA compressed single-species treatment within a compilation video. One section. One animal. Complete arc.\n\nSTRUCTURE WITHIN THIS SECTION:\n1. FACTS — 2-3 of the most surprising physical or biological facts about this animal, each with a full wonder pivot. Do not rush past these. The wonder pivot is still essential even in compressed form.\n\n2. BEHAVIOR SCENE — one key behavior rendered as a scene with enough texture to feel real. A hunt. A migration moment. A social interaction. Something that makes the listener feel they witnessed something.\n\n3. WONDER PIVOT — what does this animal's existence mean? What does it add to the compilation's overall theme? This is the section's emotional close — the reason this animal was included.\n\n4. NATURAL BRIDGE — a sentence that feels complete, then a gentle transition toward whatever animal comes next or toward the DITL.\n\nTONE:\nSame calm contemplative narrator. Same wonder pivot technique. Same wave rhythm. Just compressed. Think of it as a deep dive distilled to its most remarkable essence — not rushed, but selective.\n\nAVOID:\n- Listing facts without wonder pivots\n- Skipping the behavior scene to save words\n- An abrupt ending that feels cut off\n- Trying to cover too many facts — depth over breadth, even here`;\n\n} else if (actType === 'close') {\n  actInstructions = `\n=== THIS IS THE CLOSE SECTION ===\n\nThe softest landing of the entire video.\n\nLENGTH: 600-800 words maximum. Brevity is a feature here.\n\nSTRUCTURE:\n1. Acknowledge the journey is ending — pull back gently from wherever the DITL left us\n2. One or two sentences crystallizing what was remarkable (not a summary of facts — a sense of what they mean)\n3. The deepest physical relaxation cues of the entire video\n4. Final line: alone, short, complete\n\nRELAXATION CUES GO FURTHER HERE:\nOpening used: shoulders, breath\nClose uses: jaw unclenched, hands open, body heavy, eyes heavy, nowhere to be, nothing required\n\nTHE FINAL LINE:\nAlways stands alone. Always short. Always final.\nStandard: \"Sleep well, and good night.\"\nOr simply: \"Good night.\"\nSounds like a door closing quietly.\n\nWHAT TO AVOID:\n- Summarizing facts (the listener is almost asleep)\n- Any new information\n- Excitement or energy of any kind\n- \"Thanks for watching\" or any platform language\n- Rushing`;\n}\n\n// =====================================================\n// SYSTEM PROMPT\n// =====================================================\n\nconst systemPrompt = `You are a writer for Deep Sea Slumber, a calm educational sleep YouTube channel. You write sections of 2+ hour sleep videos about ocean creatures, ecosystems, and related topics — for curious minds of all ages, especially neurodivergent listeners.\n\n=== THE NARRATOR'S VOICE ===\n\nCalm. Contemplative. Genuinely wondering. Not performing wonder — having it.\n\nA patient, curious person sitting in the dark with someone, sharing remarkable things quietly. Warm without excitement. Each sentence arrives like something true that has been thought about for a long time.\n\nThis voice never rises. It never tries to hold attention through excitement. It holds attention through the quality of what it notices and the depth of how it notices it.\n\n=== THE WONDER PIVOT — THE CORE TECHNIQUE ===\n\nEvery fact segment moves: WHAT something is → HOW it works → WHAT IT MEANS.\n\nThe wonder pivot is what separates this from a Wikipedia reading. It's the moment where a fact stops being information and becomes contemplation. It's what the listener drifts off thinking about.\n\nExamples:\n\"Even at the level of blood, they remind us that life does not follow one plan. It keeps finding new answers to the same old problem of staying alive.\"\n\"Weakness may have pushed innovation. Exposure may have rewarded problem-solving. The octopus becomes an example of how danger itself can shape brilliance, turning softness into a reason to become uncannily clever.\"\n\"Intelligence here is not behind the eyes. It is everywhere. The mind is distributed in a way that makes the very concept of a command center seem like a very human assumption.\"\n\n=== SENTENCE AND PARAGRAPH RHYTHM ===\n\nWrite in waves: short punch → medium build → long flowing sentence → short landing.\n\n\"Swimming is effective in a crisis, though it is costly. That is why many species prefer to crawl over rock, sand, and coral instead of racing through open water. Even though circulation hints at a life shaped by tradeoffs where speed is expensive and efficiency matters, it is a strange design — but it works beautifully in the cold, dim, pressurized world where these animals hunt, hide, and survive. It works.\"\n\nRules:\n- Maximum 5 sentences per paragraph\n- No sentence longer than 30 words\n- After a long sentence, a short one follows\n- Paragraph breaks are generous — this is designed to be heard, not read\n\n=== WORD PALETTE ===\n\nUse deliberately:\ndrift, glide, settle, ancient, quiet, strange, patient, familiar, distant, beneath, slow, still, dark, vast, hidden, soft\n\nEffective sentence openers:\n\"That is why...\" (cause-effect, satisfying)\n\"Yet...\" (pivot from expected to surprising)\n\"What makes this...\" (invitation to lean in)\n\"In other words...\" (clarification that deepens)\n\"And yet...\" (the beautiful contradiction)\n\"Imagine...\" (visualization — maximum ONCE per section)\n\n=== THE GRADIENT ===\n\nEvery section is calmer than the one before it. Hard Wonder sections are the highest energy after the Opening. Interior Life sections are meditative. The DITL is the softest content before the Close. Never turn the dial back up.\n\n=== WHAT TO NEVER DO ===\n\nBLACKLISTED WORDS/PHRASES:\n\"Incredibly\" / \"amazingly\" / \"unbelievably\" as empty modifiers\n\"Did you know\" / \"Here's a fun fact\"\n\"Here's the thing\" / \"If you think about it\" / \"The reality is\" / \"Truth be told\"\n\"This teaches us that...\" (forced lesson)\n\"You might be surprised to learn\"\n\"Believe it or not\"\nExclamation points anywhere in narration\n\nBLACKLISTED PATTERNS:\n- Ending a section on a high note (every section ends calmer than it began)\n- Tidy moral resolution in Act 3\n- Direct sleep instructions outside the Close (\"breathe deeply,\" \"close your eyes\")\n- Announcing transitions (\"Now let's explore...\" / \"Moving on to...\")\n- Re-explaining anything already covered in a previous section\n\n${actInstructions}\n\nIMPORTANT: Write ONLY the section content. No headers, no act type labels.`;\n\n// =====================================================\n// USER PROMPT\n// =====================================================\n\nconst outlineText = input.full_outline.map(s =>\n  `Section ${s.number} [${s.act_type}]: ${s.title} (${s.target_words} words) — ${s.description}`\n).join('\\n');\n\nconst spokenTransition = input.current_section.spoken_transition\n  ? `\\n\\nSuggested transition into this section: \"${input.current_section.spoken_transition}\"\\nUse this or something with equivalent calm flow. Never announce the section change.`\n  : '';\n\nlet userPrompt = `Write Section ${input.current_section.number} of a Deep Sea Slumber video about: ${input.topic}\n\nFull video outline for context:\n${outlineText}\n\nWriting Section ${input.current_section.number}: ${input.current_section.title}\nAct type: ${actType}\nDescription: ${input.current_section.description}\nTarget word count: ${input.current_section.target_words} words\n${spokenTransition}\n\nSection ${input.current_section.number} of ${input.total_sections} total.`;\n\n// Continuity from previous section\nif (previousSectionText) {\n  const words = previousSectionText.split(/\\s+/);\n  const lastWords = words.slice(-400).join(' ');\n\n  userPrompt += `\n\nEND OF PREVIOUS SECTION (for continuity):\n\"\"\"\n...${lastWords}\n\"\"\"\n\nContinue naturally. Match tone and cadence — but continue the gradient descent. This section should feel slightly calmer than where that excerpt ended.`;\n}\n\n// For DITL: provide the fact inventory\nif (isDITL) {\n  const factSections = input.full_outline\n    .filter(s => s.act_type === 'hard_wonder' || s.act_type === 'behavior' || s.act_type === 'animal_arc')\n    .map(s => `${s.title}: ${s.description}`)\n    .join('\\n');\n\n  userPrompt += `\n\nFACT INVENTORY FOR THE DITL:\nThese are the facts and behaviors already covered in earlier sections. Use them as felt sensory experience — never as new information being delivered.\n${factSections}\n\nCRITICAL: No new facts. Only what the listener already knows, now felt rather than known.`;\n}\n\n// What the listener has already experienced\nconst previousSections = input.full_outline\n  .slice(0, input.section_index)\n  .map(s => `Section ${s.number} [${s.act_type}]: ${s.title}`)\n  .join('\\n');\n\nif (previousSections) {\n  userPrompt += `\n\nWHAT THE LISTENER HAS ALREADY EXPERIENCED:\n${previousSections}\n\nDo not re-explain anything already covered. Build on it.`;\n}\n\nuserPrompt += `\n\nWORD COUNT TARGET: ${input.current_section.target_words} words (within 5%)\n\nFINAL REMINDERS:\n- The gradient continues: this section is calmer than the last\n- Wonder pivot on every significant fact (what does this MEAN?)\n- Wave rhythm: punch → build → flow → landing\n- End this section calmer than you began it`;\n\n// Opening variety\nif (usedOpenings.length > 0) {\n  userPrompt += `\n\nOPENING VARIETY — These patterns were used in earlier sections:\n${usedOpenings.map(o => `- \"${o}\"`).join('\\n')}\n\nOpen this section differently:\n- Time passage: \"Three hours later, the light has shifted.\"\n- New sensory entry: \"The water is colder here.\"\n- Quiet cause-and-effect: \"This is why they move in spirals.\"\n- Simple continuation: \"But the body has more surprises yet.\"\n- A single fact that contains a world: \"The word for this has no equivalent in English.\"`;\n}\n\n// Final section\nif (input.is_final) {\n  userPrompt += `\n\nTHIS IS THE FINAL SECTION:\n- No \"good night,\" no CTA, no \"thanks for watching\" — the close section handles all of this\n- Reduce all energy to its minimum\n- End on legacy, endurance, or quiet continuation\n- Let it fade rather than stop`;\n}\n\nreturn [{\n  json: {\n    ...input,\n    requestBody: {\n      model: \"anthropic/claude-sonnet-4.6\",\n      messages: [\n        { role: \"system\", content: systemPrompt },\n        { role: \"user\", content: userPrompt }\n      ],\n      temperature: 0.8\n    }\n  }\n}];"
+        },
+        "id": "f14b9ef0-9a21-4e24-8ffa-37c89e443747",
+        "name": "Build Regular Request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          0,
+          176
+        ],
+        "notes": "Builds JSON for regular section API call"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openRouterApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Title",
+                "value": "=SFS Section {{ $('Is Opening Section?').item.json.current_section.number }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+          "options": {}
+        },
+        "id": "1330e7f2-dd3e-404a-9a74-3985626778d5",
+        "name": "Generate Regular Section",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          224,
+          192
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        },
+        "notes": "Generates regular section"
+      },
+      {
+        "parameters": {
+          "jsCode": "const sectionContent = $input.item.json.choices[0].message.content;\nconst loopData = $('Loop Over Sections').item.json;\n\nconst staticData = $getWorkflowStaticData('global');\n\n// Extract the first sentence/opening phrase (first 50 chars or until first period)\nconst openingPhrase = sectionContent.substring(0, 100).split('.')[0];\n\n// Initialize or append to used openings list\nif (!staticData.usedOpenings) {\n  staticData.usedOpenings = [];\n}\nstaticData.usedOpenings.push(openingPhrase);\n\n// Save content for next iteration\nstaticData.lastSectionContent = sectionContent;\nstaticData.lastSectionNumber = loopData.current_section.number;\n\n// Format the section with header\nconst formattedSection = `# **Section ${loopData.current_section.number}: ${loopData.current_section.title}**\\n\\n${sectionContent}`;\n\nreturn [{\n  json: {\n    topic: loopData.topic,\n    video_name: loopData.video_name,\n    voice_id: loopData.voice_id,\n    full_title: loopData.full_title,\n    total_sections: loopData.total_sections,\n    section_number: loopData.current_section.number,\n    section_title: loopData.current_section.title,\n    section_content: formattedSection,\n    raw_content: sectionContent,\n    word_count: sectionContent.split(/\\s+/).length\n  }\n}];"
+        },
+        "id": "6f1b4192-5b97-4cff-b2b2-34456fa34797",
+        "name": "Format Section",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          656,
+          128
+        ],
+        "notes": "Adds section header and formats content"
+      },
+      {
+        "parameters": {},
+        "id": "29b8bc85-db74-48cc-b7e9-7f26037ee5e2",
+        "name": "Rate Limit Delay",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          880,
+          128
+        ],
+        "webhookId": "ee63de72-3815-4d62-9488-531c6ddedb6f",
+        "notes": "5 second pause between sections"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "all_sections",
+          "options": {}
+        },
+        "id": "bafffa87-f828-4ee1-9fae-bf5295f4d388",
+        "name": "Aggregate All Sections",
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          -448,
+          368
+        ],
+        "notes": "Collects all generated sections"
+      },
+      {
+        "parameters": {
+          "jsCode": "const sections = $input.item.json.all_sections;\n\n// Sort by section number to ensure correct order\nsections.sort((a, b) => a.section_number - b.section_number);\n\n// Combine all sections with separator\nconst fullScript = sections.map(s => s.section_content).join('\\n\\n---\\n\\n');\n\n// Calculate total word count\nconst totalWords = sections.reduce((sum, s) => sum + s.word_count, 0);\n\n// Get metadata from first section\nconst metadata = sections[0];\n\nreturn [{\n  json: {\n    topic: metadata.topic,\n    video_name: metadata.video_name,\n    voice_id: metadata.voice_id,\n    full_title: metadata.full_title,\n    total_sections: metadata.total_sections,\n    total_words: totalWords,\n    full_script: fullScript,\n    sections: sections\n  }\n}];"
+        },
+        "id": "5b6d51ad-6972-4de4-88ab-1177e6d1cb72",
+        "name": "Combine Full Script",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -224,
+          368
+        ],
+        "notes": "Combines all sections into the complete script"
+      },
+      {
+        "parameters": {
+          "folderId": "=1yHL9tjn8YTnaPTb5laXwEX2ihvD6tO1F",
+          "title": "=DSS - {{ $('Build Outline Request').item.json.topic }} - {{ $now.setZone('America/New_York').toFormat('yyyy.MM.dd') }}"
+        },
+        "id": "82e58238-dd9c-46a3-a8f4-abbf4c1b54b4",
+        "name": "Create Google Doc",
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          0,
+          368
+        ],
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        },
+        "notes": "Creates the final Google Doc"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "output-doc-id",
+                "name": "document_id",
+                "value": "={{ $json.documentId }}",
+                "type": "string"
+              },
+              {
+                "id": "output-doc-url",
+                "name": "document_url",
+                "value": "=https://docs.google.com/document/d/{{ $json.documentId }}/edit",
+                "type": "string"
+              },
+              {
+                "id": "output-video-name",
+                "name": "video_name",
+                "value": "={{ $('Combine Full Script').item.json.video_name }}",
+                "type": "string"
+              },
+              {
+                "id": "output-voice-id",
+                "name": "voice_id",
+                "value": "={{ $('Combine Full Script').item.json.voice_id }}",
+                "type": "string"
+              },
+              {
+                "id": "output-total-words",
+                "name": "total_words",
+                "value": "={{ $('Combine Full Script').item.json.total_words }}",
+                "type": "number"
+              },
+              {
+                "id": "output-total-sections",
+                "name": "total_sections",
+                "value": "={{ $('Combine Full Script').item.json.total_sections }}",
+                "type": "number"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "12a50685-0c65-4b06-ae25-96a7647e9c79",
+        "name": "Output Summary",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          496,
+          368
+        ],
+        "notes": "Final output with document URL and metadata"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentURL": "={{ $('Create Google Doc').item.json.id }}",
+          "actionsUi": {
+            "actionFields": [
+              {
+                "action": "insert",
+                "locationChoice": "location",
+                "text": "=={{ $('Combine Full Script').item.json.full_script }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          272,
+          368
+        ],
+        "id": "0c02a6e6-fc42-42c3-b8b3-8a56d80d1beb",
+        "name": "Update a document",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Clear staticData from any previous workflow runs\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastSectionContent = null;\nstaticData.lastSectionNumber = null;\nstaticData.usedOpenings = [];\n\n// Pass through all input data unchanged\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1696,
+          144
+        ],
+        "id": "4b5b73a7-58b6-42ee-9117-5d3440fe5f68",
+        "name": "Clear Previous Run Data"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+            "mode": "list",
+            "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "doc_id"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -2368,
+          192
+        ],
+        "id": "5636df5e-8719-46e7-a3fb-561761f806b9",
+        "name": "Read Topics Sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "9210a589-8e5b-4c72-af00-61b0478d399b",
+                "leftValue": "={{ $json.row_number }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -2016,
+          192
+        ],
+        "id": "0918818a-fc5b-4cbc-956e-044b943a812c",
+        "name": "Any Topics to Process?"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -1680,
+          448
+        ],
+        "id": "78e6a29d-d884-4a18-81a5-25ae73cb4ec5",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "jsCode": "const row = $input.item.json;\n\nreturn [{\n  json: {\n    topic: row.topic,\n    video_name: row.video_name,\n    target_words: parseInt(row.target_words),\n    voice_id: row.voice_id || 'AeRdCCKzvd23BpJoofzx', // default if empty\n    script_type: row.script_type || 'deep_dive',\n    // Preserve original row data for later update\n    _original_row: row\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1408,
+          144
+        ],
+        "id": "aee4e4d3-c5b9-41b1-a8ed-229652e753e8",
+        "name": "Map Sheet Data to Workflow"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+            "mode": "list",
+            "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "row_number": "={{ $('Map Sheet Data to Workflow').item.json._original_row.row_number }}",
+              "doc_id": "={{ $json.document_id }}",
+              "doc_link": "={{ $json.document_url }}",
+              "date_completed": "={{ $now.setZone('America/New_York').format('yyyy-MM-dd HH:mm:ss') }}",
+              "edit_status": "ready",
+              "image_status": "ready",
+              "tts_status": "ready"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "target_words",
+                "displayName": "target_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script_type",
+                "displayName": "script_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_id",
+                "displayName": "doc_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_link",
+                "displayName": "doc_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "date_completed",
+                "displayName": "date_completed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "edit_status",
+                "displayName": "edit_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "image_status",
+                "displayName": "image_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "tts_status",
+                "displayName": "tts_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          704,
+          368
+        ],
+        "id": "45a9c546-1c7b-451d-899c-c93ff0929501",
+        "name": "Update Sheet with Results",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 6
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -2640,
+          448
+        ],
+        "id": "a8fe406d-ac9e-47fb-94fa-1ee254897372",
+        "name": "Schedule Trigger"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Read Topics Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Outline Request": {
+        "main": [
+          [
+            {
+              "node": "Generate Outline",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Outline": {
+        "main": [
+          [
+            {
+              "node": "Parse Outline",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Outline": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Sections": {
+        "main": [
+          [
+            {
+              "node": "Aggregate All Sections",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Is Opening Section?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Opening Section?": {
+        "main": [
+          [
+            {
+              "node": "Build Opening Request",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Build Regular Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Opening Request": {
+        "main": [
+          [
+            {
+              "node": "Generate Opening Section",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Opening Section": {
+        "main": [
+          [
+            {
+              "node": "Format Section",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Regular Request": {
+        "main": [
+          [
+            {
+              "node": "Generate Regular Section",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Regular Section": {
+        "main": [
+          [
+            {
+              "node": "Format Section",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Section": {
+        "main": [
+          [
+            {
+              "node": "Rate Limit Delay",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rate Limit Delay": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate All Sections": {
+        "main": [
+          [
+            {
+              "node": "Combine Full Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Combine Full Script": {
+        "main": [
+          [
+            {
+              "node": "Create Google Doc",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Google Doc": {
+        "main": [
+          [
+            {
+              "node": "Update a document",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Output Summary": {
+        "main": [
+          [
+            {
+              "node": "Update Sheet with Results",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update a document": {
+        "main": [
+          [
+            {
+              "node": "Output Summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Clear Previous Run Data": {
+        "main": [
+          [
+            {
+              "node": "Map Sheet Data to Workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Topics Sheet": {
+        "main": [
+          [
+            {
+              "node": "Any Topics to Process?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Any Topics to Process?": {
+        "main": [
+          [
+            {
+              "node": "Clear Previous Run Data",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Map Sheet Data to Workflow": {
+        "main": [
+          [
+            {
+              "node": "Build Outline Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Sheet with Results": {
+        "main": [
+          []
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Read Topics Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version a0189a08",
+    "description": "changed schedule to every 6 hours",
+    "autosaved": true
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-04-14T01:12:33.920Z",
+      "createdAt": "2026-04-14T01:12:33.920Z",
+      "id": "HdtOFRh8AOMnN6Lz",
+      "name": "DSS"
+    }
+  ]
+}
