@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-13T02:08:16.322Z",
+  "updatedAt": "2026-04-17T00:41:52.053Z",
   "createdAt": "2026-04-13T02:06:53.790Z",
   "id": "EAdCJll6cqK1DrBz",
   "name": "003. DSS Script to TTS Prep (Google Doc → TTS Spreadsheet)",
@@ -13,8 +13,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -688,
-        96
+        -704,
+        48
       ]
     },
     {
@@ -440,22 +440,6 @@
       ],
       "id": "c0602b86-4e5a-4603-8f96-5b8c97fd66f1",
       "name": "No Operation, do nothing"
-    },
-    {
-      "parameters": {
-        "path": "d103fee6-7059-41af-9241-ee5da9303104",
-        "responseMode": "lastNode",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -720,
-        -64
-      ],
-      "id": "6216f887-4bc5-42f6-9f90-738d94c7440a",
-      "name": "Webhook",
-      "webhookId": "d103fee6-7059-41af-9241-ee5da9303104"
     }
   ],
   "connections": {
@@ -564,17 +548,6 @@
           }
         ]
       ]
-    },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "settings": {
@@ -589,7 +562,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "e72ecb88-1c0d-4210-9918-6fa5c08f1892",
+  "versionId": "0e260cec-71ad-4d0a-a861-72844f33709f",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
