@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-04-14T01:59:17.301Z",
+  "updatedAt": "2026-04-17T20:46:20.042Z",
   "createdAt": "2026-04-14T01:12:35.270Z",
   "id": "zn7nNytdtXEFofe0",
   "name": "002-B. DSS Image Prompt Generation",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -435,6 +435,27 @@
         }
       },
       "notes": "Marks this chapter as completed in Sheet1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 18,
+              "triggerAtMinute": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1104,
+        96
+      ],
+      "id": "9c99a41b-8d59-4f21-8918-87ade96bb5a5",
+      "name": "Schedule Trigger"
     }
   ],
   "connections": {
@@ -537,6 +558,17 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Pending Chapters (Sheet1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -546,14 +578,18 @@
     "callerPolicy": "workflowsFromSameOwner",
     "binaryMode": "separate"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "557b64fc-2074-48eb-a83e-e03f5b697155",
-  "activeVersionId": null,
-  "triggerCount": 0,
+  "versionId": "74292648-bdf5-4651-91c5-030174b01c32",
+  "activeVersionId": "74292648-bdf5-4651-91c5-030174b01c32",
+  "triggerCount": 1,
   "shared": [
     {
       "updatedAt": "2026-04-14T01:12:35.274Z",
@@ -563,7 +599,582 @@
       "projectId": "eaD0haLSQbgJ93Hf"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-04-17T20:46:30.000Z",
+    "createdAt": "2026-04-17T20:46:20.043Z",
+    "versionId": "74292648-bdf5-4651-91c5-030174b01c32",
+    "workflowId": "zn7nNytdtXEFofe0",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "941410a9-b4c6-465e-972e-6fd25a4a3de5",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1088,
+          288
+        ]
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+            "mode": "list",
+            "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "image_status",
+                "lookupValue": "ready"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "9c5a5809-b7df-4567-9d81-d7c756365f3c",
+        "name": "Read Pending Chapters (Sheet1)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -704,
+          288
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Reads pending chapters from Sheet1"
+      },
+      {
+        "parameters": {
+          "jsCode": "return [{\n  json: {\n    video_name: $input.item.json.video_name,\n    topic: $input.item.json.topic,\n    image_count: 30,\n    row_number: $input.item.json.row_number\n  }\n}];"
+        },
+        "id": "e8db7453-fc20-4cba-b8b8-aa9f6821c157",
+        "name": "Calculate Image Count",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          0,
+          160
+        ],
+        "notes": "word count ÷ 50"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openRouterApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"openai/gpt-5.4\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate image prompts for a sleep YouTube channel. Each prompt describes a unique dark oil painting scene related to the given topic.\\n\\nSTYLE (apply to every prompt):\\n- Dark oil painting style, old masters aesthetic (Rembrandt, Caravaggio)\\n- Thick visible brushstrokes, impasto texture\\n- Dramatic chiaroscuro lighting, deep blacks with a single soft warm light source\\n- Color palette: deep blacks, deep navy, dark teal, deep ocean blues and greens, hints of dark purple\\n- Calm, still, peaceful compositions only\\n- Always end every prompt with: dark oil painting, old masters aesthetic, no text\\n\\nCOMPOSITION VARIETY - distribute evenly across all 30 prompts:\\n- Wide establishing shots\\n- Close-up portraits of face or single feature\\n- Overhead top-down views\\n- Side profile compositions\\n- Silhouette with faint backlight\\n- Subject small within large dark habitat\\n- Macro detail shots of texture, eye, or skin\\n\\nRESTRICTIONS:\\n- NO violence, predation, or scary elements\\n- NO bright or saturated colors\\n- NO readable text in images\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array, no markdown, no explanation:\\n[{\\\"prompt\\\": \\\"A dark oil painting of...\\\"}, {\\\"prompt\\\": \\\"A dark oil painting of...\\\"}]\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.topic) }}\n    }\n  ],\n  \"temperature\": 1,\n  \"max_tokens\": 280000\n}",
+          "options": {}
+        },
+        "id": "586bc98e-fa75-46d1-8b4f-4108649cd063",
+        "name": "Generate Prompts via OpenAI",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          208,
+          160
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        },
+        "notes": "Creates all image prompts for this chapter"
+      },
+      {
+        "parameters": {
+          "jsCode": "const openaiResponse = $input.item.json.choices[0].message.content;\nlet prompts;\n\ntry {\n  prompts = JSON.parse(openaiResponse);\n} catch (e) {\n  const jsonMatch = openaiResponse.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    prompts = JSON.parse(jsonMatch[1]);\n  } else {\n    throw new Error(\"Could not parse OpenAI response as JSON\");\n  }\n}\n\nconst videoName = $('Loop Over Topics').item.json.video_name;\nconst rowNumber = $('Loop Over Topics').item.json.row_number;\n\nreturn prompts.map((p, index) => ({\n  json: {\n    video_name: videoName,\n    image_number: String(index + 1).padStart(2, '0'),\n    filename: `${videoName}-${String(index + 1).padStart(2, '0')}.png`,\n    prompt: p.prompt,\n    status: 'pending',\n    topic_row_number: rowNumber\n  }\n}));"
+        },
+        "id": "5d520883-375e-4273-bf3d-20954a7ba34d",
+        "name": "Parse & Format for Sheet2",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          416,
+          160
+        ],
+        "notes": "Formats each prompt as a row for Sheet2"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+            "mode": "list",
+            "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1502887379,
+            "mode": "list",
+            "cachedResultName": "Prompts",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1502887379"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "image_number": "={{ $json.image_number }}",
+              "filename": "={{ $json.filename }}",
+              "prompt": "={{ $json.prompt }}",
+              "status": "pending"
+            },
+            "matchingColumns": [
+              "filename"
+            ],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "image_number",
+                "displayName": "image_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "filename",
+                "displayName": "filename",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "prompt",
+                "displayName": "prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "5b533c10-3a5b-4af4-9154-d9a157711031",
+        "name": "Write Prompts to Sheet2",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          0,
+          384
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Appends all prompts to Sheet2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "ed851aef-4d2a-4d5c-a9b5-db675f39c2ee",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "1aac0963-32f0-4aa0-bc5d-b00cda2024fd",
+        "name": "Loop Over Topics",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -352,
+          288
+        ],
+        "notes": "Process one chapter at a time"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+            "mode": "list",
+            "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "row_number": "={{ $('Loop Over Topics').item.json.row_number }}",
+              "image_status": "complete"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "target_words",
+                "displayName": "target_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "script_type",
+                "displayName": "script_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "doc_id",
+                "displayName": "doc_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "doc_link",
+                "displayName": "doc_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "date_completed",
+                "displayName": "date_completed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "edit_status",
+                "displayName": "edit_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "image_status",
+                "displayName": "image_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "tts_status",
+                "displayName": "tts_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Schedule Date",
+                "displayName": "Schedule Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "c9248e04-dea6-4cf5-819b-6d2da4d4f84d",
+        "name": "Mark Topic Complete",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          304,
+          384
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Marks this chapter as completed in Sheet1"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 18,
+                "triggerAtMinute": 8
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -1104,
+          96
+        ],
+        "id": "9c99a41b-8d59-4f21-8918-87ade96bb5a5",
+        "name": "Schedule Trigger"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Read Pending Chapters (Sheet1)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Pending Chapters (Sheet1)": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Topics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculate Image Count": {
+        "main": [
+          [
+            {
+              "node": "Generate Prompts via OpenAI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Prompts via OpenAI": {
+        "main": [
+          [
+            {
+              "node": "Parse & Format for Sheet2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse & Format for Sheet2": {
+        "main": [
+          [
+            {
+              "node": "Write Prompts to Sheet2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write Prompts to Sheet2": {
+        "main": [
+          [
+            {
+              "node": "Mark Topic Complete",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          []
+        ]
+      },
+      "Loop Over Topics": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Calculate Image Count",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Topic Complete": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Topics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Read Pending Chapters (Sheet1)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version 74292648",
+    "description": "start schedule every 18 hours",
+    "autosaved": true
+  },
   "tags": [
     {
       "updatedAt": "2026-04-14T01:12:33.920Z",
