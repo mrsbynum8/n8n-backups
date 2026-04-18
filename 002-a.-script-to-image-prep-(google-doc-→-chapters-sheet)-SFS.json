@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-10T18:03:52.880Z",
+  "updatedAt": "2026-04-17T15:55:14.667Z",
   "createdAt": "2026-01-25T23:20:43.283Z",
   "id": "ZYwVA9WqrGwDHT59WQN-F",
   "name": "002-A. Script to Image Prep (Google Doc → Chapters Sheet)",
@@ -164,35 +164,6 @@
           "name": "Google Sheets account"
         }
       }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "summary",
-              "name": "message",
-              "value": "=✅ Successfully wrote {{ $input.all().length }} sections to Chapters sheet",
-              "type": "string"
-            },
-            {
-              "id": "sections-count",
-              "name": "sections_processed",
-              "value": "={{ $input.all().length }}",
-              "type": "number"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "6214d944-d4ef-4ed4-9de3-596800ee54ed",
-      "name": "Output Summary",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        432,
-        -192
-      ]
     },
     {
       "parameters": {
@@ -1072,7 +1043,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "ed8ef2dd-4dd0-46eb-b4de-e1452f8909b0",
+  "versionId": "89c44252-ad20-4f0d-9719-e353572bf52c",
   "activeVersionId": "206ed2f7-b251-4056-8be2-bb86158222a5",
   "triggerCount": 1,
   "shared": [
