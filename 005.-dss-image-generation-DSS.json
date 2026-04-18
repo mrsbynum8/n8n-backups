@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-04-17T00:57:14.318Z",
+  "updatedAt": "2026-04-17T20:57:32.478Z",
   "createdAt": "2026-04-14T01:59:42.048Z",
   "id": "cFIj94UmMkvz7QEx",
   "name": "005. DSS Image Generation",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -379,6 +379,26 @@
       ],
       "id": "608c8630-4436-4bc5-a790-da301a22e7ff",
       "name": "Limit"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12,
+              "triggerAtMinute": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1104,
+        320
+      ],
+      "id": "8852ee78-dbfa-4136-a563-3351c96dca39",
+      "name": "Schedule Trigger"
     }
   ],
   "connections": {
@@ -510,6 +530,17 @@
       "main": [
         []
       ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Pending Prompts (Sheet2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -518,16 +549,21 @@
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
     "binaryMode": "separate",
-    "timezone": "America/New_York"
+    "timezone": "America/New_York",
+    "saveDataSuccessExecution": "none"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "6e2f3dff-465b-4a0c-9f0c-f657cadc2a32",
-  "activeVersionId": null,
-  "triggerCount": 0,
+  "versionId": "e7ee6722-be53-4be9-969f-0dadc7b2a54a",
+  "activeVersionId": "e7ee6722-be53-4be9-969f-0dadc7b2a54a",
+  "triggerCount": 1,
   "shared": [
     {
       "updatedAt": "2026-04-14T01:59:42.053Z",
@@ -537,7 +573,554 @@
       "projectId": "eaD0haLSQbgJ93Hf"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-04-17T20:56:06.000Z",
+    "createdAt": "2026-04-17T20:55:52.163Z",
+    "versionId": "e7ee6722-be53-4be9-969f-0dadc7b2a54a",
+    "workflowId": "cFIj94UmMkvz7QEx",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "a5b02698-55f0-4795-b068-2c5a4327a930",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1088,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+            "mode": "list",
+            "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1502887379,
+            "mode": "list",
+            "cachedResultName": "Prompts",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit#gid=1502887379"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "status",
+                "lookupValue": "pending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "1e6fbc2e-4371-4e2d-9c5c-a360e2b4e941",
+        "name": "Read Pending Prompts (Sheet2)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -880,
+          112
+        ],
+        "executeOnce": false,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Reads all pending prompts from Sheet2"
+      },
+      {
+        "parameters": {
+          "batchSize": 10,
+          "options": {}
+        },
+        "id": "96b12c3d-a800-4af7-a3ff-bb465538ead9",
+        "name": "Batch Prompts (10 at a time)",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -656,
+          112
+        ],
+        "notes": "Processes 10 prompts simultaneously (fal.ai concurrency limit)"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://fal.run/fal-ai/gpt-image-1.5",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1536x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+          "options": {}
+        },
+        "id": "18236e0a-b2b6-4168-9668-99835b4a21ab",
+        "name": "Generate Image via fal.ai",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -432,
+          112
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "z9A4PGMllFQCcjr1",
+            "name": "Fal.ai Auth"
+          }
+        },
+        "continueOnFail": true,
+        "notes": "Generates image (~70 seconds) - runs 10 at once!"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-images-concurrent",
+                "leftValue": "={{ $json.images[0].url }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "95162360-7aaa-428b-8dc4-daf200c2e412",
+        "name": "Generation Successful?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -224,
+          112
+        ],
+        "notes": "Checks if fal.ai returned an image"
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.images[0].url }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "id": "82e3db82-9720-4466-81e6-ba236e7e5376",
+        "name": "Download Image",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          0,
+          0
+        ],
+        "notes": "Downloads the generated PNG"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "preserve-filename",
+                "name": "filename",
+                "value": "={{ $('Batch Prompts (10 at a time)').item.json.filename }}",
+                "type": "string"
+              },
+              {
+                "id": "preserve-row-number",
+                "name": "row_number",
+                "value": "={{ $('Batch Prompts (10 at a time)').item.json.row_number }}",
+                "type": "number"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "36f429b8-91c6-480b-8853-56e8e5ef88e0",
+        "name": "Preserve Metadata",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          224,
+          0
+        ],
+        "notes": "Keeps original filename and row number with binary data"
+      },
+      {
+        "parameters": {
+          "name": "={{ $json.filename }}",
+          "driveId": {
+            "__rl": true,
+            "value": "My Drive",
+            "mode": "list",
+            "cachedResultName": "My Drive",
+            "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1V_O8oZMUMOeG-rra_DgzvPelSx2rNCyd",
+            "mode": "list",
+            "cachedResultName": "DSS Images",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1V_O8oZMUMOeG-rra_DgzvPelSx2rNCyd"
+          },
+          "options": {}
+        },
+        "id": "0571b7a0-df95-4917-8b0f-6151799b5576",
+        "name": "Upload to Google Drive",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          448,
+          0
+        ],
+        "retryOnFail": true,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "YccFrdj90ivdga5k",
+            "name": "Google Drive account"
+          }
+        },
+        "notes": "Uploads with correct filename"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8",
+            "mode": "list",
+            "cachedResultName": "Deep Sea Slumber Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u2TQk6RfMYEmngQmEqOd0ywst7dewerARSEz-QEewi8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1502887379,
+            "mode": "list",
+            "cachedResultName": "Prompts",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1502887379"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "status": "complete",
+              "row_number": "={{ $('Read Pending Prompts (Sheet2)').item.json.row_number }}"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "image_number",
+                "displayName": "image_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "filename",
+                "displayName": "filename",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "prompt",
+                "displayName": "prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "c631dad5-3e14-4fe9-a7a0-bc4d9999d507",
+        "name": "Mark Prompt Complete (Sheet2)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          656,
+          0
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Updates status in Sheet2"
+      },
+      {
+        "parameters": {
+          "amount": 10
+        },
+        "id": "11b38f55-8160-4c54-a6e6-6832268ca430",
+        "name": "Delay Between Batches",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          880,
+          112
+        ],
+        "webhookId": "e085222c-9132-4d79-a09d-459591803fbf",
+        "notes": "10 second pause between batches of 10"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1088,
+          112
+        ],
+        "id": "608c8630-4436-4bc5-a790-da301a22e7ff",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 12,
+                "triggerAtMinute": 8
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -1104,
+          320
+        ],
+        "id": "8852ee78-dbfa-4136-a563-3351c96dca39",
+        "name": "Schedule Trigger"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Read Pending Prompts (Sheet2)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Pending Prompts (Sheet2)": {
+        "main": [
+          [
+            {
+              "node": "Batch Prompts (10 at a time)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Batch Prompts (10 at a time)": {
+        "main": [
+          [
+            {
+              "node": "Delay Between Batches",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Generate Image via fal.ai",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Image via fal.ai": {
+        "main": [
+          [
+            {
+              "node": "Generation Successful?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generation Successful?": {
+        "main": [
+          [
+            {
+              "node": "Download Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Batch Prompts (10 at a time)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Image": {
+        "main": [
+          [
+            {
+              "node": "Preserve Metadata",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preserve Metadata": {
+        "main": [
+          [
+            {
+              "node": "Upload to Google Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to Google Drive": {
+        "main": [
+          [
+            {
+              "node": "Mark Prompt Complete (Sheet2)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Prompt Complete (Sheet2)": {
+        "main": [
+          [
+            {
+              "node": "Batch Prompts (10 at a time)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delay Between Batches": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          []
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Read Pending Prompts (Sheet2)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version e7ee6722",
+    "description": "starting schedule daily at noon",
+    "autosaved": true
+  },
   "tags": [
     {
       "updatedAt": "2026-04-14T01:12:33.920Z",
