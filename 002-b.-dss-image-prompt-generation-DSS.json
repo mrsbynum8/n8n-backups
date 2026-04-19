@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-17T20:46:20.042Z",
+  "updatedAt": "2026-04-18T16:23:59.490Z",
   "createdAt": "2026-04-14T01:12:35.270Z",
   "id": "zn7nNytdtXEFofe0",
   "name": "002-B. DSS Image Prompt Generation",
@@ -443,7 +443,7 @@
             {
               "field": "hours",
               "hoursInterval": 18,
-              "triggerAtMinute": 8
+              "triggerAtMinute": 38
             }
           ]
         }
@@ -576,19 +576,22 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "timezone": "America/New_York"
   },
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        18
+      ]
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "74292648-bdf5-4651-91c5-030174b01c32",
-  "activeVersionId": "74292648-bdf5-4651-91c5-030174b01c32",
+  "versionId": "53f93bcc-10ae-4e86-84d0-edb2fa783d39",
+  "activeVersionId": "53f93bcc-10ae-4e86-84d0-edb2fa783d39",
   "triggerCount": 1,
   "shared": [
     {
@@ -600,9 +603,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-17T20:46:30.000Z",
-    "createdAt": "2026-04-17T20:46:20.043Z",
-    "versionId": "74292648-bdf5-4651-91c5-030174b01c32",
+    "updatedAt": "2026-04-18T07:02:36.000Z",
+    "createdAt": "2026-04-18T07:02:26.509Z",
+    "versionId": "53f93bcc-10ae-4e86-84d0-edb2fa783d39",
     "workflowId": "zn7nNytdtXEFofe0",
     "nodes": [
       {
@@ -1042,7 +1045,7 @@
               {
                 "field": "hours",
                 "hoursInterval": 18,
-                "triggerAtMinute": 8
+                "triggerAtMinute": 38
               }
             ]
           }
@@ -1171,8 +1174,8 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 74292648",
-    "description": "start schedule every 18 hours",
+    "name": "Version 53f93bcc",
+    "description": "changed scheduled time to 38m",
     "autosaved": true
   },
   "tags": [
