@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-04-03T02:03:38.934Z",
+  "updatedAt": "2026-04-19T22:50:42.704Z",
   "createdAt": "2026-01-25T22:11:27.563Z",
   "id": "u4_u2ln94yCg6M0ziIFTb",
   "name": "002. SHSFS Combined Image Prompt Generation",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -393,7 +393,7 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "status": "completed",
+            "status": "complete",
             "row_number": "={{ $('Loop Over Chapters').item.json.row_number }}"
           },
           "matchingColumns": [
@@ -1039,7 +1039,7 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "status": "completed",
+            "status": "complete",
             "row_number": "={{ $('Read Pending Prompts (Sheet2)').item.json.row_number }}"
           },
           "matchingColumns": [
@@ -1185,7 +1185,6 @@
           "mappingMode": "defineBelow",
           "value": {
             "video_name": "={{ $json.video_name }}",
-            "tts_status": "",
             "image_status": "chdone"
           },
           "matchingColumns": [
@@ -1341,6 +1340,27 @@
           "name": "Google Sheets account"
         }
       }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8,
+              "triggerAtMinute": 28
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        144
+      ],
+      "id": "58f958f0-7a37-45d0-bd4c-7d19a08bd9b7",
+      "name": "Schedule Trigger"
     }
   ],
   "connections": {
@@ -1708,6 +1728,17 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check for Ready Scripts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1715,13 +1746,19 @@
     "availableInMCP": false,
     "binaryMode": "separate"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        0
+      ]
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "b9a3aa4c-a5b8-40e9-8c62-40d31f856771",
-  "activeVersionId": null,
+  "versionId": "17e8e6be-f502-4165-9be4-af2d3da60cc4",
+  "activeVersionId": "17e8e6be-f502-4165-9be4-af2d3da60cc4",
   "triggerCount": 1,
   "shared": [
     {
@@ -1732,7 +1769,1752 @@
       "projectId": "eaD0haLSQbgJ93Hf"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-04-19T22:53:34.000Z",
+    "createdAt": "2026-04-19T22:50:42.705Z",
+    "versionId": "17e8e6be-f502-4165-9be4-af2d3da60cc4",
+    "workflowId": "u4_u2ln94yCg6M0ziIFTb",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "d25fdf96-82ec-47b8-9dbc-bea06af64719",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $json.document_id }}"
+        },
+        "id": "1dc40fb3-58fc-45b8-9a17-a69bf7fc4785",
+        "name": "Read Google Doc",
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          1744,
+          0
+        ],
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// The content is already a string when using simple: true\nconst fullText = $input.item.json.content;\nconst videoName = $('Loop Over Ready Scripts').first().json.video_name;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nconst matches = [];\n\n// Find all section headers\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    fullMatch: match[0],\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\n// Extract content for each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const startIndex = currentMatch.index;\n  const endIndex = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  \n  let sectionContent = fullText.substring(startIndex, endIndex).trim();\n  \n  // Remove the --- separator at the end if present\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  sections.push({\n    json: {\n      video_name: videoName,\n      chapter_number: currentMatch.number,\n      script: sectionContent,\n      status: 'pending'\n    }\n  });\n}\n\nif (sections.length === 0) {\n  throw new Error('No sections found. Make sure the document uses \"# **Section N: Title**\" format.');\n}\n\nreturn sections;"
+        },
+        "id": "a74380d1-a48b-464e-b417-306fc5b90746",
+        "name": "Parse Sections",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1952,
+          0
+        ],
+        "notes": "Splits the document by section headers and formats for spreadsheet"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 225841298,
+            "mode": "list",
+            "cachedResultName": "Chapters",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=225841298"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "chapter_number": "={{ $json.chapter_number }}",
+              "script": "={{ $json.script }}",
+              "status": "={{ $json.status }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script",
+                "displayName": "script",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "da513954-93df-4324-8e84-88c7149e4e7c",
+        "name": "Write to Chapters Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2176,
+          0
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 225841298,
+            "mode": "list",
+            "cachedResultName": "Chapters",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=225841298"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "status",
+                "lookupValue": "pending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "2d3cbd0a-7dc9-4f9f-899b-b20b1a9ff427",
+        "name": "Read Pending Chapters (Sheet1)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1376,
+          240
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Reads pending chapters from Sheet1"
+      },
+      {
+        "parameters": {
+          "options": {
+            "reset": false
+          }
+        },
+        "id": "6f50b0eb-b484-4c61-beff-6b1e6f8b0776",
+        "name": "Loop Over Chapters",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1600,
+          240
+        ],
+        "notes": "Process one chapter at a time"
+      },
+      {
+        "parameters": {
+          "jsCode": "const script = $input.item.json.script;\nconst chapterNumber = $input.item.json.chapter_number;\nconst wordCount = script.split(/\\s+/).length;\n\n// First section gets 2x image density (1 image per 30 words)\n// Other sections get standard density (1 image per 60 words)\nconst wordsPerImage = chapterNumber === 1 ? 40 : 180;\nconst imageCount = Math.round(wordCount / wordsPerImage);\n\nreturn [{\n  json: {\n    video_name: $input.item.json.video_name,\n    chapter_number: chapterNumber,\n    script: script,\n    image_count: imageCount,\n    row_number: $input.item.json.row_number\n  }\n}];"
+        },
+        "id": "42b55215-5366-4750-9077-a8d594f99ce2",
+        "name": "Calculate Image Count",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2016,
+          272
+        ],
+        "notes": "word count ÷ 50"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openRouterApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Title",
+                "value": "SHSFS Prompts "
+              },
+              {
+                "name": "HTTP-Referer",
+                "value": "https://sacredhindustoriesforsleep.com"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"openai/gpt-5.4\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate detailed image prompts for Hindu sacred story sleep videos. Each prompt MUST be 5+ sentences describing a contemplative, devotional scene inspired by classical Indian Tanjore painting tradition.\\n\\nCRITICAL INSTRUCTION - CHRONOLOGICAL ORDER:\\n- Generate prompts in STRICT CHRONOLOGICAL ORDER following the script from beginning to end\\n- Each prompt should correspond to the narrative as it unfolds sequentially\\n- DO NOT jump around in the story or group similar themes together\\n- Follow the script paragraph by paragraph, section by section, in linear order\\n- The first prompt should depict the beginning of the script, the last prompt should depict the end\\n\\nSTYLE REQUIREMENTS:\\n- Tanjore painting style (Thanjavur South Indian devotional art): bold, jewel-like colors, flat iconic composition, rich gold ornamentation, deep warm palette\\n- Contemplative, devotional quality with sleep-friendly tones\\n- The flat, iconic composition of Tanjore art with softened edges for calming effect\\n- Historical/cultural accuracy (ancient Indian settings, traditional garments, period-appropriate architecture and materials)\\n- Warm, sacred color palette: deep jewel tones, ochre, terracotta, deep indigo, sunset orange, warm earth tones, heavy gold ornamentation for divine light\\n- Focus on devotional atmosphere, character expressions showing inner spiritual states, symbolic elements\\n- Gentle, reverent treatment of all figures and scenes\\n\\nREPRESENTATION (CRITICAL - MUST APPEAR IN EVERY PROMPT):\\n- OPEN EVERY PROMPT with this exact anchor phrase before describing the scene: \\\"A Tanjore-style devotional painting depicting..., with all human figures rendered in authentic South Asian skin tones ranging from warm light brown to deep brown, per Tanjore painting tradition — no pale, fair, or European coloring on any figure.\\\"\\n- The South Asian skin tone spectrum for this channel runs from warm light brown (the lightest acceptable value) through golden-brown, warm medium brown, rich brown, and deep brown. All characters must fall somewhere in this range.\\n- Every prompt must explicitly describe the skin tone of every named human character using a descriptor from this spectrum\\n- Character skin tone assignments:\\n  Yudhishthira: warm medium brown\\n  Arjuna: warm light brown to golden-brown\\n  Bhima: rich brown\\n  Nakula: golden-brown\\n  Sahadeva: warm medium brown\\n  Kunti: warm medium brown\\n  Draupadi: rich brown to deep brown\\n  Bhishma: warm light brown to warm medium brown (aged, never pale or grey-toned)\\n  Drona: warm medium brown\\n  Duryodhana: rich brown\\n  Duhshasana: rich brown\\n  Karna: golden-brown (sun-god heritage marker)\\n  Shakuni: warm medium brown\\n  Dhritarashtra: warm medium brown\\n  Gandhari: warm medium brown\\n  Vidura: rich brown\\n  Krishna: blue-black per iconographic tradition\\n  Ghatotkacha: deep brown to dark brown (rakshasa heritage marker)\\n  Background figures, servants, soldiers: naturally varied across the full South Asian spectrum — warm light brown through deep brown\\n- Every prompt must specify subcontinental facial features for every figure — never Anglo or European features\\n- BANNED DESCRIPTORS — never use these: wheatish, fair, pale, ivory, light-skinned, or any phrasing that implies European or East Asian coloring\\n\\nCONTENT RESTRICTIONS (CRITICAL):\\n- NO violence, gore, blood, or weapons shown explicitly\\n- NO nudity or sexual content\\n- NO readable text or writing in images\\n- Use symbolic/atmospheric approaches when literal depictions would violate these rules\\n- Maintain respectful, sacred treatment of all Hindu deities, sages, and sacred figures\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array with no other text, markdown, or explanation:\\n[{\\\"prompt\\\": \\\"A Tanjore-style devotional painting depicting..., with all human figures rendered in authentic South Asian skin tones ranging from warm light brown to deep brown, per Tanjore painting tradition — no pale, fair, or European coloring on any figure.\\\"}, {\\\"prompt\\\": \\\"A Tanjore-style devotional painting depicting..., with all human figures rendered in authentic South Asian skin tones ranging from warm light brown to deep brown, per Tanjore painting tradition — no pale, fair, or European coloring on any figure.\\\"}]\\n\\nBase all prompts on the provided script IN THE ORDER IT IS WRITTEN.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.script) }}\n    }\n  ],\n  \"temperature\": 1,\n  \"max_tokens\": 28192\n}",
+          "options": {}
+        },
+        "id": "4f3af98c-7032-448c-83df-d842fa5becdd",
+        "name": "Generate Prompts via OpenAI",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2304,
+          272
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "VNgbdBR86ZkDETr5",
+            "name": "OpenRouter account"
+          }
+        },
+        "notes": "Creates all image prompts for this chapter"
+      },
+      {
+        "parameters": {
+          "jsCode": "const openaiResponse = $input.item.json.choices[0].message.content;\nlet prompts;\n\ntry {\n  prompts = JSON.parse(openaiResponse);\n} catch (e) {\n  const jsonMatch = openaiResponse.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n  if (jsonMatch) {\n    prompts = JSON.parse(jsonMatch[1]);\n  } else {\n    throw new Error(\"Could not parse OpenAI response as JSON\");\n  }\n}\n\nconst videoName = $('Loop Over Chapters').item.json.video_name;\nconst chapterNum = $('Loop Over Chapters').item.json.chapter_number;\nconst rowNumber = $('Loop Over Chapters').item.json.row_number;\n\n// Format for Sheet2 - each prompt as a separate row\nreturn prompts.map((p, index) => ({\n  json: {\n    video_name: videoName,\n    chapter_number: chapterNum,\n    image_number: String(index + 1).padStart(2, '0'),\n    filename: `${videoName}-${chapterNum}-${String(index + 1).padStart(2, '0')}.png`,\n    prompt: p.prompt,\n    status: 'pending',\n    chapter_row_number: rowNumber\n  }\n}));"
+        },
+        "id": "956f135b-629f-42a6-abfa-384f5416e65c",
+        "name": "Parse & Format for Sheet2",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2528,
+          272
+        ],
+        "notes": "Formats each prompt as a row for Sheet2"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2013912948,
+            "mode": "list",
+            "cachedResultName": "Prompts",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=2013912948"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "chapter_number": "={{ $json.chapter_number }}",
+              "image_number": "={{ $json.image_number }}",
+              "filename": "={{ $json.filename }}",
+              "prompt": "={{ $json.prompt }}",
+              "status": "pending"
+            },
+            "matchingColumns": [
+              "filename"
+            ],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "image_number",
+                "displayName": "image_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "filename",
+                "displayName": "filename",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "prompt",
+                "displayName": "prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "7ad595c8-4d70-4ca8-9eb8-56f81b5081fd",
+        "name": "Write Prompts to Sheet2",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1968,
+          496
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Appends all prompts to Sheet2"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 225841298,
+            "mode": "list",
+            "cachedResultName": "Chapters",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=225841298"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "status": "complete",
+              "row_number": "={{ $('Loop Over Chapters').item.json.row_number }}"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "script",
+                "displayName": "script",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "cd6238e9-83fb-4857-8390-552e297628a6",
+        "name": "Mark Chapter Complete (Sheet1)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2208,
+          496
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Marks this chapter as completed in Sheet1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          2384,
+          0
+        ],
+        "id": "8a7cad91-ba2f-4b83-a49e-124c17108681",
+        "name": "Limit"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          2464,
+          576
+        ],
+        "id": "fb00e09f-9008-4de1-a126-b0a97f83eb3f",
+        "name": "Limit1"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "image_status",
+                "lookupValue": "ready"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          496,
+          32
+        ],
+        "id": "05fc50bc-1bae-45b9-9644-79cf0777870d",
+        "name": "Check for Ready Scripts",
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "754c18ef-7284-42a4-b567-7eb18908f534",
+                "leftValue": "={{ $json.row_number }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          752,
+          0
+        ],
+        "id": "8d0f256b-c0a8-4078-a8a3-795ae70ba88c",
+        "name": "Any Scripts Ready?"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1104,
+          16
+        ],
+        "id": "28d958b9-ca3c-432c-a013-fe7ea60ac5cb",
+        "name": "Loop Over Ready Scripts"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3cb09ccd-50c5-4587-ab5c-62336f249b0f",
+                "name": "document_id",
+                "value": "={{ $json.doc_id }}",
+                "type": "string"
+              },
+              {
+                "id": "138b1d49-c2d2-4e9b-865b-65157e34dd3f",
+                "name": "video_name",
+                "value": "={{ $json.video_name }}",
+                "type": "string"
+              },
+              {
+                "id": "ad975ee4-26b5-4851-af6e-363bb6f98f69",
+                "name": "slack_channel",
+                "value": "#sfs-video-assets",
+                "type": "string"
+              },
+              {
+                "id": "71c2b449-df41-48d5-afbb-78e4c7f9f783",
+                "name": "row_number",
+                "value": "={{ $json.row_number }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1456,
+          0
+        ],
+        "id": "3e0f4c6a-1e61-42bc-8d3b-f98b8f041108",
+        "name": "Extract Script Info"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "row_number": "={{ $('Loop Over Ready Scripts').item.json.row_number }}",
+              "image_status": "complete"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "target_words",
+                "displayName": "target_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script_type",
+                "displayName": "script_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reference_books",
+                "displayName": "reference_books",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_id",
+                "displayName": "doc_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_link",
+                "displayName": "doc_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "date_completed",
+                "displayName": "date_completed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "image_status",
+                "displayName": "image_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "tts_status",
+                "displayName": "tts_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          2704,
+          576
+        ],
+        "id": "01516487-73fe-47f7-aa35-fef5c8ae9a19",
+        "name": "Mark Script Complete",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          752,
+          320
+        ],
+        "id": "15150c8f-3f23-4988-a3f8-fcc1575eb201",
+        "name": "No Scripts Ready - Skip"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          2096,
+          688
+        ],
+        "id": "0b04334e-b0e1-4072-8769-52a78e8366ae",
+        "name": "Limit2"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2013912948,
+            "mode": "list",
+            "cachedResultName": "Prompts",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=2013912948"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "status",
+                "lookupValue": "pending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "d829f28b-bbe7-43af-ab70-49bf7ab44517",
+        "name": "Read Pending Prompts (Sheet2)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          752,
+          1344
+        ],
+        "executeOnce": false,
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Reads all pending prompts from Sheet2"
+      },
+      {
+        "parameters": {
+          "batchSize": 10,
+          "options": {}
+        },
+        "id": "51439ba7-4e31-43f8-a287-4bf0f81f2393",
+        "name": "Batch Prompts (10 at a time)",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          976,
+          1280
+        ],
+        "notes": "Processes 10 prompts simultaneously (fal.ai concurrency limit)"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://fal.run/fal-ai/gpt-image-1.5",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1536x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+          "options": {}
+        },
+        "id": "a1218c4f-05a9-4987-a891-1e6cae095281",
+        "name": "Generate Image via fal.ai",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1200,
+          1344
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "z9A4PGMllFQCcjr1",
+            "name": "Fal.ai Auth"
+          }
+        },
+        "continueOnFail": true,
+        "notes": "Generates image (~70 seconds) - runs 10 at once!"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-images-concurrent",
+                "leftValue": "={{ $json.images[0].url }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "677cce26-0e90-439a-befb-a7235fb54e24",
+        "name": "Generation Successful?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1408,
+          1344
+        ],
+        "notes": "Checks if fal.ai returned an image"
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.images[0].url }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "id": "858f1093-ae56-4063-8aed-1d446f792c54",
+        "name": "Download Image",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1632,
+          1232
+        ],
+        "notes": "Downloads the generated PNG"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "preserve-filename",
+                "name": "filename",
+                "value": "={{ $('Batch Prompts (10 at a time)').item.json.filename }}",
+                "type": "string"
+              },
+              {
+                "id": "preserve-row-number",
+                "name": "row_number",
+                "value": "={{ $('Batch Prompts (10 at a time)').item.json.row_number }}",
+                "type": "number"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "25a3be38-3c17-4fc4-b6f7-414165889428",
+        "name": "Preserve Metadata",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1856,
+          1232
+        ],
+        "notes": "Keeps original filename and row number with binary data"
+      },
+      {
+        "parameters": {
+          "name": "={{ $json.filename }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1rSkzEFyJP80-ua4WpV7l2kPRCzhOxXmT",
+            "mode": "list",
+            "cachedResultName": "SHSFS Images",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1rSkzEFyJP80-ua4WpV7l2kPRCzhOxXmT"
+          },
+          "options": {}
+        },
+        "id": "c3bff700-0403-488f-ac01-5edc72c02c6d",
+        "name": "Upload to Google Drive",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          2080,
+          1232
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "YccFrdj90ivdga5k",
+            "name": "Google Drive account"
+          }
+        },
+        "notes": "Uploads with correct filename"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2013912948,
+            "mode": "list",
+            "cachedResultName": "Prompts",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=2013912948"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "status": "complete",
+              "row_number": "={{ $('Read Pending Prompts (Sheet2)').item.json.row_number }}"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "image_number",
+                "displayName": "image_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "filename",
+                "displayName": "filename",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "prompt",
+                "displayName": "prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "57530917-ba6a-4d5b-a9d2-d112b836b359",
+        "name": "Mark Prompt Complete (Sheet2)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2288,
+          1232
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        },
+        "notes": "Updates status in Sheet2"
+      },
+      {
+        "parameters": {
+          "amount": 10
+        },
+        "id": "188f0651-c7e7-4f4d-88bc-ef2631ff0f37",
+        "name": "Delay Between Batches",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1360,
+          1120
+        ],
+        "webhookId": "4b9e0a23-6a54-4740-929b-3a53dda98dfe",
+        "notes": "10 second pause between batches of 10"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1568,
+          1056
+        ],
+        "id": "307f62c1-6439-4416-a376-679f6a255d6a",
+        "name": "Limit3"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+            "mode": "list",
+            "cachedResultName": "SHSFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Topics",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "image_status": "chdone"
+            },
+            "matchingColumns": [
+              "video_name"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "target_words",
+                "displayName": "target_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script_type",
+                "displayName": "script_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reference_books",
+                "displayName": "reference_books",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_id",
+                "displayName": "doc_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_link",
+                "displayName": "doc_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "date_completed",
+                "displayName": "date_completed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "edit_status",
+                "displayName": "edit_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "image_status",
+                "displayName": "image_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "tts_status",
+                "displayName": "tts_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Scheduled Date",
+                "displayName": "Scheduled Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          2592,
+          0
+        ],
+        "id": "50298818-5e2e-4872-8e54-53b6e720ac0d",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 8,
+                "triggerAtMinute": 28
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          144,
+          144
+        ],
+        "id": "58f958f0-7a37-45d0-bd4c-7d19a08bd9b7",
+        "name": "Schedule Trigger"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Check for Ready Scripts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Google Doc": {
+        "main": [
+          [
+            {
+              "node": "Parse Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Sections": {
+        "main": [
+          [
+            {
+              "node": "Write to Chapters Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write to Chapters Sheet": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Pending Chapters (Sheet1)": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Chapters",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Chapters": {
+        "main": [
+          [
+            {
+              "node": "Limit1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Calculate Image Count",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculate Image Count": {
+        "main": [
+          [
+            {
+              "node": "Generate Prompts via OpenAI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Prompts via OpenAI": {
+        "main": [
+          [
+            {
+              "node": "Parse & Format for Sheet2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse & Format for Sheet2": {
+        "main": [
+          [
+            {
+              "node": "Write Prompts to Sheet2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write Prompts to Sheet2": {
+        "main": [
+          [
+            {
+              "node": "Limit2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Chapter Complete (Sheet1)": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Chapters",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit1": {
+        "main": [
+          [
+            {
+              "node": "Mark Script Complete",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check for Ready Scripts": {
+        "main": [
+          [
+            {
+              "node": "Any Scripts Ready?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Any Scripts Ready?": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Ready Scripts",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Scripts Ready - Skip",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Ready Scripts": {
+        "main": [
+          [
+            {
+              "node": "No Scripts Ready - Skip",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract Script Info",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Script Info": {
+        "main": [
+          [
+            {
+              "node": "Read Google Doc",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Script Complete": {
+        "main": [
+          [
+            {
+              "node": "Check for Ready Scripts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit2": {
+        "main": [
+          [
+            {
+              "node": "Mark Chapter Complete (Sheet1)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Pending Prompts (Sheet2)": {
+        "main": [
+          [
+            {
+              "node": "Batch Prompts (10 at a time)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Batch Prompts (10 at a time)": {
+        "main": [
+          [
+            {
+              "node": "Delay Between Batches",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Generate Image via fal.ai",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Image via fal.ai": {
+        "main": [
+          [
+            {
+              "node": "Generation Successful?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generation Successful?": {
+        "main": [
+          [
+            {
+              "node": "Download Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Batch Prompts (10 at a time)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Image": {
+        "main": [
+          [
+            {
+              "node": "Preserve Metadata",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preserve Metadata": {
+        "main": [
+          [
+            {
+              "node": "Upload to Google Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to Google Drive": {
+        "main": [
+          [
+            {
+              "node": "Mark Prompt Complete (Sheet2)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Prompt Complete (Sheet2)": {
+        "main": [
+          [
+            {
+              "node": "Batch Prompts (10 at a time)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delay Between Batches": {
+        "main": [
+          [
+            {
+              "node": "Limit3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "No Scripts Ready - Skip": {
+        "main": [
+          [
+            {
+              "node": "Read Pending Prompts (Sheet2)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Read Pending Chapters (Sheet1)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Check for Ready Scripts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version 17e8e6be",
+    "description": "",
+    "autosaved": true
+  },
   "tags": [
     {
       "updatedAt": "2026-01-25T21:33:40.980Z",
