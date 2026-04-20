@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-18T02:50:47.673Z",
+  "updatedAt": "2026-04-19T18:22:44.461Z",
   "createdAt": "2026-04-13T02:06:53.790Z",
   "id": "EAdCJll6cqK1DrBz",
   "name": "003. DSS Script to TTS Prep (Google Doc → TTS Spreadsheet)",
@@ -211,7 +211,7 @@
           "interval": [
             {
               "field": "hours",
-              "hoursInterval": 12,
+              "hoursInterval": 8,
               "triggerAtMinute": 8
             }
           ]
@@ -559,15 +559,17 @@
   },
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        0
+      ]
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "d5b6f859-5ce9-4d53-9729-657282f59027",
-  "activeVersionId": "d5b6f859-5ce9-4d53-9729-657282f59027",
+  "versionId": "9c015436-fe2b-4ed5-8cde-78f602d9bcc1",
+  "activeVersionId": "9c015436-fe2b-4ed5-8cde-78f602d9bcc1",
   "triggerCount": 1,
   "shared": [
     {
@@ -579,9 +581,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-18T02:50:57.000Z",
-    "createdAt": "2026-04-18T02:50:47.675Z",
-    "versionId": "d5b6f859-5ce9-4d53-9729-657282f59027",
+    "updatedAt": "2026-04-19T18:22:50.000Z",
+    "createdAt": "2026-04-19T18:22:44.462Z",
+    "versionId": "9c015436-fe2b-4ed5-8cde-78f602d9bcc1",
     "workflowId": "EAdCJll6cqK1DrBz",
     "nodes": [
       {
@@ -789,7 +791,7 @@
             "interval": [
               {
                 "field": "hours",
-                "hoursInterval": 12,
+                "hoursInterval": 8,
                 "triggerAtMinute": 8
               }
             ]
@@ -1129,8 +1131,8 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version d5b6f859",
-    "description": "scheduled every 12 hours",
+    "name": "Version 9c015436",
+    "description": "every 8 hours",
     "autosaved": true
   },
   "tags": []
