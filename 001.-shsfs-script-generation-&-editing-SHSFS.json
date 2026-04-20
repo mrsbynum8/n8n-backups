@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-17T03:51:57.594Z",
+  "updatedAt": "2026-04-19T17:45:42.622Z",
   "createdAt": "2026-01-25T21:33:42.630Z",
   "id": "iixzw2YUC7r3X07o6Dg5w",
   "name": "001. SHSFS Script Generation & Editing",
@@ -1176,7 +1176,7 @@
           "interval": [
             {
               "field": "hours",
-              "hoursInterval": 17,
+              "hoursInterval": 12,
               "triggerAtMinute": 8
             }
           ]
@@ -1681,8 +1681,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "684f4382-b6f2-44e0-b07a-06a91ff32d5a",
-  "activeVersionId": "684f4382-b6f2-44e0-b07a-06a91ff32d5a",
+  "versionId": "c5c06e69-4dc1-415e-9e3d-1d0b508f22ff",
+  "activeVersionId": "c5c06e69-4dc1-415e-9e3d-1d0b508f22ff",
   "triggerCount": 1,
   "shared": [
     {
@@ -1694,9 +1694,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-17T03:52:11.000Z",
-    "createdAt": "2026-04-17T03:51:57.596Z",
-    "versionId": "684f4382-b6f2-44e0-b07a-06a91ff32d5a",
+    "updatedAt": "2026-04-19T17:45:49.000Z",
+    "createdAt": "2026-04-19T17:45:42.625Z",
+    "versionId": "c5c06e69-4dc1-415e-9e3d-1d0b508f22ff",
     "workflowId": "iixzw2YUC7r3X07o6Dg5w",
     "nodes": [
       {
@@ -2869,7 +2869,7 @@
             "interval": [
               {
                 "field": "hours",
-                "hoursInterval": 17,
+                "hoursInterval": 12,
                 "triggerAtMinute": 8
               }
             ]
@@ -3345,8 +3345,8 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 684f4382",
-    "description": "schedule activated every 17 hours",
+    "name": "Version c5c06e69",
+    "description": "schedule for every 12 hours",
     "autosaved": true
   },
   "tags": [
