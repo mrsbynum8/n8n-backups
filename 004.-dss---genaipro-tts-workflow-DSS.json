@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-18T16:32:50.470Z",
+  "updatedAt": "2026-04-19T18:23:05.690Z",
   "createdAt": "2026-04-13T02:04:36.802Z",
   "id": "4u5VbPGixGmruNfD",
   "name": "004. DSS - GenAIPro TTS Workflow",
@@ -561,7 +561,8 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 16,
+              "field": "hours",
+              "hoursInterval": 8,
               "triggerAtMinute": 28
             }
           ]
@@ -783,15 +784,17 @@
   },
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        0
+      ]
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "02c7a208-1756-4498-9fc9-d6a969e9b823",
-  "activeVersionId": "02c7a208-1756-4498-9fc9-d6a969e9b823",
+  "versionId": "48450185-3567-4293-ba74-b47d164adccd",
+  "activeVersionId": "48450185-3567-4293-ba74-b47d164adccd",
   "triggerCount": 1,
   "shared": [
     {
@@ -803,9 +806,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-18T16:33:16.000Z",
-    "createdAt": "2026-04-18T16:32:50.471Z",
-    "versionId": "02c7a208-1756-4498-9fc9-d6a969e9b823",
+    "updatedAt": "2026-04-19T18:23:10.000Z",
+    "createdAt": "2026-04-19T18:23:05.691Z",
+    "versionId": "48450185-3567-4293-ba74-b47d164adccd",
     "workflowId": "4u5VbPGixGmruNfD",
     "nodes": [
       {
@@ -1363,7 +1366,8 @@
           "rule": {
             "interval": [
               {
-                "triggerAtHour": 16,
+                "field": "hours",
+                "hoursInterval": 8,
                 "triggerAtMinute": 28
               }
             ]
@@ -1577,8 +1581,8 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 02c7a208",
-    "description": "Schedule trigger added and Telegram approval included",
+    "name": "Version 48450185",
+    "description": "every 8 hours",
     "autosaved": true
   },
   "tags": [
