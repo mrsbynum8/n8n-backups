@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-17T20:57:32.478Z",
+  "updatedAt": "2026-04-19T22:54:12.875Z",
   "createdAt": "2026-04-14T01:59:42.048Z",
   "id": "cFIj94UmMkvz7QEx",
   "name": "005. DSS Image Generation",
@@ -385,8 +385,9 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 12,
-              "triggerAtMinute": 8
+              "field": "hours",
+              "hoursInterval": 8,
+              "triggerAtMinute": 48
             }
           ]
         }
@@ -554,15 +555,17 @@
   },
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        16
+      ]
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "e7ee6722-be53-4be9-969f-0dadc7b2a54a",
-  "activeVersionId": "e7ee6722-be53-4be9-969f-0dadc7b2a54a",
+  "versionId": "e3d0223c-2f47-48f6-81f8-43e4c60fb5c5",
+  "activeVersionId": "e3d0223c-2f47-48f6-81f8-43e4c60fb5c5",
   "triggerCount": 1,
   "shared": [
     {
@@ -574,9 +577,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-17T20:56:06.000Z",
-    "createdAt": "2026-04-17T20:55:52.163Z",
-    "versionId": "e7ee6722-be53-4be9-969f-0dadc7b2a54a",
+    "updatedAt": "2026-04-19T22:54:15.000Z",
+    "createdAt": "2026-04-19T22:54:12.876Z",
+    "versionId": "e3d0223c-2f47-48f6-81f8-43e4c60fb5c5",
     "workflowId": "cFIj94UmMkvz7QEx",
     "nodes": [
       {
@@ -958,8 +961,9 @@
           "rule": {
             "interval": [
               {
-                "triggerAtHour": 12,
-                "triggerAtMinute": 8
+                "field": "hours",
+                "hoursInterval": 8,
+                "triggerAtMinute": 48
               }
             ]
           }
@@ -1117,8 +1121,8 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version e7ee6722",
-    "description": "starting schedule daily at noon",
+    "name": "Version e3d0223c",
+    "description": "",
     "autosaved": true
   },
   "tags": [
