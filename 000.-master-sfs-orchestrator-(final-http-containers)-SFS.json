@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-02-04T04:46:41.480Z",
+  "updatedAt": "2026-04-19T04:09:16.000Z",
   "createdAt": "2026-02-04T02:01:19.405Z",
   "id": "8WCGev-ZvL8kjx7qzK9ms",
   "name": "000. Master SFS Orchestrator (Final HTTP Containers)",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {},
@@ -150,7 +150,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "f5d35446-dba7-4bdf-8ce9-c991f113bd2e",
+  "versionId": "c041379e-bddf-4d34-b0d2-3272dd48cf40",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
