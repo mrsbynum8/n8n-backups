@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-03-16T01:16:06.000Z",
+  "updatedAt": "2026-04-19T05:21:01.000Z",
   "createdAt": "2026-01-25T22:37:50.632Z",
   "id": "_w7a0uplZN3RoMzIS4nUA",
   "name": "004. SHSFS - GenAIPro TTS Workflow",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {},
@@ -758,7 +758,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "31b67395-7fcc-4846-a5c6-ba8f68401c5c",
+  "versionId": "9624f200-7412-4c5a-96e7-a7990afa2af5",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
