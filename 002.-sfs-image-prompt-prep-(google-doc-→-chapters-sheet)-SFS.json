@@ -1,0 +1,1224 @@
+{
+  "updatedAt": "2026-04-19T18:20:58.853Z",
+  "createdAt": "2026-04-17T15:57:40.211Z",
+  "id": "KgVCQvevY5cYgTKL",
+  "name": "002. SFS Image Prompt Prep (Google Doc → Chapters Sheet)",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "da1ec611-e3a3-496d-90e5-fb7c12ebfdce",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "doc-id",
+              "name": "document_id",
+              "value": "={{ $json.doc_id }}",
+              "type": "string"
+            },
+            {
+              "id": "vid-name",
+              "name": "=video_name",
+              "value": "={{ $json.video_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2fd5ff36-25a7-463c-81fc-5f31ce3d146a",
+      "name": "📝 EDIT THIS - Your Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        32
+      ],
+      "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name for spreadsheets (must match what you'll use in Workflow B)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.document_id }}"
+      },
+      "id": "431cc4bf-1c76-4df0-9ca7-c509721afc67",
+      "name": "Read Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        32
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// The content is already a string when using simple: true\nconst fullText = $input.item.json.content;\nconst videoName = $('📝 EDIT THIS - Your Input').item.json.video_name;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nconst matches = [];\n\n// Find all section headers\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    fullMatch: match[0],\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\n// Extract content for each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const startIndex = currentMatch.index;\n  const endIndex = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  \n  let sectionContent = fullText.substring(startIndex, endIndex).trim();\n  \n  // Remove the --- separator at the end if present\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  sections.push({\n    json: {\n      video_name: videoName,\n      chapter_number: currentMatch.number,\n      script: sectionContent,\n      status: 'pending'\n    }\n  });\n}\n\nif (sections.length === 0) {\n  throw new Error('No sections found. Make sure the document uses \"# **Section N: Title**\" format.');\n}\n\nreturn sections;"
+      },
+      "id": "5f7c6d27-ad20-429f-a8de-3d85b3df1188",
+      "name": "Parse Sections",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        32
+      ],
+      "notes": "Splits the document by section headers and formats for spreadsheet"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1287119606,
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1287119606"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "chapter_number": "={{ $json.chapter_number }}",
+            "script": "={{ $json.script }}",
+            "status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script",
+              "displayName": "script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f28bd502-9f31-4367-9c4e-c343dea577ba",
+      "name": "Write to Chapters Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        560,
+        32
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Google Sheets has a 50,000 character limit per cell\n// We'll use 45,000 as a safe buffer\nconst MAX_CHARS = 45000;\n\nconst allItems = [];\n\n// Function to find the best split point\nfunction findSplitPoint(text, maxLength) {\n  if (text.length <= maxLength) {\n    return text.length;\n  }\n  \n  // Try to split at a paragraph break (double newline)\n  const paragraphBreak = text.lastIndexOf('\\n\\n', maxLength);\n  if (paragraphBreak > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return paragraphBreak + 2; // Include the newlines\n  }\n  \n  // Try to split at a sentence ending (. ! ? followed by space or newline)\n  const sentenceEndings = ['. ', '.\\n', '! ', '!\\n', '? ', '?\\n'];\n  let bestSplit = -1;\n  \n  for (const ending of sentenceEndings) {\n    const pos = text.lastIndexOf(ending, maxLength);\n    if (pos > bestSplit) {\n      bestSplit = pos + ending.length;\n    }\n  }\n  \n  if (bestSplit > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return bestSplit;\n  }\n  \n  // Last resort: split at last space\n  const lastSpace = text.lastIndexOf(' ', maxLength);\n  if (lastSpace > 0) {\n    return lastSpace + 1;\n  }\n  \n  // Absolute last resort: hard cut (shouldn't happen with normal text)\n  return maxLength;\n}\n\n// Process each section from the previous node\nfor (const item of $input.all()) {\n  const script = item.json.script;\n  const videoName = item.json.video_name;\n  const chapterNumber = item.json.chapter_number;\n  const status = item.json.status;\n  \n  // If section is short enough, keep it as-is\n  if (script.length <= MAX_CHARS) {\n    allItems.push({\n      json: {\n        video_name: videoName,\n        chapter_number: chapterNumber,\n        script: script,\n        status: status\n      }\n    });\n  } else {\n    // Section is too long - split it into chunks at natural boundaries\n    let remaining = script;\n    let partNumber = 1;\n    \n    while (remaining.length > 0) {\n      const splitPoint = findSplitPoint(remaining, MAX_CHARS);\n      const chunk = remaining.substring(0, splitPoint).trim();\n      \n      // Format part number with leading zero (01, 02, etc.)\n      const paddedPart = String(partNumber).padStart(2, '0');\n      \n      allItems.push({\n        json: {\n          video_name: videoName,\n          chapter_number: `${chapterNumber}-${paddedPart}`,\n          script: chunk,\n          status: status\n        }\n      });\n      \n      remaining = remaining.substring(splitPoint).trim();\n      partNumber++;\n    }\n  }\n}\n\nreturn allItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        32
+      ],
+      "id": "734bf3ef-2b2b-4361-b842-144da3dbaa79",
+      "name": "Split Long Sections"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "image_status",
+              "lookupValue": "ready"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -896,
+        32
+      ],
+      "id": "ad85d957-50e6-419c-9251-3ca71c4ca214",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "463a29d7-4688-4cb2-b6ad-d0904568413f",
+              "leftValue": "={{ $json.row_number }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -688,
+        32
+      ],
+      "id": "21c6da2b-0ddb-4162-ba60-aa43de717c23",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -464,
+        32
+      ],
+      "id": "013ceb27-121d-44e4-80ca-8cfc463f8559",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+          "mode": "list",
+          "cachedResultName": "SFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doc_id": "={{ $('Read Google Doc').item.json.documentId }}",
+            "image_status": "chdone"
+          },
+          "matchingColumns": [
+            "doc_id"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        256
+      ],
+      "id": "af09006e-3df4-484c-be8c-9956fd05b12d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        256
+      ],
+      "id": "44e09496-b3cd-465b-b161-56269b6308b6",
+      "name": "Wait",
+      "webhookId": "168a6d17-17bd-4771-886c-dee730639bfe"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8,
+              "triggerAtMinute": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1152,
+        208
+      ],
+      "id": "e97b3c56-54f7-4af8-8bc3-71194abec610",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 EDIT THIS - Your Input": {
+      "main": [
+        [
+          {
+            "node": "Read Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Parse Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Sections": {
+      "main": [
+        [
+          {
+            "node": "Split Long Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Chapters Sheet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Long Sections": {
+      "main": [
+        [
+          {
+            "node": "Write to Chapters Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "📝 EDIT THIS - Your Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        0
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "8ba7b294-05a6-48fd-bcbf-be392e2a2fd2",
+  "activeVersionId": "8ba7b294-05a6-48fd-bcbf-be392e2a2fd2",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-17T15:57:40.219Z",
+      "createdAt": "2026-04-17T15:57:40.219Z",
+      "role": "workflow:owner",
+      "workflowId": "KgVCQvevY5cYgTKL",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-19T18:21:02.000Z",
+    "createdAt": "2026-04-19T18:20:58.854Z",
+    "versionId": "8ba7b294-05a6-48fd-bcbf-be392e2a2fd2",
+    "workflowId": "KgVCQvevY5cYgTKL",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "da1ec611-e3a3-496d-90e5-fb7c12ebfdce",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1168,
+          32
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "doc-id",
+                "name": "document_id",
+                "value": "={{ $json.doc_id }}",
+                "type": "string"
+              },
+              {
+                "id": "vid-name",
+                "name": "=video_name",
+                "value": "={{ $json.video_name }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "2fd5ff36-25a7-463c-81fc-5f31ce3d146a",
+        "name": "📝 EDIT THIS - Your Input",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -224,
+          32
+        ],
+        "notes": "EDIT THESE VALUES:\n- document_id: The Google Doc ID from Workflow 0\n- video_name: Short name for spreadsheets (must match what you'll use in Workflow B)"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "documentURL": "={{ $json.document_id }}"
+        },
+        "id": "431cc4bf-1c76-4df0-9ca7-c509721afc67",
+        "name": "Read Google Doc",
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          -16,
+          32
+        ],
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "0icadRz5XxXy9hB4",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// The content is already a string when using simple: true\nconst fullText = $input.item.json.content;\nconst videoName = $('📝 EDIT THIS - Your Input').item.json.video_name;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nconst matches = [];\n\n// Find all section headers\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    fullMatch: match[0],\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\n// Extract content for each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const startIndex = currentMatch.index;\n  const endIndex = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  \n  let sectionContent = fullText.substring(startIndex, endIndex).trim();\n  \n  // Remove the --- separator at the end if present\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  sections.push({\n    json: {\n      video_name: videoName,\n      chapter_number: currentMatch.number,\n      script: sectionContent,\n      status: 'pending'\n    }\n  });\n}\n\nif (sections.length === 0) {\n  throw new Error('No sections found. Make sure the document uses \"# **Section N: Title**\" format.');\n}\n\nreturn sections;"
+        },
+        "id": "5f7c6d27-ad20-429f-a8de-3d85b3df1188",
+        "name": "Parse Sections",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          160,
+          32
+        ],
+        "notes": "Splits the document by section headers and formats for spreadsheet"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1287119606,
+            "mode": "list",
+            "cachedResultName": "Chapters",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=1287119606"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "video_name": "={{ $json.video_name }}",
+              "chapter_number": "={{ $json.chapter_number }}",
+              "script": "={{ $json.script }}",
+              "status": "={{ $json.status }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "chapter_number",
+                "displayName": "chapter_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script",
+                "displayName": "script",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "f28bd502-9f31-4367-9c4e-c343dea577ba",
+        "name": "Write to Chapters Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          560,
+          32
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Google Sheets has a 50,000 character limit per cell\n// We'll use 45,000 as a safe buffer\nconst MAX_CHARS = 45000;\n\nconst allItems = [];\n\n// Function to find the best split point\nfunction findSplitPoint(text, maxLength) {\n  if (text.length <= maxLength) {\n    return text.length;\n  }\n  \n  // Try to split at a paragraph break (double newline)\n  const paragraphBreak = text.lastIndexOf('\\n\\n', maxLength);\n  if (paragraphBreak > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return paragraphBreak + 2; // Include the newlines\n  }\n  \n  // Try to split at a sentence ending (. ! ? followed by space or newline)\n  const sentenceEndings = ['. ', '.\\n', '! ', '!\\n', '? ', '?\\n'];\n  let bestSplit = -1;\n  \n  for (const ending of sentenceEndings) {\n    const pos = text.lastIndexOf(ending, maxLength);\n    if (pos > bestSplit) {\n      bestSplit = pos + ending.length;\n    }\n  }\n  \n  if (bestSplit > maxLength * 0.8) { // Only use if it's at least 80% of max\n    return bestSplit;\n  }\n  \n  // Last resort: split at last space\n  const lastSpace = text.lastIndexOf(' ', maxLength);\n  if (lastSpace > 0) {\n    return lastSpace + 1;\n  }\n  \n  // Absolute last resort: hard cut (shouldn't happen with normal text)\n  return maxLength;\n}\n\n// Process each section from the previous node\nfor (const item of $input.all()) {\n  const script = item.json.script;\n  const videoName = item.json.video_name;\n  const chapterNumber = item.json.chapter_number;\n  const status = item.json.status;\n  \n  // If section is short enough, keep it as-is\n  if (script.length <= MAX_CHARS) {\n    allItems.push({\n      json: {\n        video_name: videoName,\n        chapter_number: chapterNumber,\n        script: script,\n        status: status\n      }\n    });\n  } else {\n    // Section is too long - split it into chunks at natural boundaries\n    let remaining = script;\n    let partNumber = 1;\n    \n    while (remaining.length > 0) {\n      const splitPoint = findSplitPoint(remaining, MAX_CHARS);\n      const chunk = remaining.substring(0, splitPoint).trim();\n      \n      // Format part number with leading zero (01, 02, etc.)\n      const paddedPart = String(partNumber).padStart(2, '0');\n      \n      allItems.push({\n        json: {\n          video_name: videoName,\n          chapter_number: `${chapterNumber}-${paddedPart}`,\n          script: chunk,\n          status: status\n        }\n      });\n      \n      remaining = remaining.substring(splitPoint).trim();\n      partNumber++;\n    }\n  }\n}\n\nreturn allItems;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          368,
+          32
+        ],
+        "id": "734bf3ef-2b2b-4361-b842-144da3dbaa79",
+        "name": "Split Long Sections"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "image_status",
+                "lookupValue": "ready"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -896,
+          32
+        ],
+        "id": "ad85d957-50e6-419c-9251-3ca71c4ca214",
+        "name": "Get row(s) in sheet",
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "463a29d7-4688-4cb2-b6ad-d0904568413f",
+                "leftValue": "={{ $json.row_number }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -688,
+          32
+        ],
+        "id": "21c6da2b-0ddb-4162-ba60-aa43de717c23",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -464,
+          32
+        ],
+        "id": "013ceb27-121d-44e4-80ca-8cfc463f8559",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ",
+            "mode": "list",
+            "cachedResultName": "SFS Topic Input Sheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Je5LG46mogd9t3UOHllc8gzz8gQc5bgIuOSmJFhAyQ/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "doc_id": "={{ $('Read Google Doc').item.json.documentId }}",
+              "image_status": "chdone"
+            },
+            "matchingColumns": [
+              "doc_id"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "video_name",
+                "displayName": "video_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "target_words",
+                "displayName": "target_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "script_type",
+                "displayName": "script_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "doc_id",
+                "displayName": "doc_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "doc_link",
+                "displayName": "doc_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "date_completed",
+                "displayName": "date_completed",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "voice_id",
+                "displayName": "voice_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "image_status",
+                "displayName": "image_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "tts_status",
+                "displayName": "tts_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -208,
+          256
+        ],
+        "id": "af09006e-3df4-484c-be8c-9956fd05b12d",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "1XqTJPtDuzHpqQbs",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 15
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          256
+        ],
+        "id": "44e09496-b3cd-465b-b161-56269b6308b6",
+        "name": "Wait",
+        "webhookId": "168a6d17-17bd-4771-886c-dee730639bfe"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 8,
+                "triggerAtMinute": 8
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -1152,
+          208
+        ],
+        "id": "e97b3c56-54f7-4af8-8bc3-71194abec610",
+        "name": "Schedule Trigger"
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📝 EDIT THIS - Your Input": {
+        "main": [
+          [
+            {
+              "node": "Read Google Doc",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Google Doc": {
+        "main": [
+          [
+            {
+              "node": "Parse Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Sections": {
+        "main": [
+          [
+            {
+              "node": "Split Long Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write to Chapters Sheet": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Long Sections": {
+        "main": [
+          [
+            {
+              "node": "Write to Chapters Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "📝 EDIT THIS - Your Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version 8ba7b294",
+    "description": "every 8 hours",
+    "autosaved": true
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T23:18:23.477Z",
+      "createdAt": "2026-01-25T23:18:23.477Z",
+      "id": "EYwjzgLoghqZQ2Du",
+      "name": "SFS"
+    }
+  ]
+}
