@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-18T16:23:59.490Z",
+  "updatedAt": "2026-04-19T22:53:56.411Z",
   "createdAt": "2026-04-14T01:12:35.270Z",
   "id": "zn7nNytdtXEFofe0",
   "name": "002-B. DSS Image Prompt Generation",
@@ -442,8 +442,8 @@
           "interval": [
             {
               "field": "hours",
-              "hoursInterval": 18,
-              "triggerAtMinute": 38
+              "hoursInterval": 8,
+              "triggerAtMinute": 18
             }
           ]
         }
@@ -590,8 +590,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "53f93bcc-10ae-4e86-84d0-edb2fa783d39",
-  "activeVersionId": "53f93bcc-10ae-4e86-84d0-edb2fa783d39",
+  "versionId": "dc4e7026-ae2d-410c-a399-45a4c9db8fa9",
+  "activeVersionId": "dc4e7026-ae2d-410c-a399-45a4c9db8fa9",
   "triggerCount": 1,
   "shared": [
     {
@@ -603,9 +603,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-18T07:02:36.000Z",
-    "createdAt": "2026-04-18T07:02:26.509Z",
-    "versionId": "53f93bcc-10ae-4e86-84d0-edb2fa783d39",
+    "updatedAt": "2026-04-19T22:53:59.000Z",
+    "createdAt": "2026-04-19T22:53:56.412Z",
+    "versionId": "dc4e7026-ae2d-410c-a399-45a4c9db8fa9",
     "workflowId": "zn7nNytdtXEFofe0",
     "nodes": [
       {
@@ -1044,8 +1044,8 @@
             "interval": [
               {
                 "field": "hours",
-                "hoursInterval": 18,
-                "triggerAtMinute": 38
+                "hoursInterval": 8,
+                "triggerAtMinute": 18
               }
             ]
           }
@@ -1174,8 +1174,8 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 53f93bcc",
-    "description": "changed scheduled time to 38m",
+    "name": "Version dc4e7026",
+    "description": "",
     "autosaved": true
   },
   "tags": [
