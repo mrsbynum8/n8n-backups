@@ -1,0 +1,815 @@
+{
+  "updatedAt": "2026-04-20T21:52:07.721Z",
+  "createdAt": "2026-04-20T18:55:02.271Z",
+  "id": "UPUuyqaQ4tLcJntz",
+  "name": "SHSFS — ClickUp to YouTube Metadata Push",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-001",
+              "leftValue": "={{ $json.history_items[0].after.status }}",
+              "rightValue": "push to youtube",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7a705f7d-ff51-48f4-9d35-75f6891780e6",
+      "name": "Is Status 'Push to YouTube'?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        256,
+        192
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsCode": "const fields = $input.first().json.custom_fields;\n\nconst getField = (id) => {\n  const f = fields.find(f => f.id === id);\n  return (f && f.value !== undefined && f.value !== null) ? f.value : null;\n};\n\nconst tagsRaw = getField('3a9c232c-2f8e-4916-ab50-392103a71491');\nconst tagsString = Array.isArray(tagsRaw)\n  ? tagsRaw.map(t => t.trim()).join(',')\n  : (tagsRaw ? tagsRaw.split(',').map(t => t.trim()).join(',') : '');\n\nconst publishedUrl = getField('cf96eec7-0104-4cf4-8c19-70674f44bb64');\nconst videoIdMatch = publishedUrl ? publishedUrl.match(/youtu\\.be\\/([a-zA-Z0-9_-]+)/) : null;\nconst videoId = videoIdMatch ? videoIdMatch[1] : null;\n\nconst scheduledRaw = getField('596b25a4-62ee-4640-a17a-44b68b5233e0');\nlet publishAt = null;\nif (scheduledRaw) {\n  const d = new Date(parseInt(scheduledRaw));\n  d.setUTCHours(23, 8, 0, 0);\n  publishAt = d.toISOString();\n}\n\nconst thumbnailUrl = $input.first().json.attachments?.[0]?.url || null;\n\nreturn [{\n  json: {\n    yt_title:       getField('3aa0126f-e0d2-41ff-bbe7-a0ff6bf25ab7'),\n    yt_description: getField('af715d19-ad93-4a0e-a73c-40c712aaaae3'),\n    yt_tags:        tagsString,\n    yt_video_id:    videoId,\n    publish_at:     publishAt,\n    thumbnail_url:  thumbnailUrl,\n    task_id:        $input.first().json.id\n  }\n}];"
+      },
+      "id": "aac17d5f-40e6-4526-9f51-b4ae7db7b9de",
+      "name": "Extract YouTube Fields",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        704,
+        192
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "update",
+        "videoId": "={{ $json.yt_video_id }}",
+        "title": "={{ $json.yt_title }}",
+        "regionCode": "US",
+        "categoryId": "24",
+        "updateFields": {
+          "description": "={{ $json.yt_description }}",
+          "privacyStatus": "private",
+          "publishAt": "={{ $json.publish_at }}",
+          "tags": "={{ $json.yt_tags }}"
+        }
+      },
+      "id": "28464966-3287-4915-b3c4-d1707153b082",
+      "name": "Push Metadata to YouTube",
+      "type": "n8n-nodes-base.youTube",
+      "position": [
+        1376,
+        192
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "k4gQgatXAOjTkO8F",
+          "name": "SHSFS YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## SHSFS — ClickUp → YouTube Metadata Push\n**Trigger:** Move any SHSFS task to status \"Push to YouTube\"\n\n**Workflow:**\n1. Paste the YouTube shareable URL (https://youtu.be/xxxxxx) into the published_url field on the task\n2. Move task status to \"Push to YouTube\"\n3. n8n extracts the video ID from the URL, reads yt_title + yt_description + yt_tags, and pushes all metadata to YouTube",
+        "height": 224,
+        "width": 1060,
+        "color": 4
+      },
+      "id": "0190ff03-5729-452e-b5f5-2a0fcc3958fe",
+      "name": "Setup Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        -80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "team": "36002548",
+        "events": [
+          "taskStatusUpdated"
+        ],
+        "filters": {
+          "listId": "901414053031"
+        }
+      },
+      "type": "n8n-nodes-base.clickUpTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        192
+      ],
+      "id": "f7247c81-17fe-4ce9-8303-daa085288f99",
+      "name": "ClickUp Trigger",
+      "webhookId": "35540b0b-f43d-4e27-972e-f5fd049b9c4b",
+      "credentials": {
+        "clickUpApi": {
+          "id": "VDAwAFdhfib9eDlC",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": "={{ $json.task_id }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        480,
+        192
+      ],
+      "id": "56774d59-9792-483e-b761-96887511f6fe",
+      "name": "Get a task",
+      "credentials": {
+        "clickUpApi": {
+          "id": "VDAwAFdhfib9eDlC",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "85c9126b-5a9c-4850-b2d2-ee04e240370e",
+              "leftValue": "={{ $json.yt_tags.join(',').length }}",
+              "rightValue": 478,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        192
+      ],
+      "id": "0dbb077d-860d-4526-a971-3c00e082498e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "7224216650",
+        "message": "=Shorten SHSFS video tags.  {{ $('Get a task').item.json.custom_fields[0].name }}",
+        "approvalOptions": {
+          "values": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        112
+      ],
+      "id": "0f974349-c0c6-499a-adf1-22e61d3ae6c8",
+      "name": "Are Tags Too Long?",
+      "webhookId": "c14b1948-c43c-40df-894e-da079506ce47",
+      "credentials": {
+        "telegramApi": {
+          "id": "DdvlWVVRZZzepXS7",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Extract YouTube Fields').item.json.thumbnail_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        656,
+        416
+      ],
+      "id": "2f1e4616-6610-40d8-ab69-f15f861b82a5",
+      "name": "Download Thumbnail"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId={{ $('Extract YouTube Fields').item.json.yt_video_id }}&uploadType=media",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "image/png"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        864,
+        416
+      ],
+      "id": "58f2e8da-b494-4933-a392-4e20d4dde5d4",
+      "name": "Set Thumbnail on YouTube",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "5DfFjunxGQPmdcbN",
+          "name": "SHSFS YouTube account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7224216650",
+        "text": "={{ $('Push Metadata to YouTube').item.json.snippet.localized.title }} Video is Scheduled!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        416
+      ],
+      "id": "c0b8f6f8-93eb-4bf9-94b9-84aaf87a472d",
+      "name": "Scheduled Alert",
+      "webhookId": "754f2318-357f-49ca-9129-aeaaad9b24c2",
+      "credentials": {
+        "telegramApi": {
+          "id": "DdvlWVVRZZzepXS7",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Extract YouTube Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Is Status 'Push to YouTube'?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Status 'Push to YouTube'?": {
+      "main": [
+        [
+          {
+            "node": "Get a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task": {
+      "main": [
+        [
+          {
+            "node": "Extract YouTube Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Are Tags Too Long?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Push Metadata to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Are Tags Too Long?": {
+      "main": [
+        [
+          {
+            "node": "Push Metadata to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Push Metadata to YouTube": {
+      "main": [
+        [
+          {
+            "node": "Download Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Set Thumbnail on YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Thumbnail on YouTube": {
+      "main": [
+        [
+          {
+            "node": "Scheduled Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:ClickUp Trigger": {
+      "webhookId": "dea9fbf8-7fcc-4a59-b6c0-ee5e93198f1d",
+      "secret": "65KM2Q1D8KO23Y8XS3ZI737XS9RLPG6LZRAFZNZPQDKII9L34R1R4QLJHXJRXOSX"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "7108dca2-f915-43b3-84b8-8358a4a8fe10",
+  "activeVersionId": "7108dca2-f915-43b3-84b8-8358a4a8fe10",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-20T18:55:02.286Z",
+      "createdAt": "2026-04-20T18:55:02.286Z",
+      "role": "workflow:owner",
+      "workflowId": "UPUuyqaQ4tLcJntz",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-20T21:52:10.000Z",
+    "createdAt": "2026-04-20T21:52:07.724Z",
+    "versionId": "7108dca2-f915-43b3-84b8-8358a4a8fe10",
+    "workflowId": "UPUuyqaQ4tLcJntz",
+    "nodes": [
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-001",
+                "leftValue": "={{ $json.history_items[0].after.status }}",
+                "rightValue": "push to youtube",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "7a705f7d-ff51-48f4-9d35-75f6891780e6",
+        "name": "Is Status 'Push to YouTube'?",
+        "type": "n8n-nodes-base.if",
+        "position": [
+          256,
+          192
+        ],
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "jsCode": "const fields = $input.first().json.custom_fields;\n\nconst getField = (id) => {\n  const f = fields.find(f => f.id === id);\n  return (f && f.value !== undefined && f.value !== null) ? f.value : null;\n};\n\nconst tagsRaw = getField('3a9c232c-2f8e-4916-ab50-392103a71491');\nconst tagsString = Array.isArray(tagsRaw)\n  ? tagsRaw.map(t => t.trim()).join(',')\n  : (tagsRaw ? tagsRaw.split(',').map(t => t.trim()).join(',') : '');\n\nconst publishedUrl = getField('cf96eec7-0104-4cf4-8c19-70674f44bb64');\nconst videoIdMatch = publishedUrl ? publishedUrl.match(/youtu\\.be\\/([a-zA-Z0-9_-]+)/) : null;\nconst videoId = videoIdMatch ? videoIdMatch[1] : null;\n\nconst scheduledRaw = getField('596b25a4-62ee-4640-a17a-44b68b5233e0');\nlet publishAt = null;\nif (scheduledRaw) {\n  const d = new Date(parseInt(scheduledRaw));\n  d.setUTCHours(23, 8, 0, 0);\n  publishAt = d.toISOString();\n}\n\nconst thumbnailUrl = $input.first().json.attachments?.[0]?.url || null;\n\nreturn [{\n  json: {\n    yt_title:       getField('3aa0126f-e0d2-41ff-bbe7-a0ff6bf25ab7'),\n    yt_description: getField('af715d19-ad93-4a0e-a73c-40c712aaaae3'),\n    yt_tags:        tagsString,\n    yt_video_id:    videoId,\n    publish_at:     publishAt,\n    thumbnail_url:  thumbnailUrl,\n    task_id:        $input.first().json.id\n  }\n}];"
+        },
+        "id": "aac17d5f-40e6-4526-9f51-b4ae7db7b9de",
+        "name": "Extract YouTube Fields",
+        "type": "n8n-nodes-base.code",
+        "position": [
+          704,
+          192
+        ],
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "resource": "video",
+          "operation": "update",
+          "videoId": "={{ $json.yt_video_id }}",
+          "title": "={{ $json.yt_title }}",
+          "regionCode": "US",
+          "categoryId": "24",
+          "updateFields": {
+            "description": "={{ $json.yt_description }}",
+            "privacyStatus": "private",
+            "publishAt": "={{ $json.publish_at }}",
+            "tags": "={{ $json.yt_tags }}"
+          }
+        },
+        "id": "28464966-3287-4915-b3c4-d1707153b082",
+        "name": "Push Metadata to YouTube",
+        "type": "n8n-nodes-base.youTube",
+        "position": [
+          1376,
+          192
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "youTubeOAuth2Api": {
+            "id": "k4gQgatXAOjTkO8F",
+            "name": "SHSFS YouTube account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## SHSFS — ClickUp → YouTube Metadata Push\n**Trigger:** Move any SHSFS task to status \"Push to YouTube\"\n\n**Workflow:**\n1. Paste the YouTube shareable URL (https://youtu.be/xxxxxx) into the published_url field on the task\n2. Move task status to \"Push to YouTube\"\n3. n8n extracts the video ID from the URL, reads yt_title + yt_description + yt_tags, and pushes all metadata to YouTube",
+          "height": 224,
+          "width": 1060,
+          "color": 4
+        },
+        "id": "0190ff03-5729-452e-b5f5-2a0fcc3958fe",
+        "name": "Setup Notes",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          0,
+          -80
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "team": "36002548",
+          "events": [
+            "taskStatusUpdated"
+          ],
+          "filters": {
+            "listId": "901414053031"
+          }
+        },
+        "type": "n8n-nodes-base.clickUpTrigger",
+        "typeVersion": 1,
+        "position": [
+          32,
+          192
+        ],
+        "id": "f7247c81-17fe-4ce9-8303-daa085288f99",
+        "name": "ClickUp Trigger",
+        "webhookId": "35540b0b-f43d-4e27-972e-f5fd049b9c4b",
+        "credentials": {
+          "clickUpApi": {
+            "id": "VDAwAFdhfib9eDlC",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "id": "={{ $json.task_id }}"
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          480,
+          192
+        ],
+        "id": "56774d59-9792-483e-b761-96887511f6fe",
+        "name": "Get a task",
+        "credentials": {
+          "clickUpApi": {
+            "id": "VDAwAFdhfib9eDlC",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "85c9126b-5a9c-4850-b2d2-ee04e240370e",
+                "leftValue": "={{ $json.yt_tags.join(',').length }}",
+                "rightValue": 478,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          928,
+          192
+        ],
+        "id": "0dbb077d-860d-4526-a971-3c00e082498e",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "chatId": "7224216650",
+          "message": "=Shorten SHSFS video tags.  {{ $('Get a task').item.json.custom_fields[0].name }}",
+          "approvalOptions": {
+            "values": {}
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1152,
+          112
+        ],
+        "id": "0f974349-c0c6-499a-adf1-22e61d3ae6c8",
+        "name": "Are Tags Too Long?",
+        "webhookId": "c14b1948-c43c-40df-894e-da079506ce47",
+        "credentials": {
+          "telegramApi": {
+            "id": "DdvlWVVRZZzepXS7",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Extract YouTube Fields').item.json.thumbnail_url }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          656,
+          416
+        ],
+        "id": "2f1e4616-6610-40d8-ab69-f15f861b82a5",
+        "name": "Download Thumbnail"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId={{ $('Extract YouTube Fields').item.json.yt_video_id }}&uploadType=media",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "youTubeOAuth2Api",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "image/png"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "binaryData",
+          "inputDataFieldName": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          864,
+          416
+        ],
+        "id": "58f2e8da-b494-4933-a392-4e20d4dde5d4",
+        "name": "Set Thumbnail on YouTube",
+        "credentials": {
+          "youTubeOAuth2Api": {
+            "id": "5DfFjunxGQPmdcbN",
+            "name": "SHSFS YouTube account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "7224216650",
+          "text": "={{ $('Push Metadata to YouTube').item.json.snippet.localized.title }} Video is Scheduled!",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1072,
+          416
+        ],
+        "id": "c0b8f6f8-93eb-4bf9-94b9-84aaf87a472d",
+        "name": "Scheduled Alert",
+        "webhookId": "754f2318-357f-49ca-9129-aeaaad9b24c2",
+        "credentials": {
+          "telegramApi": {
+            "id": "DdvlWVVRZZzepXS7",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Extract YouTube Fields": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ClickUp Trigger": {
+        "main": [
+          [
+            {
+              "node": "Is Status 'Push to YouTube'?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Status 'Push to YouTube'?": {
+        "main": [
+          [
+            {
+              "node": "Get a task",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a task": {
+        "main": [
+          [
+            {
+              "node": "Extract YouTube Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Are Tags Too Long?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Push Metadata to YouTube",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Are Tags Too Long?": {
+        "main": [
+          [
+            {
+              "node": "Push Metadata to YouTube",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Push Metadata to YouTube": {
+        "main": [
+          [
+            {
+              "node": "Download Thumbnail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Thumbnail": {
+        "main": [
+          [
+            {
+              "node": "Set Thumbnail on YouTube",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Thumbnail on YouTube": {
+        "main": [
+          [
+            {
+              "node": "Scheduled Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "ShaRhanda Lawson",
+    "name": "Version 7108dca2",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
