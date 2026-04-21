@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19T22:04:24.174Z",
+  "updatedAt": "2026-04-20T14:05:48.027Z",
   "createdAt": "2026-01-25T22:37:08.152Z",
   "id": "3vjhmzLK7dhnglARTF9m-",
   "name": "003. SHSFS Script to TTS Generation",
@@ -13,8 +13,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        1472,
+        -352
       ]
     },
     {
@@ -1038,7 +1038,7 @@
       "main": [
         [
           {
-            "node": "Get row(s) in sheet",
+            "node": "Read Pending Segments",
             "type": "main",
             "index": 0
           }
@@ -1365,8 +1365,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "8140d1e9-6349-449c-b229-52db9ccf4939",
-  "activeVersionId": "8140d1e9-6349-449c-b229-52db9ccf4939",
+  "versionId": "720d4bf3-26c8-4fcf-a1ca-8cf0f5bfc3c6",
+  "activeVersionId": "720d4bf3-26c8-4fcf-a1ca-8cf0f5bfc3c6",
   "triggerCount": 1,
   "shared": [
     {
@@ -1378,9 +1378,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-19T22:04:27.000Z",
-    "createdAt": "2026-04-19T22:04:24.175Z",
-    "versionId": "8140d1e9-6349-449c-b229-52db9ccf4939",
+    "updatedAt": "2026-04-20T21:01:02.000Z",
+    "createdAt": "2026-04-20T14:05:48.028Z",
+    "versionId": "720d4bf3-26c8-4fcf-a1ca-8cf0f5bfc3c6",
     "workflowId": "3vjhmzLK7dhnglARTF9m-",
     "nodes": [
       {
@@ -1390,8 +1390,8 @@
         "type": "n8n-nodes-base.manualTrigger",
         "typeVersion": 1,
         "position": [
-          0,
-          0
+          1472,
+          -352
         ]
       },
       {
@@ -2415,7 +2415,7 @@
         "main": [
           [
             {
-              "node": "Get row(s) in sheet",
+              "node": "Read Pending Segments",
               "type": "main",
               "index": 0
             }
@@ -2727,7 +2727,7 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 8140d1e9",
+    "name": "Version 720d4bf3",
     "description": "",
     "autosaved": true
   },
