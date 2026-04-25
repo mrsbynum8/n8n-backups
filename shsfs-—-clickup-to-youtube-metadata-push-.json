@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-20T21:52:07.721Z",
+  "updatedAt": "2026-04-25T00:12:48.305Z",
   "createdAt": "2026-04-20T18:55:02.271Z",
   "id": "UPUuyqaQ4tLcJntz",
   "name": "SHSFS — ClickUp to YouTube Metadata Push",
@@ -254,8 +254,8 @@
       "name": "Set Thumbnail on YouTube",
       "credentials": {
         "youTubeOAuth2Api": {
-          "id": "5DfFjunxGQPmdcbN",
-          "name": "SHSFS YouTube account 2"
+          "id": "k4gQgatXAOjTkO8F",
+          "name": "SHSFS YouTube account"
         }
       }
     },
@@ -404,7 +404,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "7108dca2-f915-43b3-84b8-8358a4a8fe10",
+  "versionId": "ae56c437-6f84-4404-bebd-1f11bf473b37",
   "activeVersionId": "7108dca2-f915-43b3-84b8-8358a4a8fe10",
   "triggerCount": 1,
   "shared": [
