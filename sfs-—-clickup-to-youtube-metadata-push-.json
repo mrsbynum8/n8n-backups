@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-20T22:05:58.530Z",
+  "updatedAt": "2026-04-25T17:08:58.509Z",
   "createdAt": "2026-04-20T21:58:37.420Z",
   "id": "xDVCc9JrnwL6chwI",
   "name": "SFS — ClickUp to YouTube Metadata Push",
@@ -209,7 +209,7 @@
           "parameters": [
             {
               "name": "Content-Type",
-              "value": "image/png"
+              "value": "image/jpeg"
             }
           ]
         },
@@ -221,7 +221,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        864,
+        1072,
         496
       ],
       "id": "52a3275b-040b-4f2b-8522-58fe288ae41c",
@@ -242,7 +242,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1072,
+        1280,
         496
       ],
       "id": "9df1173d-7f53-409e-85d1-3218e560ed8a",
@@ -280,6 +280,20 @@
           "name": "ClickUp account"
         }
       }
+    },
+    {
+      "parameters": {
+        "amount": 8
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        272
+      ],
+      "id": "07f67268-eb01-4b4c-8779-d0384c1fb81f",
+      "name": "Wait",
+      "webhookId": "3294ca02-31b9-4f97-b21b-b32280ce0025"
     }
   ],
   "connections": {
@@ -349,7 +363,7 @@
       "main": [
         [
           {
-            "node": "Download Thumbnail",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -388,6 +402,17 @@
           }
         ]
       ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Download Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -396,16 +421,16 @@
   },
   "staticData": {
     "node:ClickUp Trigger": {
-      "webhookId": "ab738afd-3a31-4ec6-b73f-27e1c12d075c",
-      "secret": "XB8CRUBBC4GVDEWB11HX2JVT3Q29LQ004KHU81OT740Y5ODUP4BPDWCXD4O8HW8B"
+      "webhookId": "a0fd675e-a2bd-4f1a-b7f0-e6bad27be1b4",
+      "secret": "RQD82H5G5TQ5FO6BWSZX2J60Y5BC7YQD1AEL76228FM251AS895XP8EWWBUV1YYT"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "9d6f86a3-59f4-458b-a888-3ad4d0d4d33c",
-  "activeVersionId": "9d6f86a3-59f4-458b-a888-3ad4d0d4d33c",
+  "versionId": "6f1e4a74-598f-41f2-8c10-29c899c67d5b",
+  "activeVersionId": "6f1e4a74-598f-41f2-8c10-29c899c67d5b",
   "triggerCount": 1,
   "shared": [
     {
@@ -417,9 +442,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-20T22:06:33.000Z",
-    "createdAt": "2026-04-20T22:05:58.531Z",
-    "versionId": "9d6f86a3-59f4-458b-a888-3ad4d0d4d33c",
+    "updatedAt": "2026-04-25T17:09:03.000Z",
+    "createdAt": "2026-04-25T17:08:58.510Z",
+    "versionId": "6f1e4a74-598f-41f2-8c10-29c899c67d5b",
     "workflowId": "xDVCc9JrnwL6chwI",
     "nodes": [
       {
@@ -625,7 +650,7 @@
             "parameters": [
               {
                 "name": "Content-Type",
-                "value": "image/png"
+                "value": "image/jpeg"
               }
             ]
           },
@@ -637,7 +662,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.4,
         "position": [
-          864,
+          1072,
           496
         ],
         "id": "52a3275b-040b-4f2b-8522-58fe288ae41c",
@@ -658,7 +683,7 @@
         "type": "n8n-nodes-base.telegram",
         "typeVersion": 1.2,
         "position": [
-          1072,
+          1280,
           496
         ],
         "id": "9df1173d-7f53-409e-85d1-3218e560ed8a",
@@ -696,6 +721,20 @@
             "name": "ClickUp account"
           }
         }
+      },
+      {
+        "parameters": {
+          "amount": 8
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1584,
+          272
+        ],
+        "id": "07f67268-eb01-4b4c-8779-d0384c1fb81f",
+        "name": "Wait",
+        "webhookId": "3294ca02-31b9-4f97-b21b-b32280ce0025"
       }
     ],
     "connections": {
@@ -765,7 +804,7 @@
         "main": [
           [
             {
-              "node": "Download Thumbnail",
+              "node": "Wait",
               "type": "main",
               "index": 0
             }
@@ -804,10 +843,21 @@
             }
           ]
         ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Download Thumbnail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 9d6f86a3",
+    "name": "jpeg images",
     "description": "",
     "autosaved": true
   },
