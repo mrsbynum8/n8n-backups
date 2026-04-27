@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19T22:54:12.875Z",
+  "updatedAt": "2026-04-26T22:33:30.662Z",
   "createdAt": "2026-04-14T01:59:42.048Z",
   "id": "cFIj94UmMkvz7QEx",
   "name": "005. DSS Image Generation",
@@ -78,7 +78,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://fal.run/fal-ai/gpt-image-1.5",
+        "url": "https://fal.run/openai/gpt-image-2",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -92,7 +92,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1536x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"landscape_4_3\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
         "options": {}
       },
       "id": "18236e0a-b2b6-4168-9668-99835b4a21ab",
@@ -564,7 +564,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "e3d0223c-2f47-48f6-81f8-43e4c60fb5c5",
+  "versionId": "4998e28d-670c-48da-9a40-fa39bc62abe4",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
