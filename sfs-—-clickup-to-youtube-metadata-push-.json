@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-25T17:08:58.509Z",
+  "updatedAt": "2026-04-28T16:22:26.619Z",
   "createdAt": "2026-04-20T21:58:37.420Z",
   "id": "xDVCc9JrnwL6chwI",
   "name": "SFS — ClickUp to YouTube Metadata Push",
@@ -221,7 +221,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1072,
+        928,
         496
       ],
       "id": "52a3275b-040b-4f2b-8522-58fe288ae41c",
@@ -429,7 +429,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "6f1e4a74-598f-41f2-8c10-29c899c67d5b",
+  "versionId": "ddfd0a46-a3b6-4d64-983b-918326a619e7",
   "activeVersionId": "6f1e4a74-598f-41f2-8c10-29c899c67d5b",
   "triggerCount": 1,
   "shared": [
