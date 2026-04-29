@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-25T00:12:48.305Z",
+  "updatedAt": "2026-04-29T01:30:38.675Z",
   "createdAt": "2026-04-20T18:55:02.271Z",
   "id": "UPUuyqaQ4tLcJntz",
   "name": "SHSFS — ClickUp to YouTube Metadata Push",
@@ -280,6 +280,20 @@
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "amount": 8
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        192
+      ],
+      "id": "efc20140-4ef0-4f64-b87c-e8ccc1032bbd",
+      "name": "Wait",
+      "webhookId": "9030223e-f754-4659-90f7-6e69d71d68d8"
     }
   ],
   "connections": {
@@ -360,7 +374,7 @@
       "main": [
         [
           {
-            "node": "Download Thumbnail",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -388,6 +402,17 @@
           }
         ]
       ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Download Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -396,16 +421,16 @@
   },
   "staticData": {
     "node:ClickUp Trigger": {
-      "webhookId": "dea9fbf8-7fcc-4a59-b6c0-ee5e93198f1d",
-      "secret": "65KM2Q1D8KO23Y8XS3ZI737XS9RLPG6LZRAFZNZPQDKII9L34R1R4QLJHXJRXOSX"
+      "webhookId": "9bde3a09-4deb-4b5d-8c57-2fbd1eb895b3",
+      "secret": "VXSLOFL796BB4PMMGU9CCYJ0KHD0TBQ1GU2NCOA8H5IGVHJ0J3FI9NVIPLEGO6P9"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "ae56c437-6f84-4404-bebd-1f11bf473b37",
-  "activeVersionId": "7108dca2-f915-43b3-84b8-8358a4a8fe10",
+  "versionId": "25a8b000-ecd5-4a8c-b7f5-041273c36b6e",
+  "activeVersionId": "0392b5f3-0301-4076-9aa0-704055fa879a",
   "triggerCount": 1,
   "shared": [
     {
@@ -417,9 +442,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-20T21:52:10.000Z",
-    "createdAt": "2026-04-20T21:52:07.724Z",
-    "versionId": "7108dca2-f915-43b3-84b8-8358a4a8fe10",
+    "updatedAt": "2026-04-29T01:29:30.000Z",
+    "createdAt": "2026-04-29T01:29:15.575Z",
+    "versionId": "0392b5f3-0301-4076-9aa0-704055fa879a",
     "workflowId": "UPUuyqaQ4tLcJntz",
     "nodes": [
       {
@@ -476,7 +501,7 @@
           "videoId": "={{ $json.yt_video_id }}",
           "title": "={{ $json.yt_title }}",
           "regionCode": "US",
-          "categoryId": "24",
+          "categoryId": "=24",
           "updateFields": {
             "description": "={{ $json.yt_description }}",
             "privacyStatus": "private",
@@ -670,8 +695,8 @@
         "name": "Set Thumbnail on YouTube",
         "credentials": {
           "youTubeOAuth2Api": {
-            "id": "5DfFjunxGQPmdcbN",
-            "name": "SHSFS YouTube account 2"
+            "id": "k4gQgatXAOjTkO8F",
+            "name": "SHSFS YouTube account"
           }
         }
       },
@@ -696,6 +721,20 @@
             "name": "Telegram account"
           }
         }
+      },
+      {
+        "parameters": {
+          "amount": 8
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1584,
+          192
+        ],
+        "id": "efc20140-4ef0-4f64-b87c-e8ccc1032bbd",
+        "name": "Wait",
+        "webhookId": "9030223e-f754-4659-90f7-6e69d71d68d8"
       }
     ],
     "connections": {
@@ -776,7 +815,7 @@
         "main": [
           [
             {
-              "node": "Download Thumbnail",
+              "node": "Wait",
               "type": "main",
               "index": 0
             }
@@ -804,10 +843,21 @@
             }
           ]
         ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Download Thumbnail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 7108dca2",
+    "name": "Version 0392b5f3",
     "description": "",
     "autosaved": true
   },
