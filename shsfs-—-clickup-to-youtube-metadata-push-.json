@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-29T01:30:38.675Z",
+  "updatedAt": "2026-05-13T03:13:14.949Z",
   "createdAt": "2026-04-20T18:55:02.271Z",
   "id": "UPUuyqaQ4tLcJntz",
   "name": "SHSFS — ClickUp to YouTube Metadata Push",
@@ -429,7 +429,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "25a8b000-ecd5-4a8c-b7f5-041273c36b6e",
+  "versionId": "c206dcb3-9d63-461a-8d5f-f3256c1a0630",
   "activeVersionId": "0392b5f3-0301-4076-9aa0-704055fa879a",
   "triggerCount": 1,
   "shared": [
