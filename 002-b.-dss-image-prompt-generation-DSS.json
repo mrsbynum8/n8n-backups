@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-21T03:05:34.424Z",
+  "updatedAt": "2026-05-17T19:42:55.376Z",
   "createdAt": "2026-04-14T01:12:35.270Z",
   "id": "zn7nNytdtXEFofe0",
   "name": "002-B. DSS Image Prompt Generation",
@@ -90,7 +90,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"openai/gpt-5.4\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate image prompts for a sleep YouTube channel. Each prompt describes a unique dark oil painting scene related to the given topic.\\n\\nSTYLE (apply to every prompt):\\n- Dark oil painting style, old masters aesthetic (Rembrandt, Caravaggio)\\n- Thick visible brushstrokes, impasto texture\\n- Dramatic chiaroscuro lighting, deep blacks with a single soft warm light source\\n- Color palette: deep blacks, deep navy, dark teal, deep ocean blues and greens, hints of dark purple\\n- Calm, still, peaceful compositions only\\n- Always end every prompt with: dark oil painting, old masters aesthetic, no text\\n\\nCOMPOSITION VARIETY - distribute evenly across all 30 prompts:\\n- Wide establishing shots\\n- Close-up portraits of face or single feature\\n- Overhead top-down views\\n- Side profile compositions\\n- Silhouette with faint backlight\\n- Subject small within large dark habitat\\n- Macro detail shots of texture, eye, or skin\\n\\nRESTRICTIONS:\\n- NO violence, predation, or scary elements\\n- NO bright or saturated colors\\n- NO readable text in images\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array, no markdown, no explanation:\\n[{\\\"prompt\\\": \\\"A dark oil painting of...\\\"}, {\\\"prompt\\\": \\\"A dark oil painting of...\\\"}]\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.topic) }}\n    }\n  ],\n  \"temperature\": 1,\n  \"max_tokens\": 280000\n}",
+        "jsonBody": "={\n  \"model\": \"openai/gpt-5.4\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You generate image prompts for a sleep YouTube channel. Each prompt describes a unique dark oil painting scene related to the given topic.\\n\\nSTYLE (apply to every prompt):\\n- Dark oil painting style, old masters aesthetic (Rembrandt, Caravaggio)\\n- Thick visible brushstrokes, impasto texture\\n- Dramatic chiaroscuro lighting, deep blacks with a single soft warm light source\\n- Color palette: deep blacks, deep navy, dark teal, deep ocean blues and greens, hints of dark purple\\n- Calm, still, peaceful compositions only\\n- Always end every prompt with: dark oil painting, old masters aesthetic, no text\\n\\nCOMPOSITION VARIETY - distribute evenly across all 30 prompts:\\n- Wide establishing shots\\n- Side profile compositions\\n- Silhouette with faint backlight\\n- Subject small within large dark habitat\\n- Subject alongside other sea creatures in their natural environment\\n- Subject framed by environmental elements such as coral, kelp, rock formations, seafloor, or water column\\n\\nRESTRICTIONS:\\n- NO violence, predation, or scary elements\\n- NO bright or saturated colors\\n- NO readable text in images\\n- NO macro or extreme close-up shots\\n- NO overhead or top-down compositions\\n\\nOUTPUT FORMAT:\\nGenerate EXACTLY {{ $json.image_count }} prompts.\\nOutput ONLY a valid JSON array, no markdown, no explanation:\\n[{\\\"prompt\\\": \\\"A dark oil painting of...\\\"}, {\\\"prompt\\\": \\\"A dark oil painting of...\\\"}]\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.topic) }}\n    }\n  ],\n  \"temperature\": 1,\n  \"max_tokens\": 280000\n}",
         "options": {}
       },
       "id": "586bc98e-fa75-46d1-8b4f-4108649cd063",
@@ -590,7 +590,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "73fc2ebf-e5b6-40f0-963c-4473069e7894",
+  "versionId": "b3a94f65-1f92-48b6-b2c1-46dbf19b2aa5",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
