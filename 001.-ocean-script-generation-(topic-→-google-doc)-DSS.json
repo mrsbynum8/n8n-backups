@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-21T00:45:15.619Z",
+  "updatedAt": "2026-05-22T00:52:03.328Z",
   "createdAt": "2026-04-10T02:08:14.499Z",
   "id": "vDBsTpNpbNNIKQ82",
   "name": "001. Ocean Script Generation (Topic → Google Doc)",
@@ -680,24 +680,41 @@
     },
     {
       "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "hours",
-              "hoursInterval": 4,
-              "triggerAtMinute": 28
-            }
-          ]
-        }
+        "httpMethod": "POST",
+        "path": "dss-scriptwriter",
+        "options": {}
       },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
       "position": [
-        -2640,
+        -2736,
         448
       ],
-      "id": "a8fe406d-ac9e-47fb-94fa-1ee254897372",
-      "name": "Schedule Trigger"
+      "id": "5a62454e-a8ec-4838-b98c-aa32a2c5a0b9",
+      "name": "Webhook",
+      "webhookId": "417fc925-54ae-429e-814a-5818ef0caf93"
+    },
+    {
+      "parameters": {
+        "chatId": "7224216650",
+        "text": "={{ $('Combine Full Script').item.json.full_title }} Script on DSS has been written!\n\nDoc: {{ $('Output Summary').item.json.document_url }}\nWords: {{ $('Output Summary').item.json.total_words }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        368
+      ],
+      "id": "5d23efdf-5d47-48c5-8cfd-69647d99e278",
+      "name": "Send a text message",
+      "webhookId": "12f3e70f-31e6-41cd-8cd5-4926e653bb5c",
+      "credentials": {
+        "telegramApi": {
+          "id": "DdvlWVVRZZzepXS7",
+          "name": "Telegram account"
+        }
+      }
     }
   ],
   "connections": {
@@ -955,10 +972,16 @@
     },
     "Update Sheet with Results": {
       "main": [
-        []
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Schedule Trigger": {
+    "Webhook": {
       "main": [
         [
           {
@@ -994,9 +1017,10 @@
         "And once a reef begins to feel like a community, it is hard not to wonder how long such communities ",
         "And now we stop knowing, and simply become",
         "And after all that color, motion, and time, what remains is something very simple and very quiet",
-        "From here, there is almost nowhere else to go except into stillness"
+        "From here, there is almost nowhere else to go except into stillness",
+        "And after all these ancient bodies and unbroken lineages, what remains is not drama, but a quieter k"
       ],
-      "lastSectionContent": "From here, there is almost nowhere else to go except into stillness.\n\nYou have spent a long time with this animal. With its spiral, and its chambers, and the slow chemistry of its buoyancy. With its patient cirri moving through dark water. With the nightly rise and the quiet return to depth. You have been inside its world, in a way — not completely, not the way it knows its own world, but enough. Enough to feel the shape of it.\n\nWhat remains is not a fact. It is something quieter than that.\n\nThe nautilus has been making the same shell for a very long time. Not the same individual shell — but the same form, the same proportions, the same elegant answer to the question of how to live soft-bodied in a pressured world. That form has passed through hundreds of millions of years of changing ocean, changing climate, changing everything — and it has arrived here, tonight, still turning slowly in dim water somewhere in the Indo-Pacific. Still adding chambers. Still managing its depth in the dark.\n\nThere is something in that which does not need to be explained. It only needs to be felt.\n\nLet your jaw be soft now. Let it release the last of whatever it was holding. Your hands, wherever they are resting — let them open a little, or stay as they are, loose and unheld. Your body has been here, in this stillness, for some time now. It knows what it needs. It is already doing it.\n\nThe shell is a spiral, and a spiral has no sharp edges. It curves into itself. It does not arrive at a point. It simply continues, each turn wider than the last, until the animal outgrows it and adds another room, and the whole shape expands — gently, gradually, without urgency.\n\nThat is a kind of patience that is hard to name.\n\nYou do not need to name it. You have already spent the night with it. You have already felt, in some dim and drifting way, what it means to move slowly through a dark world and find it enough. To be guided by scent and pressure and the faint difference between warmer water and colder. To carry your history inside you, sealed and quiet, in chambers you no longer enter.\n\nThe nautilus does not know it is ancient. It does not know it has outlasted nearly everything. It only knows the dark slope, and the scent of something drifting down from above, and the slow adjustment of depth. That is its whole world. And that world is enough.\n\nYour eyes are heavy. Let them be heavy. There is nothing they need to find.\n\nSomewhere, in water that is dim and cold and very far away, the nautilus is doing what it has always done. Drifting. Adjusting. Settling toward the depth where the temperature is right and the pressure holds it gently in place. It is not thinking about the length of its lineage, or the beauty of its shell, or what it means to have survived so much.\n\nIt is simply there. Patient. Continuing.\n\nAnd you are here. Still. In the quiet dark of wherever you are.\n\nThe water is deep. The shell turns slowly. Everything that needed to be said has been said.\n\nSleep well, and good night.",
+      "lastSectionContent": "And after all these ancient bodies and unbroken lineages, what remains is not drama, but a quieter kind of awe.\n\nSo many of the survivors were not built to win in the way we usually imagine winning. They were not always the fastest. Not always the fiercest. Often they were simply well matched to water, to change, to waiting.\n\nThat is why endurance can look so gentle.\n\nSometimes it looks like a shell adding one chamber at a time. Sometimes it looks like a body made mostly of softness, still drifting after ages that erased stronger-looking forms. Sometimes it looks like armor, or stillness, or the patient use of a current that has been traveling the same coast longer than memory can hold. It does not hurry.\n\nWhat makes this so calming is the shape of the answer life kept giving. Again and again, across cold ages and warm ones, across losses too large for any creature to understand, survival did not belong only to force. It belonged to fit. To flexibility. To bodies that could settle into their world without demanding that the world stay the same.\n\nAnd that feels worth carrying into the quiet.\n\nBecause beneath all the vanished seas and broken ages, something continued. Not one perfect design, but many. A spiral. A soft bell. A filtering body open to flow. A patient fish nosing along the bottom. An old reptile crossing distance with the same ancient steadiness. A shark gliding through dark water on a plan so economical it hardly needed to be rewritten. All of them different. All of them continuing.\n\nIn other words, life did not endure by choosing a single answer.\n\nIt kept several.\n\nAnd that may be the deepest comfort in all of this. The ocean did not preserve only the powerful. It also kept the quiet, the simple, the hidden, the slow. It kept what could adapt. It kept what could wait. It kept what could remain itself while the world around it changed shape.\n\nThere is something very tender in that.\n\nYou do not need to hold the whole history now. You can let it drift farther away. Let the names soften. Let the eras grow distant and indistinct, as if they are sinking back beneath dark water where they have always belonged.\n\nWhat remains can be simpler than memory.\n\nA feeling of continuity, perhaps. A sense that the living world is older, stranger, and more patient than daylight often lets us notice. And somewhere tonight, while coastlines rest in darkness and houses settle into silence, some of those old lineages are still there beneath the surface, moving exactly as they move, asking nothing of anyone, continuing in the quiet way they always have.\n\nLet your jaw unclench a little more.\n\nLet your tongue rest.\n\nLet your hands open fully now, or as fully as they want to, with no effort in them at all. Let your shoulders give up the small work they may still be doing. Let the weight of your body be honest. Let it settle downward, heavy and untroubled, supported without needing to help.\n\nYour eyes are heavy too.\n\nThey do not need to look for anything. There is nowhere to be. Nothing required. No task left waiting in this moment that must be solved before rest can come.\n\nThe old survivors do not rush toward morning.\n\nThey drift. They glide. They settle into the dark conditions that suit them, and in their long persistence there is no strain that you need to carry tonight. Their endurance was never a loud thing. It was quiet workmanship. A deep fit between body and world. A way of continuing without spectacle.\n\nAnd perhaps that is what lingers now.\n\nNot the scale of extinction, but the softness of continuation. Not the violence of endings, but the fact that some forms of life kept meeting the world as it was, and found enough within it to go on. That is a very ancient kind of peace. Slow. Strange. Familiar in a way that is hard to explain.\n\nYou do not need to explain it.\n\nYou can simply rest near it for a little while, as if beside a vast dark sea that has been keeping its own counsel for hundreds of millions of years. The water is still there. The old bodies are still there. The long patience of life is still there, beneath panic, beneath noise, beneath all the brief and restless things.\n\nAnd you can be still too.\n\nJust this body. Just this darkness. Just this quiet moment with nothing pressing in on it. If thought comes, let it pass like something drifting below the surface. If it goes, let it go. The night does not need your effort to become night.\n\nEverything can loosen now.\n\nEverything can be heavy.\n\nEverything can rest.\n\nGood night.",
       "lastSectionNumber": 13
     },
     "node:Schedule Trigger": {
@@ -1009,8 +1033,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "7951989b-b9f8-4fc6-8c00-725b2f78a9ec",
-  "activeVersionId": "7951989b-b9f8-4fc6-8c00-725b2f78a9ec",
+  "versionId": "dc76d0d9-ef0e-4a3c-9ffe-d56c7750f974",
+  "activeVersionId": "dc76d0d9-ef0e-4a3c-9ffe-d56c7750f974",
   "triggerCount": 1,
   "shared": [
     {
@@ -1022,9 +1046,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-05-21T00:45:20.000Z",
-    "createdAt": "2026-05-21T00:45:15.620Z",
-    "versionId": "7951989b-b9f8-4fc6-8c00-725b2f78a9ec",
+    "updatedAt": "2026-05-22T00:52:12.000Z",
+    "createdAt": "2026-05-22T00:52:03.331Z",
+    "versionId": "dc76d0d9-ef0e-4a3c-9ffe-d56c7750f974",
     "workflowId": "vDBsTpNpbNNIKQ82",
     "nodes": [
       {
@@ -1701,24 +1725,41 @@
       },
       {
         "parameters": {
-          "rule": {
-            "interval": [
-              {
-                "field": "hours",
-                "hoursInterval": 4,
-                "triggerAtMinute": 28
-              }
-            ]
-          }
+          "httpMethod": "POST",
+          "path": "dss-scriptwriter",
+          "options": {}
         },
-        "type": "n8n-nodes-base.scheduleTrigger",
-        "typeVersion": 1.3,
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
         "position": [
-          -2640,
+          -2736,
           448
         ],
-        "id": "a8fe406d-ac9e-47fb-94fa-1ee254897372",
-        "name": "Schedule Trigger"
+        "id": "5a62454e-a8ec-4838-b98c-aa32a2c5a0b9",
+        "name": "Webhook",
+        "webhookId": "417fc925-54ae-429e-814a-5818ef0caf93"
+      },
+      {
+        "parameters": {
+          "chatId": "7224216650",
+          "text": "={{ $('Combine Full Script').item.json.full_title }} Script on DSS has been written!\n\nDoc: {{ $('Output Summary').item.json.document_url }}\nWords: {{ $('Output Summary').item.json.total_words }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          912,
+          368
+        ],
+        "id": "5d23efdf-5d47-48c5-8cfd-69647d99e278",
+        "name": "Send a text message",
+        "webhookId": "12f3e70f-31e6-41cd-8cd5-4926e653bb5c",
+        "credentials": {
+          "telegramApi": {
+            "id": "DdvlWVVRZZzepXS7",
+            "name": "Telegram account"
+          }
+        }
       }
     ],
     "connections": {
@@ -1976,10 +2017,16 @@
       },
       "Update Sheet with Results": {
         "main": [
-          []
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
-      "Schedule Trigger": {
+      "Webhook": {
         "main": [
           [
             {
@@ -1992,7 +2039,7 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "every 4 hours",
+    "name": "added telegram",
     "description": "",
     "autosaved": true
   },
