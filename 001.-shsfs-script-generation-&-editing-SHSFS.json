@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-21T00:42:38.545Z",
+  "updatedAt": "2026-05-22T00:52:38.108Z",
   "createdAt": "2026-01-25T21:33:42.630Z",
   "id": "iixzw2YUC7r3X07o6Dg5w",
   "name": "001. SHSFS Script Generation & Editing",
@@ -1159,27 +1159,6 @@
     },
     {
       "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "hours",
-              "hoursInterval": 12,
-              "triggerAtMinute": 8
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -640,
-        144
-      ],
-      "id": "393c51da-62dc-43ee-9994-c55da8e4412f",
-      "name": "Schedule Trigger"
-    },
-    {
-      "parameters": {
         "jsCode": "// Get today's date in YYYY-MM-DD format\nconst today = new Date().toISOString().split('T')[0];\n\n// Get all rows from sheet\nconst allRows = $input.all();\n\n// Count scripts completed today\nconst completedToday = allRows.filter(row => {\n  const completedDate = row.json.date_completed;\n  if (!completedDate) return false;\n  // Handle different date formats\nconst dateStr = typeof completedDate === 'string' \n  ? completedDate.split(' ')[0]  // ✅ Splits on space for \"yyyy-MM-dd HH:mm:ss\"\n  : new Date(completedDate).toISOString().split('T')[0];\n  return dateStr === today;\n}).length;\n\n// Set your daily limit here (adjust as needed)\nconst DAILY_LIMIT = 4; // Change to 4 or 5 if you want\n\n// Calculate how many more we can do today\nconst remainingSlots = DAILY_LIMIT - completedToday;\n\n// Filter for pending topics (no doc_id means not processed yet)\nconst pendingTopics = allRows.filter(row => !row.json.doc_id);\n\n// Take only the number we can process today\nconst topicsToProcess = pendingTopics.slice(0, Math.max(0, remainingSlots));\n\n// Return results with metadata\nreturn topicsToProcess.map(row => ({\n  json: {\n    ...row.json,\n    _metadata: {\n      completedToday: completedToday,\n      dailyLimit: DAILY_LIMIT,\n      remainingSlots: remainingSlots,\n      totalPending: pendingTopics.length\n    }\n  }\n}));"
       },
       "type": "n8n-nodes-base.code",
@@ -1190,6 +1169,44 @@
       ],
       "id": "2f9d209f-dca3-4213-a96a-18fca258fccd",
       "name": "Check Today's Count"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "shsfs-scriptwriter",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -624,
+        -160
+      ],
+      "id": "0b4b91a4-8102-4a2e-835d-938949b878ff",
+      "name": "Webhook",
+      "webhookId": "9b9f9bde-b164-474c-9f10-5dbdf0f7c00b"
+    },
+    {
+      "parameters": {
+        "chatId": "7224216650",
+        "text": "={{ $('Combine Full Script').item.json.full_title }} Script has been written for SHSFS!\n\nDoc: {{ $('Output Summary').item.json.document_url }}\nWords: {{ $('Output Summary').item.json.total_words }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4208,
+        864
+      ],
+      "id": "952a7a8c-621a-40b2-9aa6-5f4d53610e90",
+      "name": "Send a text message",
+      "webhookId": "06598756-db63-42c2-94e9-4d54f9ad03f0",
+      "credentials": {
+        "telegramApi": {
+          "id": "DdvlWVVRZZzepXS7",
+          "name": "Telegram account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1592,7 +1609,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Send a text message",
             "type": "main",
             "index": 0
           }
@@ -1628,7 +1645,18 @@
         ]
       ]
     },
-    "Schedule Trigger": {
+    "Check Today's Count": {
+      "main": [
+        [
+          {
+            "node": "Any Topics to Process?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
       "main": [
         [
           {
@@ -1639,11 +1667,16 @@
         ]
       ]
     },
-    "Check Today's Count": {
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    },
+    "Send a text message": {
       "main": [
         [
           {
-            "node": "Any Topics to Process?",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -1662,9 +1695,11 @@
   },
   "staticData": {
     "global": {
-      "usedOpenings": [],
-      "lastSectionContent": null,
-      "lastSectionNumber": null
+      "usedOpenings": [
+        "But one death in the Mahabharata is never only one death"
+      ],
+      "lastSectionContent": "But one death in the Mahabharata is never only one death. The ember rolls forward into another generation.\n\nParikshit is gone.\n\nThe chamber still smells of ghee lamps, sandalwood, and the sharp, strange trace left behind by serpent fire. Priests who had chanted for seven days now sit in stunned silence. Guards stare at the floor as if stone itself has betrayed them. Outside, the corridors of the palace fill with running feet, then weeping, then the low thunder of news spreading from mouth to mouth.\n\nThe king has fallen.\nThe curse has flowered.\nAnd Hastinapura, old survivor of older disasters, must learn once more how to breathe after shock.\n\nYou can feel that hour if you stand there long enough.\n\nThe evening light is red on the pillars. Smoke from the lamps curls upward in thin blue threads. Somewhere in the women’s quarters, someone begins to cry openly, no longer trying to be dignified about it. Grief does that. It tears neatness apart.\n\nAnd in another room, a child is brought forward.\n\nJanamejaya.\n\nNot yet the fierce sacrificer. Not yet the king who will try to drag an entire serpent race into fire. For now he is only a son handed a grief too large for his hands. His father is gone. The last direct heir of the Pandavas has slipped away under a curse and a fang. The old line, already stretched thin by war, exile, vows, and ash, narrows even further.\n\nCrowns always look too heavy on the young.\n\nThe court gathers around him with hollow faces. Ministers speak carefully. Priests recite what must be recited. Elders steady the kingdom with ritual, because ritual is what people reach for when the heart refuses order. Water is poured. Mantras move through the air. The throne does not remain empty long, because kingdoms fear emptiness almost as much as they fear serpents.\n\nSo Janamejaya is raised up.\n\nBut he inherits more than a seat.\n\nHe inherits a wound.\n\nTime passes. Not wildly. Quietly.\n\nThe seasons turn over Hastinapura. Monsoon rain darkens the palace courtyards. Then winter comes with pale mornings and wool shawls. Then summer again, dry and bright, with dust on the roads and the smell of hot stone rising by noon. The boy grows. His shoulders broaden. His jaw hardens. The old grief does not leave. It learns how to sit still.\n\nYou have seen this kind of grief before. It waits politely for years, then stands up all at once.\n\nJanamejaya hears again and again how his father fell. He hears of the curse spoken by the sage’s son. He hears of the fruit basket. He hears of the tiny worm that was no worm. And above all, he hears the name that glitters and coils through every telling.\n\nTakshaka.\n\nThe serpent king.\nThe hidden one.\nThe old enemy from an older fire.\n\nA name like that does not stay small.\n\nIn the palace halls, bards speak of the Kuru line by lamplight. They begin with kings so ancient they almost sound like trees. They pass through Shantanu and Ganga, Bhishma with his terrible vow, Pandu in the forest, the five brothers, the war, the ashes, the child saved in the womb, and then at last Parikshit. Each name is polished by repetition. Each sorrow becomes part of the royal breath.\n\nAnd then Takshaka enters the recitation.\n\nNot as a mere snake in the grass. Never that.\n\nHe is remembered with the weight of old dread. Hooded. Patient. Gold-eyed in the roots of the world. A king below the earth, where cool jeweled halls lie far from the heat of men. A survivor of Khandava’s burning. A bearer of memory so old it tastes of smoke.\n\nWhen people speak his name at night, voices lower without meaning to.\n\nYou can almost hear it.\n\nThe soft rustle of silk.\nThe pop of oil in the lamps.\nThe distant night-call of some bird beyond the walls.\nAnd in between, that name.\n\nTakshaka.\n\nIt slides through the room like something alive.\n\nJanamejaya grows up inside that sound.\n\nAt first he wants justice. That is the clean word for it. Noble. Upright. Fit for a king. But grief rarely stays in clean words. Justice warms. It darkens. It begins to ask for more. If one serpent king took his father, why should the serpent race be left in peace? If poison struck the throne, why should poison remain under root and stone?\n\nAnd so the vow begins to form.\n\nNot in one dramatic flash. More slowly than that.\n\nA priest mentions the proper rites for vengeance.\nAn elder remembers ancient enmities.\nA king sits awake too late.\nA fire is imagined.\nThen planned.\nThen fed.\n\nThe serpent sacrifice is coming.\n\nFar away, beneath forest mounds and riverbanks, in caverns cool as moonlit wells, that rumor begins to move too. Nagas hear it in hidden courts. They hear that Janamejaya, son of Parikshit, will summon brahmins and sacred flame. He will call upon chants so powerful that serpents will be dragged from their holes, their coils, their secret palaces, and pulled helpless through the air toward the fire.\n\nRevenge has a very busy imagination.\n\nAnd Takshaka hears.\n\nMaybe he hears it in Indra’s court. Maybe in his own jeweled chamber where torchlight strikes polished stone and makes it look wet as river skin. Maybe from a scout rising breathless from some root-dark tunnel. However it comes, it comes.\n\nThe son is calling back to the father’s end.\nThe ember is becoming a blaze.\n\nYou stand, for a moment, between those worlds.\n\nAbove, the palaces of men. High walls, carved beams, white parasols, horses in the stables, conch shells at dawn.\n\nBelow, the old serpent realms. Cool chambers. Gem-lit pillars. The hush of scaled bodies moving over stone. Ancient kings who remember things buried deeper than human memory likes to travel.\n\nNeither world is ever as separate as it pretends.\n\nRoots crack courtyards.\nSnakes sleep beneath sacrificial altars.\nRain falls on temple roof and anthill alike.\n\nThis is how the old world breathes. In layers.\n\nYears later, when Janamejaya’s great rite flares to life, the fire will leap and the chants will pull and serpents will begin to fall through the sky like dark cords flung from the clouds. The air itself will seem to tighten. Priests will sweat beside the blaze. The king will sit rigid with inherited fury. Takshaka himself will seek refuge high above, near Indra, while the ritual strains upward to seize him.\n\nBut that comes in time.\n\nFor now, let the night settle over Hastinapura.\n\nParikshit has been mourned. The pyres have cooled. Janamejaya sleeps somewhere behind guarded doors, one hand still curled as children’s hands do, though a kingdom already presses around him. In the outer halls, the last attendants move softly with bronze trays, pinching out lamps one by one. The smell of smoke and lotus oil hangs low in the air.\n\nIn the courtyards, moonlight gathers in the stone basins.\n\nIn the old archives, names are copied again onto palm leaf.\n\nIn the temples, bells ring once and then go quiet.\n\nAnd beyond all of it, outside walls and roads and memory-polished thrones, the earth remains full of hidden movement.\n\nSerpents slide through tree roots wet from night dew.\nThey pass through ruined halls where dynasties once boasted.\nThey rest in the cool hollows of riverbanks.\nThey vanish beneath shrines.\nThey lift their heads at sounds no human hears.\n\nTakshaka remains there too.\n\nIn fear.\nIn legend.\nIn warning.\nIn the long memory of flame answered by flame.\n\nEmpires sleep heavily. They always do. Draped in banners, guarded by soldiers, soothed by priests, convinced their walls are the edge of the world.\n\nBut under the flagstones, under the roots, under the old burnt places where forests once stood, another kingdom keeps its watch.\n\nAnd if the night is still enough, if the lamps burn low enough, if the wind pauses in the neem trees beyond the palace, you can almost feel it below everything human—\n\ncool,\ncoiled,\npatient,\nawake.",
+      "lastSectionNumber": 9
     },
     "node:Schedule Trigger": {
       "recurrenceRules": [
@@ -1676,8 +1711,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "c179a77b-4edd-4598-82cc-f6d7bf0deb3f",
-  "activeVersionId": "c179a77b-4edd-4598-82cc-f6d7bf0deb3f",
+  "versionId": "ad9a1b34-3f3d-452a-b2ba-9f61f71f0b9e",
+  "activeVersionId": "ad9a1b34-3f3d-452a-b2ba-9f61f71f0b9e",
   "triggerCount": 1,
   "shared": [
     {
@@ -1689,9 +1724,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-05-21T00:43:35.000Z",
-    "createdAt": "2026-05-21T00:42:38.547Z",
-    "versionId": "c179a77b-4edd-4598-82cc-f6d7bf0deb3f",
+    "updatedAt": "2026-05-22T00:52:42.000Z",
+    "createdAt": "2026-05-22T00:52:38.111Z",
+    "versionId": "ad9a1b34-3f3d-452a-b2ba-9f61f71f0b9e",
     "workflowId": "iixzw2YUC7r3X07o6Dg5w",
     "nodes": [
       {
@@ -2847,27 +2882,6 @@
       },
       {
         "parameters": {
-          "rule": {
-            "interval": [
-              {
-                "field": "hours",
-                "hoursInterval": 12,
-                "triggerAtMinute": 8
-              }
-            ]
-          }
-        },
-        "type": "n8n-nodes-base.scheduleTrigger",
-        "typeVersion": 1.3,
-        "position": [
-          -640,
-          144
-        ],
-        "id": "393c51da-62dc-43ee-9994-c55da8e4412f",
-        "name": "Schedule Trigger"
-      },
-      {
-        "parameters": {
           "jsCode": "// Get today's date in YYYY-MM-DD format\nconst today = new Date().toISOString().split('T')[0];\n\n// Get all rows from sheet\nconst allRows = $input.all();\n\n// Count scripts completed today\nconst completedToday = allRows.filter(row => {\n  const completedDate = row.json.date_completed;\n  if (!completedDate) return false;\n  // Handle different date formats\nconst dateStr = typeof completedDate === 'string' \n  ? completedDate.split(' ')[0]  // ✅ Splits on space for \"yyyy-MM-dd HH:mm:ss\"\n  : new Date(completedDate).toISOString().split('T')[0];\n  return dateStr === today;\n}).length;\n\n// Set your daily limit here (adjust as needed)\nconst DAILY_LIMIT = 4; // Change to 4 or 5 if you want\n\n// Calculate how many more we can do today\nconst remainingSlots = DAILY_LIMIT - completedToday;\n\n// Filter for pending topics (no doc_id means not processed yet)\nconst pendingTopics = allRows.filter(row => !row.json.doc_id);\n\n// Take only the number we can process today\nconst topicsToProcess = pendingTopics.slice(0, Math.max(0, remainingSlots));\n\n// Return results with metadata\nreturn topicsToProcess.map(row => ({\n  json: {\n    ...row.json,\n    _metadata: {\n      completedToday: completedToday,\n      dailyLimit: DAILY_LIMIT,\n      remainingSlots: remainingSlots,\n      totalPending: pendingTopics.length\n    }\n  }\n}));"
         },
         "type": "n8n-nodes-base.code",
@@ -2878,6 +2892,44 @@
         ],
         "id": "2f9d209f-dca3-4213-a96a-18fca258fccd",
         "name": "Check Today's Count"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "shsfs-scriptwriter",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -624,
+          -160
+        ],
+        "id": "0b4b91a4-8102-4a2e-835d-938949b878ff",
+        "name": "Webhook",
+        "webhookId": "9b9f9bde-b164-474c-9f10-5dbdf0f7c00b"
+      },
+      {
+        "parameters": {
+          "chatId": "7224216650",
+          "text": "={{ $('Combine Full Script').item.json.full_title }} Script has been written for SHSFS!\n\nDoc: {{ $('Output Summary').item.json.document_url }}\nWords: {{ $('Output Summary').item.json.total_words }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          4208,
+          864
+        ],
+        "id": "952a7a8c-621a-40b2-9aa6-5f4d53610e90",
+        "name": "Send a text message",
+        "webhookId": "06598756-db63-42c2-94e9-4d54f9ad03f0",
+        "credentials": {
+          "telegramApi": {
+            "id": "DdvlWVVRZZzepXS7",
+            "name": "Telegram account"
+          }
+        }
       }
     ],
     "connections": {
@@ -3280,7 +3332,7 @@
         "main": [
           [
             {
-              "node": "Loop Over Items",
+              "node": "Send a text message",
               "type": "main",
               "index": 0
             }
@@ -3316,17 +3368,6 @@
           ]
         ]
       },
-      "Schedule Trigger": {
-        "main": [
-          [
-            {
-              "node": "Read Topics Sheet",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Check Today's Count": {
         "main": [
           [
@@ -3337,10 +3378,37 @@
             }
           ]
         ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Read Topics Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me": {
+        "main": [
+          []
+        ]
+      },
+      "Send a text message": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "fixed integer issue",
+    "name": "Version ad9a1b34",
     "description": "",
     "autosaved": true
   },
