@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19T18:21:43.525Z",
+  "updatedAt": "2026-05-22T17:29:10.013Z",
   "createdAt": "2026-01-26T00:25:02.042Z",
   "id": "UKfhRSUncjdb7ANnyf8lQ",
   "name": "005. SFS TTS Prep (Google Doc → TTS Sheet)",
@@ -461,6 +461,20 @@
       ],
       "id": "24546775-9660-4344-9986-7a44c6fe607b",
       "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        496
+      ],
+      "id": "0eb5ad19-db0c-41a0-b9e8-7a4da3922dd3",
+      "name": "Wait",
+      "webhookId": "23451cea-b525-4622-be91-00ef6a774fa7"
     }
   ],
   "connections": {
@@ -563,7 +577,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -575,6 +589,17 @@
         [
           {
             "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -600,7 +625,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "3aa377bf-1e6f-44ab-8c15-56478bbcd312",
+  "versionId": "4cdd55df-85c3-4c48-8ac9-b66a33a6253a",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
