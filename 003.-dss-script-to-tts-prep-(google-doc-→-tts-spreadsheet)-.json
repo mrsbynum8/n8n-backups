@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19T18:22:44.461Z",
+  "updatedAt": "2026-05-22T17:40:42.276Z",
   "createdAt": "2026-04-13T02:06:53.790Z",
   "id": "EAdCJll6cqK1DrBz",
   "name": "003. DSS Script to TTS Prep (Google Doc → TTS Spreadsheet)",
@@ -440,6 +440,20 @@
       ],
       "id": "c0602b86-4e5a-4603-8f96-5b8c97fd66f1",
       "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        496
+      ],
+      "id": "c455cd9b-6ac1-4fd1-9dec-5894df0da788",
+      "name": "Wait",
+      "webhookId": "0d76c4ab-c1c4-4b93-8a2a-821c61419772"
     }
   ],
   "connections": {
@@ -542,6 +556,17 @@
       "main": [
         [
           {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
             "node": "Loop Over Items",
             "type": "main",
             "index": 0
@@ -568,7 +593,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "9c015436-fe2b-4ed5-8cde-78f602d9bcc1",
+  "versionId": "b6aa0644-307b-4df1-b66f-8334ae63e78f",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
