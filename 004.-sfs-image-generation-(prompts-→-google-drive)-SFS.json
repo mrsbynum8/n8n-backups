@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19T22:53:19.356Z",
+  "updatedAt": "2026-05-23T00:51:18.606Z",
   "createdAt": "2026-01-26T00:27:28.921Z",
   "id": "7eTLolS3Xq87upqhzzL2C",
   "name": "004. SFS Image Generation (Prompts → Google Drive)",
@@ -78,7 +78,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://fal.run/fal-ai/gpt-image-1.5",
+        "url": "https://fal.run/openai/gpt-image-2",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -92,7 +92,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1536x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"landscape_4_3\",\n  \"num_images\": 1,\n  \"output_format\": \"jpeg\",\n  \"quality\": \"low\"\n}",
         "options": {}
       },
       "id": "4a93cd93-2a93-4bbf-b2a1-a23abc81c57d",
@@ -346,6 +346,9 @@
         656,
         0
       ],
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 5,
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "1XqTJPtDuzHpqQbs",
@@ -562,7 +565,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "811f055c-9d24-4ccb-8a14-bd7c4881c3e3",
+  "versionId": "c381fa92-7b6d-461f-a950-ccf1aa5b8bc4",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
