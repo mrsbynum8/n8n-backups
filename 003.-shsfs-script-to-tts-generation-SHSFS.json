@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-20T14:05:48.027Z",
+  "updatedAt": "2026-05-23T02:49:15.004Z",
   "createdAt": "2026-01-25T22:37:08.152Z",
   "id": "3vjhmzLK7dhnglARTF9m-",
   "name": "003. SHSFS Script to TTS Generation",
@@ -510,7 +510,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://genaipro.vn/api/v1/labs/task",
+        "url": "https://genaipro.io/api/v1/labs/task",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -609,7 +609,7 @@
     },
     {
       "parameters": {
-        "url": "=https://genaipro.vn/api/v1/labs/task/{{ $('Store Task Info').item.json.task_id }}",
+        "url": "=https://genaipro.io/api/v1/labs/task/{{ $('Store Task Info').item.json.task_id }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {}
@@ -1031,6 +1031,20 @@
       ],
       "id": "ba0be899-6dec-4ae2-90c0-29e3cee62d50",
       "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        464
+      ],
+      "id": "dfe2e7fb-cd1c-44dc-a8de-002e016a10bd",
+      "name": "Wait",
+      "webhookId": "e768acb4-5200-4474-9d5e-28b728cf60e2"
     }
   ],
   "connections": {
@@ -1133,7 +1147,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -1310,13 +1324,7 @@
     },
     "Limit1": {
       "main": [
-        [
-          {
-            "node": "Send message and wait for response",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Send message and wait for response": {
@@ -1347,6 +1355,17 @@
           }
         ]
       ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1365,7 +1384,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "720d4bf3-26c8-4fcf-a1ca-8cf0f5bfc3c6",
+  "versionId": "74b77e5e-045b-423d-8811-62276053bacf",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
