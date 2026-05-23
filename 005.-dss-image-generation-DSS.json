@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-28T00:16:29.610Z",
+  "updatedAt": "2026-05-22T18:52:38.352Z",
   "createdAt": "2026-04-14T01:59:42.048Z",
   "id": "cFIj94UmMkvz7QEx",
   "name": "005. DSS Image Generation",
@@ -62,7 +62,7 @@
     },
     {
       "parameters": {
-        "batchSize": 15,
+        "batchSize": 10,
         "options": {}
       },
       "id": "96b12c3d-a800-4af7-a3ff-bb465538ead9",
@@ -92,7 +92,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"landscape_4_3\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"landscape_4_3\",\n  \"num_images\": 1,\n  \"output_format\": \"jpeg\",\n  \"quality\": \"low\"\n}",
         "options": {}
       },
       "id": "18236e0a-b2b6-4168-9668-99835b4a21ab",
@@ -564,7 +564,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "d25c9607-e71e-4720-9fbb-0cebb00b2054",
+  "versionId": "e7680746-f56c-470b-b582-330fe8d71f8f",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
