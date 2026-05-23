@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19T20:09:13.167Z",
+  "updatedAt": "2026-05-23T00:12:01.127Z",
   "createdAt": "2026-01-26T00:25:39.261Z",
   "id": "C958wKQ13rICFNT4flkF-",
   "name": "006. SFS - GenAIPro TTS Workflow",
@@ -76,7 +76,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://genaipro.vn/api/v1/labs/task",
+        "url": "https://genaipro.io/api/v1/labs/task",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -175,7 +175,7 @@
     },
     {
       "parameters": {
-        "url": "=https://genaipro.vn/api/v1/labs/task/{{ $('Store Task Info').item.json.task_id }}",
+        "url": "=https://genaipro.io/api/v1/labs/task/{{ $('Store Task Info').item.json.task_id }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {}
@@ -511,6 +511,8 @@
         768,
         704
       ],
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "1XqTJPtDuzHpqQbs",
@@ -794,7 +796,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "21251b01-68ef-4ead-899f-3bfb7f3349e9",
+  "versionId": "9ca8666b-7002-4dc7-a6d1-1d56b036a699",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
