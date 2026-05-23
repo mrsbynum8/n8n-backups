@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19T18:20:58.853Z",
+  "updatedAt": "2026-05-22T17:29:34.485Z",
   "createdAt": "2026-04-17T15:57:40.211Z",
   "id": "KgVCQvevY5cYgTKL",
   "name": "002. SFS Image Prompt Prep (Google Doc → Chapters Sheet)",
@@ -419,7 +419,7 @@
     },
     {
       "parameters": {
-        "amount": 15
+        "amount": 30
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
@@ -607,7 +607,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "8ba7b294-05a6-48fd-bcbf-be392e2a2fd2",
+  "versionId": "6a114208-a403-4b37-9b58-74a1a8c7635a",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
