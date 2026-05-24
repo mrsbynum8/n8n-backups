@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-03T15:49:14.762Z",
+  "updatedAt": "2026-05-23T15:59:42.949Z",
   "createdAt": "2026-01-25T23:16:17.841Z",
   "id": "l5epofWIJ6X66dw7JsOc9",
   "name": "Backup. SHFS Prompt Generation (Sheet1 → Sheet2)",
@@ -351,6 +351,20 @@
         }
       },
       "notes": "Marks this chapter as completed in Sheet1"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        352
+      ],
+      "id": "6709db27-a7ce-49f2-bc4a-c88d8682dd96",
+      "name": "Wait",
+      "webhookId": "15f7dc33-6d29-49f3-9081-7ef5d9dda102"
     }
   ],
   "connections": {
@@ -436,6 +450,17 @@
       "main": [
         [
           {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
             "node": "Loop Over Chapters",
             "type": "main",
             "index": 0
@@ -454,7 +479,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "851a7d44-bc59-49c8-b7aa-140b0bcd8d1c",
+  "versionId": "7354f629-7e92-4d48-8153-363405e80b6b",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
