@@ -1,0 +1,687 @@
+{
+  "updatedAt": "2026-05-23T16:07:49.239Z",
+  "createdAt": "2026-05-23T16:02:09.686Z",
+  "id": "kRnaGmaBdqmADmNP",
+  "name": "Backup. SHSFS Script to Image Chapters Tab",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "55f7e438-175b-436c-a34f-4865cd0a30dd",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.document_id }}"
+      },
+      "id": "4a48c35f-239b-47c6-ae44-fb50a435dee4",
+      "name": "Read Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        0
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0icadRz5XxXy9hB4",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// The content is already a string when using simple: true\nconst fullText = $input.item.json.content;\nconst videoName = $('Loop Over Ready Scripts').first().json.video_name;\n\n// Split by section headers: # **Section N: Title**\nconst sectionRegex = /# \\*\\*Section (\\d+): ([^*]+)\\*\\*/g;\nconst sections = [];\nlet match;\nconst matches = [];\n\n// Find all section headers\nwhile ((match = sectionRegex.exec(fullText)) !== null) {\n  matches.push({\n    index: match.index,\n    fullMatch: match[0],\n    number: parseInt(match[1]),\n    title: match[2].trim()\n  });\n}\n\n// Extract content for each section\nfor (let i = 0; i < matches.length; i++) {\n  const currentMatch = matches[i];\n  const startIndex = currentMatch.index;\n  const endIndex = i < matches.length - 1 ? matches[i + 1].index : fullText.length;\n  \n  let sectionContent = fullText.substring(startIndex, endIndex).trim();\n  \n  // Remove the --- separator at the end if present\n  sectionContent = sectionContent.replace(/\\n---\\s*$/, '').trim();\n  \n  sections.push({\n    json: {\n      video_name: videoName,\n      chapter_number: currentMatch.number,\n      script: sectionContent,\n      status: 'pending'\n    }\n  });\n}\n\nif (sections.length === 0) {\n  throw new Error('No sections found. Make sure the document uses \"# **Section N: Title**\" format.');\n}\n\nreturn sections;"
+      },
+      "id": "848a23e2-18c0-4235-906f-7fb873c7aa00",
+      "name": "Parse Sections",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1872,
+        0
+      ],
+      "notes": "Splits the document by section headers and formats for spreadsheet"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 225841298,
+          "mode": "list",
+          "cachedResultName": "Chapters",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=225841298"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "chapter_number": "={{ $json.chapter_number }}",
+            "script": "={{ $json.script }}",
+            "status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chapter_number",
+              "displayName": "chapter_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script",
+              "displayName": "script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0fb54109-7d10-437e-9f2b-94e56f4d74cf",
+      "name": "Write to Chapters Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2144,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2368,
+        -16
+      ],
+      "id": "6b69191b-09d9-4549-b5e1-e2ea7a4b2c3a",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "image_status",
+              "lookupValue": "ready"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        32
+      ],
+      "id": "f88ac0bb-c922-4c3b-a9d5-e7f3c3bbdf1e",
+      "name": "Check for Ready Scripts",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "754c18ef-7284-42a4-b567-7eb18908f534",
+              "leftValue": "={{ $json.row_number }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        752,
+        0
+      ],
+      "id": "6c655c84-932b-47f8-984f-364b368d37e8",
+      "name": "Any Scripts Ready?"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1104,
+        16
+      ],
+      "id": "a1d1a607-0a25-40a4-b6a3-ddca5d52583d",
+      "name": "Loop Over Ready Scripts"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3cb09ccd-50c5-4587-ab5c-62336f249b0f",
+              "name": "document_id",
+              "value": "={{ $json.doc_id }}",
+              "type": "string"
+            },
+            {
+              "id": "138b1d49-c2d2-4e9b-865b-65157e34dd3f",
+              "name": "video_name",
+              "value": "={{ $json.video_name }}",
+              "type": "string"
+            },
+            {
+              "id": "71c2b449-df41-48d5-afbb-78e4c7f9f783",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1456,
+        0
+      ],
+      "id": "47aa79ed-a864-4be1-a02b-93e64a113da1",
+      "name": "Extract Script Info"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -256
+      ],
+      "id": "88484d94-3b81-46af-85eb-c5ea8ef91214",
+      "name": "No Scripts Ready - Skip"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI",
+          "mode": "list",
+          "cachedResultName": "SHSFS Topic Input Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wNk9TcHaypPm6ky-MeeYTDy0yGajhLbRqNC1Sh2noSI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_name": "={{ $json.video_name }}",
+            "image_status": "chdone"
+          },
+          "matchingColumns": [
+            "video_name"
+          ],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_name",
+              "displayName": "video_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "target_words",
+              "displayName": "target_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_type",
+              "displayName": "script_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reference_books",
+              "displayName": "reference_books",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_id",
+              "displayName": "doc_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doc_link",
+              "displayName": "doc_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_completed",
+              "displayName": "date_completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "voice_id",
+              "displayName": "voice_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "edit_status",
+              "displayName": "edit_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_status",
+              "displayName": "image_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tts_status",
+              "displayName": "tts_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scheduled Date",
+              "displayName": "Scheduled Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2576,
+        80
+      ],
+      "id": "54bee47b-506e-487a-8178-f3773a9666d6",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XqTJPtDuzHpqQbs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8,
+              "triggerAtMinute": 28
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        144
+      ],
+      "id": "f067fc83-d996-4eb3-a1fc-eeb52c1f5143",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1312,
+        192
+      ],
+      "id": "720a7150-1294-4677-bbd0-882afc2f4735",
+      "name": "Wait",
+      "webhookId": "da332867-4f07-425d-b000-2d27cdf68b4e"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check for Ready Scripts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Parse Sections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Sections": {
+      "main": [
+        [
+          {
+            "node": "Write to Chapters Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Chapters Sheet": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Ready Scripts": {
+      "main": [
+        [
+          {
+            "node": "Any Scripts Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Scripts Ready?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Ready Scripts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Scripts Ready - Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Ready Scripts": {
+      "main": [
+        [
+          {
+            "node": "No Scripts Ready - Skip",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Script Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Script Info": {
+      "main": [
+        [
+          {
+            "node": "Read Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Scripts Ready - Skip": {
+      "main": [
+        []
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check for Ready Scripts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Check for Ready Scripts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        16
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "fcb7a596-e505-4078-ac59-799e1d8a5fe8",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-05-23T16:02:09.693Z",
+      "createdAt": "2026-05-23T16:02:09.693Z",
+      "role": "workflow:owner",
+      "workflowId": "kRnaGmaBdqmADmNP",
+      "projectId": "eaD0haLSQbgJ93Hf"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-25T21:33:40.980Z",
+      "createdAt": "2026-01-25T21:33:40.980Z",
+      "id": "3tXWj4bbeGdd4akG",
+      "name": "SHSFS"
+    }
+  ]
+}
