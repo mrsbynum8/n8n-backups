@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-20T00:24:03.133Z",
+  "updatedAt": "2026-05-23T16:00:50.122Z",
   "createdAt": "2026-01-25T22:41:16.640Z",
   "id": "4lu_6AxSHsO3uHr0714om",
   "name": "Backup. SHSFS Image Generation (Prompts → Google Drive)",
@@ -79,7 +79,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://fal.run/fal-ai/gpt-image-1.5",
+        "url": "https://fal.run/openai/gpt-image-2",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -93,7 +93,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"1536x1024\",\n  \"num_images\": 1,\n  \"output_format\": \"png\",\n  \"quality\": \"low\"\n}",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.prompt) }},\n  \"image_size\": \"landscape_4_3\",\n  \"num_images\": 1,\n  \"output_format\": \"jpeg\",\n  \"quality\": \"low\"\n}",
         "options": {}
       },
       "id": "ac8bc7e6-2b14-4eb0-a1e8-5ad3d299b71a",
@@ -525,7 +525,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "5c17b828-f787-4009-b21e-904ec90b4a7c",
+  "versionId": "97455d99-70ba-45d1-89a5-c105d7219f4c",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
