@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-13T03:13:14.949Z",
+  "updatedAt": "2026-05-23T20:35:45.385Z",
   "createdAt": "2026-04-20T18:55:02.271Z",
   "id": "UPUuyqaQ4tLcJntz",
   "name": "SHSFS — ClickUp to YouTube Metadata Push",
@@ -421,16 +421,16 @@
   },
   "staticData": {
     "node:ClickUp Trigger": {
-      "webhookId": "9bde3a09-4deb-4b5d-8c57-2fbd1eb895b3",
-      "secret": "VXSLOFL796BB4PMMGU9CCYJ0KHD0TBQ1GU2NCOA8H5IGVHJ0J3FI9NVIPLEGO6P9"
+      "webhookId": "3573ecb9-61cf-448d-a9ad-1f12e2886396",
+      "secret": "GOUHVODSPSUKT8CJWYVHZVGQECZWSCUYRDZRTGWC0MZUX7LTU2RQ3EIXBU0YJWQA"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "c206dcb3-9d63-461a-8d5f-f3256c1a0630",
-  "activeVersionId": "0392b5f3-0301-4076-9aa0-704055fa879a",
+  "versionId": "233ce978-1a77-4c14-8421-c1bfece290ba",
+  "activeVersionId": "233ce978-1a77-4c14-8421-c1bfece290ba",
   "triggerCount": 1,
   "shared": [
     {
@@ -442,9 +442,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-29T01:29:30.000Z",
-    "createdAt": "2026-04-29T01:29:15.575Z",
-    "versionId": "0392b5f3-0301-4076-9aa0-704055fa879a",
+    "updatedAt": "2026-05-23T20:35:52.000Z",
+    "createdAt": "2026-05-23T20:35:45.387Z",
+    "versionId": "233ce978-1a77-4c14-8421-c1bfece290ba",
     "workflowId": "UPUuyqaQ4tLcJntz",
     "nodes": [
       {
@@ -501,7 +501,7 @@
           "videoId": "={{ $json.yt_video_id }}",
           "title": "={{ $json.yt_title }}",
           "regionCode": "US",
-          "categoryId": "=24",
+          "categoryId": "24",
           "updateFields": {
             "description": "={{ $json.yt_description }}",
             "privacyStatus": "private",
@@ -857,7 +857,7 @@
       }
     },
     "authors": "ShaRhanda Lawson",
-    "name": "Version 0392b5f3",
+    "name": "Version 233ce978",
     "description": "",
     "autosaved": true
   },
